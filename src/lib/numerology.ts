@@ -94,8 +94,12 @@ export function calculatePersonality(fullName: string): number {
 }
 
 // Calculate Personal Year
-export function calculatePersonalYear(day: number, month: number, year: number): number {
-  const sum = reduceNumber(day) + reduceNumber(month) + reduceNumber(year);
+// Formula: birth day + birth month + current year (each reduced, then sum reduced)
+export function calculatePersonalYear(birthDay: number, birthMonth: number, currentYear: number): number {
+  // Do NOT reduce day and month individually - add them as-is, then reduce
+  // The correct formula is: day + month + (year digits summed until single/master)
+  const yearReduced = reduceNumber(currentYear);
+  const sum = birthDay + birthMonth + yearReduced;
   return reduceNumber(sum);
 }
 

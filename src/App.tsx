@@ -9,6 +9,10 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import NumerologyMap from "./pages/NumerologyMap";
 import Chat from "./pages/Chat";
+import History from "./pages/History";
+import FavorableDates from "./pages/FavorableDates";
+import WhatsApp from "./pages/WhatsApp";
+import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +30,10 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/map" element={<NumerologyMap />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/dates" element={<FavorableDates />} />
+          <Route path="/whatsapp" element={<WhatsApp />} />
+          <Route path="/profile" element={<ProfilePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
