@@ -17,6 +17,7 @@ import {
   personalYearMeanings,
   destinyArchetypes,
 } from "@/lib/numerology";
+import { generateNumerologyPdf } from "@/lib/generatePdf";
 import {
   Sparkles,
   ArrowLeft,
@@ -226,8 +227,12 @@ const NumerologyMap = () => {
             </div>
           </div>
 
-          {numerologyData && (
-            <Button variant="cosmic-outline" size="sm">
+          {numerologyData && profile && (
+            <Button 
+              variant="cosmic-outline" 
+              size="sm"
+              onClick={() => generateNumerologyPdf(profile, numerologyData, new Date().getFullYear())}
+            >
               <Download className="w-4 h-4 mr-2" />
               Scarica PDF
             </Button>
