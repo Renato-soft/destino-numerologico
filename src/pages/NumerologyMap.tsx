@@ -24,7 +24,10 @@ import {
   Download,
   RefreshCw,
   Loader2,
+  ChevronDown,
 } from "lucide-react";
+import { getPersonalYearSectors, sectorMeta, type SectorKey } from "@/lib/personalYearSectors";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface Profile {
   nome: string;
@@ -481,22 +484,30 @@ const NumerologyMap = () => {
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  {[
-                    { title: "Lavoro e Carriera", icon: "💼" },
-                    { title: "Amore e Relazioni", icon: "❤️" },
-                    { title: "Denaro e Gestione", icon: "💰" },
-                    { title: "Benessere e Energia", icon: "🌿" },
-                    { title: "Crescita Personale", icon: "🌟" },
-                  ].map((area) => (
-                    <div key={area.title} className="p-4 rounded-lg bg-background/50">
-                      <h4 className="font-semibold mb-2">{area.icon} {area.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        In quest'ambito, l'Anno Personale {numerologyData.personalYear} ti invita a focalizzarti
-                        su {numberMeanings[numerologyData.personalYear > 9 ? (numerologyData.personalYear === 11 ? 2 : numerologyData.personalYear === 22 ? 4 : 6) : numerologyData.personalYear]?.keywords[0]}.
-                        È un periodo favorevole per {numberMeanings[numerologyData.personalYear > 9 ? (numerologyData.personalYear === 11 ? 2 : numerologyData.personalYear === 22 ? 4 : 6) : numerologyData.personalYear]?.evolution}.
-                      </p>
-                    </div>
-                  ))}
+                  {(Object.keys(sectorMeta) as SectorKey[]).map((sectorKey) => {
+                    const meta = sectorMeta[sectorKey];
+                    const sectors = getPersonalYearSectors(numerologyData.personalYear);
+                    const sector = sectors[sectorKey];
+                    return (
+                      <Collapsible key={sectorKey}>
+                        <div className="p-4 rounded-lg bg-background/50">
+                          <h4 className="font-semibold mb-2">{meta.icon} {meta.title}</h4>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {sector.summary}
+                          </p>
+                          <CollapsibleTrigger className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium">
+                            <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
+                            Approfondisci
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="mt-3 pt-3 border-t border-border/30">
+                            <p className="text-sm text-foreground/80 leading-relaxed">
+                              {sector.detail}
+                            </p>
+                          </CollapsibleContent>
+                        </div>
+                      </Collapsible>
+                    );
+                  })}
                 </div>
               </div>
             </section>
