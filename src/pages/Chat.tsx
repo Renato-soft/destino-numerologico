@@ -20,6 +20,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   created_at: string;
+  imageUrl?: string;
 }
 
 interface Profile {
@@ -125,6 +126,7 @@ const Chat = () => {
           role: m.role as "user" | "assistant",
           content: m.content,
           created_at: m.created_at,
+          imageUrl: (m.metadata as any)?.imageUrl || undefined,
         })));
       }
     } else {
@@ -176,11 +178,13 @@ const Chat = () => {
         .single();
 
       // Call AI edge function
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke("chat-numerology", {
         body: {
           message: userMessage,
           profile,
           numerologyContext,
+          userId: currentSession?.user?.id,
           conversationHistory: messages.slice(-10).map(m => ({
             role: m.role,
             content: m.content,
@@ -191,8 +195,9 @@ const Chat = () => {
       if (aiError) throw aiError;
 
       const assistantContent = aiResponse?.response || "Mi dispiace, non sono riuscito a elaborare la tua richiesta. Riprova.";
+      const outfitImageUrl = aiResponse?.imageUrl || null;
 
-      // Save assistant message
+      // Save assistant message (store image URL in metadata)
       const { data: savedAssistantMessage } = await supabase
         .from("chat_messages")
         .insert({
@@ -200,6 +205,7 @@ const Chat = () => {
           user_id: session.user.id,
           role: "assistant",
           content: assistantContent,
+          metadata: outfitImageUrl ? { imageUrl: outfitImageUrl } : {},
         })
         .select()
         .single();
@@ -220,6 +226,7 @@ const Chat = () => {
             role: "assistant" as const,
             content: assistantContent,
             created_at: savedAssistantMessage?.created_at || new Date().toISOString(),
+            imageUrl: outfitImageUrl || undefined,
           },
         ];
       });
@@ -271,7 +278,7 @@ const Chat = () => {
     "Come sarà la mia giornata di oggi?",
     "Quali date sono favorevoli questo mese?",
     "Spiegami il mio Life Path",
-    "Quali lavori sono in linea con la mia mappa?",
+    "Cosa mi consigli di indossare oggi?",
   ];
 
   if (loading) {
@@ -390,6 +397,17 @@ const Chat = () => {
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{message.content}</p>
+                    {message.imageUrl && (
+                      <div className="mt-3">
+                        <img
+                          src={message.imageUrl}
+                          alt="Look suggerito"
+                          className="rounded-xl max-w-full w-full max-h-80 object-cover border border-border/30"
+                          loading="lazy"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1 italic">✨ Look generato in base alla tua numerologia</p>
+                      </div>
+                    )}
                   </div>
                   {message.role === "user" && (
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
