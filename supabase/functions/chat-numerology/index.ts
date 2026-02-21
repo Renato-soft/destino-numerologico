@@ -92,13 +92,14 @@ async function getUserPhotoUrls(userId: string): Promise<string[]> {
   return urls;
 }
 
-async function analyzeUserAppearance(photoUrls: string[], apiKey: string): Promise<string> {
-  if (photoUrls.length === 0) return "persona di corporatura media";
+async function analyzeUserAppearance(photoUrls: string[], apiKey: string): Promise<{ description: string; gender: string }> {
+  if (photoUrls.length === 0) return { description: "persona di corporatura media", gender: "non specificato" };
 
   const content: any[] = [
     {
       type: "text",
-      text: "Analizza brevemente questa persona per consigliare abbigliamento. Descrivi in 2-3 frasi: corporatura (snella, media, robusta), tonalità della pelle (chiara, media, olivastra, scura), e eventuali caratteristiche rilevanti per lo stile (colore capelli, ecc). Rispondi SOLO con la descrizione fisica, nient'altro.",
+      text: `Analizza questa persona per consigliare abbigliamento. Rispondi ESATTAMENTE in questo formato JSON e nient'altro:
+{"gender":"uomo" o "donna","body":"descrizione corporatura in 10 parole max","skin":"tonalità pelle in 5 parole max","hair":"colore e tipo capelli in 5 parole max"}`,
     },
   ];
 
@@ -115,21 +116,54 @@ async function analyzeUserAppearance(photoUrls: string[], apiKey: string): Promi
     body: JSON.stringify({
       model: "google/gemini-2.5-flash",
       messages: [{ role: "user", content }],
-      max_tokens: 300,
+      max_tokens: 200,
     }),
   });
 
   if (!response.ok) {
     console.error("Vision analysis failed:", await response.text());
-    return "persona di corporatura media";
+    return { description: "persona di corporatura media", gender: "non specificato" };
   }
 
   const data = await response.json();
-  return data.choices?.[0]?.message?.content || "persona di corporatura media";
+  const raw = data.choices?.[0]?.message?.content || "";
+  
+  try {
+    // Extract JSON from response
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      const gender = parsed.gender?.toLowerCase().includes("uomo") ? "uomo" : "donna";
+      const description = `${gender}, corporatura: ${parsed.body || "media"}, pelle: ${parsed.skin || "media"}, capelli: ${parsed.hair || "non specificato"}`;
+      return { description, gender };
+    }
+  } catch (e) {
+    console.error("Failed to parse appearance JSON:", e);
+  }
+  
+  return { description: raw || "persona di corporatura media", gender: "non specificato" };
 }
 
-async function generateOutfitImage(prompt: string, apiKey: string): Promise<string | null> {
+async function generateOutfitImage(userPhotoUrl: string | null, outfitDescription: string, apiKey: string): Promise<string | null> {
   try {
+    // If we have a user photo, use image editing to dress them
+    const content: any[] = [];
+    
+    if (userPhotoUrl) {
+      content.push(
+        {
+          type: "text",
+          text: outfitDescription,
+        },
+        {
+          type: "image_url",
+          image_url: { url: userPhotoUrl },
+        }
+      );
+    } else {
+      content.push({ type: "text", text: outfitDescription });
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -138,7 +172,7 @@ async function generateOutfitImage(prompt: string, apiKey: string): Promise<stri
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-image",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content }],
         modalities: ["image", "text"],
       }),
     });
@@ -216,12 +250,16 @@ I numeri dell'utente:
     const wantsOutfit = isOutfitRequest(message);
     let outfitImageUrl: string | null = null;
     let appearanceDescription = "";
+    let userGender = "non specificato";
+    let userPhotoUrl: string | null = null;
 
     if (wantsOutfit && userId) {
-      // Fetch and analyze user photos
       const photoUrls = await getUserPhotoUrls(userId);
       if (photoUrls.length > 0) {
-        appearanceDescription = await analyzeUserAppearance(photoUrls, apiKey);
+        userPhotoUrl = photoUrls[0]; // Use first photo for image editing
+        const analysis = await analyzeUserAppearance(photoUrls, apiKey);
+        appearanceDescription = analysis.description;
+        userGender = analysis.gender;
       } else {
         appearanceDescription = "L'utente non ha caricato foto. Suggerisci un look generico.";
       }
@@ -233,13 +271,16 @@ I numeri dell'utente:
       ? `
 
 RICHIESTA LOOK/ABBIGLIAMENTO RILEVATA.
+Sesso dell'utente: ${userGender}
 Descrizione fisica dell'utente: ${appearanceDescription}
 Vibrazione del giorno ${dayVibration}: ${dayVibeDesc}
+IMPORTANTE: Suggerisci SOLO abbigliamento ${userGender === "uomo" ? "MASCHILE da uomo" : userGender === "donna" ? "FEMMINILE da donna" : "adeguato al sesso dell'utente"}.
 Fornisci consigli dettagliati su cosa indossare basandoti su:
 1. La vibrazione numerologica del giorno (colori e stile associati)
 2. L'anno personale dell'utente
 3. La corporatura e tonalità della pelle dell'utente
-Sii specifico su colori, stili e accessori.`
+4. Il sesso dell'utente (${userGender})
+Sii specifico su colori, stili e accessori ${userGender === "uomo" ? "maschili" : userGender === "donna" ? "femminili" : ""}.`
       : "";
 
     const systemPrompt = `Sei un consulente di numerologia pitagorica professionale per l'app "Destino Numerologico".
@@ -308,11 +349,13 @@ ISTRUZIONI:
 
     // Generate outfit image if requested
     if (wantsOutfit && userId) {
-      const imagePrompt = `Fashion outfit flat lay photo, professional styling suggestion. ${
-        appearanceDescription ? `For a person with: ${appearanceDescription}.` : ""
-      } Style inspired by: ${dayVibeDesc}. Colors: matching the mood of ${dayVibeDesc}. Show a complete outfit laid out elegantly: top, bottom, shoes, and accessories. High quality fashion photography style, clean white background, editorial look. No people in the image, only clothes and accessories.`;
+      const genderLabel = userGender === "uomo" ? "man" : userGender === "donna" ? "woman" : "person";
+      
+      const imagePrompt = userPhotoUrl
+        ? `Transform this photo: dress this ${genderLabel} in the following outfit while keeping their exact face, body shape, and skin tone. Outfit: ${dayVibeDesc} inspired style. Colors: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's clothing only: shirt, trousers, shoes, watch." : "Women's clothing only: dress or blouse with skirt/pants, heels, jewelry."} Professional fashion photography, full body shot, elegant background. Keep the person's face and features exactly as they are.`
+        : `Fashion photo of a ${genderLabel} wearing an elegant outfit. Style: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's clothing: shirt, trousers, leather shoes, watch." : "Women's clothing: elegant dress, heels, jewelry."} Full body shot, professional fashion photography, elegant background.`;
 
-      const base64Image = await generateOutfitImage(imagePrompt, apiKey);
+      const base64Image = await generateOutfitImage(userPhotoUrl, imagePrompt, apiKey);
       if (base64Image) {
         outfitImageUrl = await uploadGeneratedImage(base64Image, userId);
       }
