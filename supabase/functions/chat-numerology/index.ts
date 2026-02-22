@@ -63,6 +63,8 @@ function isOutfitRequest(message: string): boolean {
     "vestir", "outfit", "look", "abbigliamento", "indossare", "metter",
     "cosa mi metto", "come mi vesto", "vestito", "abito", "stile",
     "guardaroba", "moda", "fashion", "dress code", "tenuta",
+    "foto", "immagine", "ricrea", "genera", "mostrami", "fammi vedere",
+    "aspetto", "sembrare", "provare addosso", "specchio",
   ];
   const lower = message.toLowerCase();
   return keywords.some(k => lower.includes(k));
