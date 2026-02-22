@@ -13,6 +13,8 @@ import {
   Loader2,
   Calendar,
   RefreshCw,
+  Camera,
+  Upload,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -24,6 +26,19 @@ interface Profile {
   created_at: string;
 }
 
+interface UserPhoto {
+  id: string;
+  type: string;
+  storage_path: string;
+  signedUrl?: string;
+}
+
+const photoTypes = [
+  { key: "face", label: "Viso" },
+  { key: "full_front", label: "Figura frontale" },
+  { key: "full_side", label: "Figura laterale" },
+];
+
 const ProfilePage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +46,8 @@ const ProfilePage = () => {
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [photos, setPhotos] = useState<UserPhoto[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -45,19 +62,35 @@ const ProfilePage = () => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("nome, cognome, birth_date, timezone, created_at")
-      .eq("user_id", session.user.id)
-      .maybeSingle();
+    const [profileResult, photosResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("nome, cognome, birth_date, timezone, created_at")
+        .eq("user_id", session.user.id)
+        .maybeSingle(),
+      supabase
+        .from("photos")
+        .select("id, type, storage_path")
+        .eq("user_id", session.user.id),
+    ]);
 
-    if (error) {
-      console.error("Error loading profile:", error);
-    } else if (data) {
-      setProfile(data);
-      setNome(data.nome);
-      setCognome(data.cognome);
-      setBirthDate(data.birth_date);
+    if (profileResult.data) {
+      setProfile(profileResult.data);
+      setNome(profileResult.data.nome);
+      setCognome(profileResult.data.cognome);
+      setBirthDate(profileResult.data.birth_date);
+    }
+
+    if (photosResult.data && photosResult.data.length > 0) {
+      const photosWithUrls = await Promise.all(
+        photosResult.data.map(async (photo) => {
+          const { data } = await supabase.storage
+            .from("user-photos")
+            .createSignedUrl(photo.storage_path, 600);
+          return { ...photo, signedUrl: data?.signedUrl };
+        })
+      );
+      setPhotos(photosWithUrls);
     }
 
     setLoading(false);
@@ -115,6 +148,50 @@ const ProfilePage = () => {
 
   const handleRegenerateMap = () => {
     navigate("/map");
+  };
+
+  const handlePhotoUpload = async (type: string, file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "File troppo grande", description: "Max 5MB", variant: "destructive" });
+      return;
+    }
+
+    setUploadingPhoto(type);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const userId = session.user.id;
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${userId}/${type}_${Date.now()}.${fileExt}`;
+
+      // Delete old photo of this type if exists
+      const existingPhoto = photos.find(p => p.type === type);
+      if (existingPhoto) {
+        await supabase.storage.from("user-photos").remove([existingPhoto.storage_path]);
+        await supabase.from("photos").delete().eq("id", existingPhoto.id);
+      }
+
+      // Upload new
+      const { error: uploadError } = await supabase.storage
+        .from("user-photos")
+        .upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      const { error: insertError } = await supabase.from("photos").insert({
+        user_id: userId,
+        type,
+        storage_path: filePath,
+      });
+      if (insertError) throw insertError;
+
+      toast({ title: "Foto aggiornata!" });
+      await loadProfile();
+    } catch (error: any) {
+      toast({ title: "Errore", description: error.message, variant: "destructive" });
+    } finally {
+      setUploadingPhoto(null);
+    }
   };
 
   if (loading) {
@@ -226,6 +303,61 @@ const ProfilePage = () => {
                 </>
               )}
             </Button>
+          </div>
+
+          {/* Photos section */}
+          <div className="glass-cosmic rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Camera className="w-5 h-5 text-primary" />
+              <h3 className="font-display font-semibold">Le tue foto</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Aggiorna le tue foto per consigli di abbigliamento più precisi
+            </p>
+            <div className="grid gap-4">
+              {photoTypes.map((pt) => {
+                const existingPhoto = photos.find(p => p.type === pt.key);
+                return (
+                  <div key={pt.key} className="space-y-1">
+                    <Label>{pt.label}</Label>
+                    <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                      existingPhoto?.signedUrl
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50 hover:bg-muted/50"
+                    }`}>
+                      {uploadingPhoto === pt.key ? (
+                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                      ) : existingPhoto?.signedUrl ? (
+                        <div className="relative w-full h-full">
+                          <img
+                            src={existingPhoto.signedUrl}
+                            alt={pt.label}
+                            className="w-full h-full object-contain rounded-xl"
+                          />
+                          <div className="absolute inset-0 bg-black/0 hover:bg-black/30 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
+                            <span className="text-white text-sm font-medium">Cambia foto</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                          <Upload className="w-8 h-8" />
+                          <span className="text-sm">Carica foto</span>
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handlePhotoUpload(pt.key, file);
+                        }}
+                      />
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Regenerate map */}

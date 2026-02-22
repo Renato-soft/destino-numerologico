@@ -13,6 +13,8 @@ import {
   User,
   Bot,
   Plus,
+  X,
+  Download,
 } from "lucide-react";
 
 interface Message {
@@ -45,6 +47,7 @@ const Chat = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [numerologyContext, setNumerologyContext] = useState<NumerologyContext | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -402,10 +405,11 @@ const Chat = () => {
                         <img
                           src={message.imageUrl}
                           alt="Look suggerito"
-                          className="rounded-xl max-w-full w-full max-h-80 object-cover border border-border/30"
+                          className="rounded-xl max-w-full w-full max-h-80 object-cover border border-border/30 cursor-pointer hover:opacity-90 transition-opacity"
                           loading="lazy"
+                          onClick={() => setLightboxUrl(message.imageUrl!)}
                         />
-                        <p className="text-xs text-muted-foreground mt-1 italic">✨ Look generato in base alla tua numerologia</p>
+                        <p className="text-xs text-muted-foreground mt-1 italic">✨ Look generato — tocca per ingrandire e scaricare</p>
                       </div>
                     )}
                   </div>
@@ -435,6 +439,44 @@ const Chat = () => {
           <div ref={messagesEndRef} />
         </div>
       </main>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setLightboxUrl(null)}
+          >
+            <div className="absolute top-4 right-4 flex gap-2">
+              <a
+                href={lightboxUrl}
+                download="look-numerologico.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center hover:bg-white/30 transition-colors"
+              >
+                <Download className="w-5 h-5 text-white" />
+              </a>
+              <button
+                onClick={() => setLightboxUrl(null)}
+                className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center hover:bg-white/30 transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            <img
+              src={lightboxUrl}
+              alt="Look suggerito"
+              className="max-w-full max-h-[90vh] object-contain rounded-xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Input */}
       <footer className="relative z-10 border-t border-border/50 bg-background/80 backdrop-blur-xl">

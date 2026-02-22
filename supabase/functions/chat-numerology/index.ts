@@ -354,7 +354,7 @@ ISTRUZIONI:
       const genderLabel = userGender === "uomo" ? "man" : userGender === "donna" ? "woman" : "person";
       
       const imagePrompt = userPhotoUrl
-        ? `Transform this photo: dress this ${genderLabel} in the following outfit while keeping their exact face, body shape, and skin tone. Outfit: ${dayVibeDesc} inspired style. Colors: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's clothing only: shirt, trousers, shoes, watch." : "Women's clothing only: dress or blouse with skirt/pants, heels, jewelry."} Professional fashion photography, full body shot, elegant background. Keep the person's face and features exactly as they are.`
+        ? `CRITICAL INSTRUCTION: Keep the EXACT same face, facial features, skin tone, hair style, and body proportions from the input photo. This person must be clearly recognizable - it should look like THEM trying on new clothes in front of a mirror. Only change the clothing. Dress this ${genderLabel} in: ${dayVibeDesc} inspired style. ${userGender === "uomo" ? "Men's clothing ONLY: elegant shirt, trousers, leather shoes, watch, belt. NO feminine clothing." : "Women's clothing ONLY: elegant dress or blouse with skirt/pants, heels, jewelry. NO masculine clothing."} Full body shot showing head to toe. Clean, well-lit background. The face must remain IDENTICAL to the original photo.`
         : `Fashion photo of a ${genderLabel} wearing an elegant outfit. Style: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's clothing: shirt, trousers, leather shoes, watch." : "Women's clothing: elegant dress, heels, jewelry."} Full body shot, professional fashion photography, elegant background.`;
 
       const base64Image = await generateOutfitImage(userPhotoUrl, imagePrompt, apiKey);
