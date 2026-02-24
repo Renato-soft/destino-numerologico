@@ -12,6 +12,7 @@ import {
   Calendar, 
   Smartphone,
   User,
+  Users,
   LogOut,
   ChevronRight
 } from "lucide-react";
@@ -143,6 +144,13 @@ const Dashboard = () => {
       icon: Calendar,
       href: "/dates",
       color: "from-amber-500 to-orange-500",
+    },
+    {
+      title: "Compatibilità",
+      description: "Confronta la tua mappa con un'altra persona",
+      icon: Users,
+      href: "/compatibility",
+      color: "from-pink-500 to-rose-500",
     },
     {
       title: "WhatsApp",
