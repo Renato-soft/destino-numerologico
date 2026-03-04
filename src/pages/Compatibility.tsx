@@ -181,9 +181,9 @@ const Compatibility = () => {
   };
 
   const radarData = result ? [
-    { subject: "Life Path", A: result.details.lifePath.score, B: 100 },
+    { subject: "Destino", A: result.details.lifePath.score, B: 100 },
     { subject: "Anima", A: result.details.soul.score, B: 100 },
-    { subject: "Espressione", A: result.details.expression.score, B: 100 },
+    { subject: "Io", A: result.details.expression.score, B: 100 },
     { subject: "Personalità", A: result.details.personality.score, B: 100 },
     { subject: "Emotiva", A: result.emotional, B: 100 },
     { subject: "Professionale", A: result.professional, B: 100 },
