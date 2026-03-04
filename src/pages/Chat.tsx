@@ -96,8 +96,8 @@ const Chat = () => {
 
     if (mapData) {
       setNumerologyContext({
-        lifePath: mapData.life_path,
-        expression: mapData.destiny_expression,
+        destino: mapData.life_path,
+        io: mapData.destiny_expression,
         soul: mapData.soul,
         personality: mapData.personality,
         personalYear: mapData.personal_year,
