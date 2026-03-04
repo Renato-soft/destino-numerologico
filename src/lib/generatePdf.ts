@@ -87,11 +87,11 @@ export function generateNumerologyPdf(
   );
   y += 8;
 
-  // Life Path
-  addSection(`Cammino di Vita ${data.lifePath}`);
+  // Destino (was Life Path)
+  addSection(`Destino ${data.lifePath}`);
   const lpDesc = getNumberDescription(data.lifePath);
   addText(
-    `Il tuo Cammino di Vita ${data.lifePath} rivela la direzione fondamentale della tua esistenza. Le parole chiave che caratterizzano questo percorso sono: ${lpDesc.meaning?.keywords.join(", ")}. Questo numero indica che sei qui per sviluppare qualità di ${lpDesc.meaning?.talents.join(", ")}.`
+    `Il tuo Destino ${data.lifePath} rivela la direzione fondamentale della tua esistenza. Le parole chiave che caratterizzano questo percorso sono: ${lpDesc.meaning?.keywords.join(", ")}. Questo numero indica che sei qui per sviluppare qualità di ${lpDesc.meaning?.talents.join(", ")}.`
   );
   addText(
     `Il tuo percorso evolutivo ti chiede di ${lpDesc.meaning?.evolution}. Nella quotidianità, questo si manifesta nella tua capacità naturale di affrontare le situazioni con ${lpDesc.meaning?.talents[0]}. Tuttavia, dovrai fare attenzione alle ombre di questo numero: ${lpDesc.meaning?.shadows.join(", ")}.`
