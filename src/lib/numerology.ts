@@ -93,6 +93,17 @@ export function calculatePersonality(fullName: string): number {
   return reduceNumber(sum);
 }
 
+// Calculate Quintessenza (Io + Destino, reduced to single digit, keeping master 11 and 22)
+export function calculateQuintessenza(io: number, destino: number): number {
+  const sum = io + destino;
+  // Only keep 11 and 22 as master numbers for Quintessenza
+  let result = sum;
+  while (result > 9 && result !== 11 && result !== 22) {
+    result = result.toString().split('').reduce((s, d) => s + parseInt(d), 0);
+  }
+  return result;
+}
+
 // Calculate Personal Year
 // Formula: birth day + birth month + current year (each reduced, then sum reduced)
 export function calculatePersonalYear(birthDay: number, birthMonth: number, currentYear: number): number {

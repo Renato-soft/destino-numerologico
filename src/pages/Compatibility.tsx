@@ -163,9 +163,9 @@ const Compatibility = () => {
     addText(`Compatibilità Professionale: ${result.professional}%`);
 
     addSection("Confronto Numeri");
-    addText(`Life Path: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
+    addText(`Destino: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
     addText(`Anima: ${myNumbers.soul} vs ${personBNumbers.soul} — ${result.details.soul.note}`);
-    addText(`Espressione: ${myNumbers.expression} vs ${personBNumbers.expression} — ${result.details.expression.note}`);
+    addText(`Io: ${myNumbers.expression} vs ${personBNumbers.expression} — ${result.details.expression.note}`);
     addText(`Personalità: ${myNumbers.personality} vs ${personBNumbers.personality} — ${result.details.personality.note}`);
 
     addSection("Dinamica della Relazione");
@@ -181,9 +181,9 @@ const Compatibility = () => {
   };
 
   const radarData = result ? [
-    { subject: "Life Path", A: result.details.lifePath.score, B: 100 },
+    { subject: "Destino", A: result.details.lifePath.score, B: 100 },
     { subject: "Anima", A: result.details.soul.score, B: 100 },
-    { subject: "Espressione", A: result.details.expression.score, B: 100 },
+    { subject: "Io", A: result.details.expression.score, B: 100 },
     { subject: "Personalità", A: result.details.personality.score, B: 100 },
     { subject: "Emotiva", A: result.emotional, B: 100 },
     { subject: "Professionale", A: result.professional, B: 100 },
@@ -336,9 +336,9 @@ const Compatibility = () => {
                   <h2 className="font-display text-xl font-bold mb-6">Confronto Numeri</h2>
                   <div className="space-y-6">
                     {[
-                      { label: "Life Path", data: result.details.lifePath },
+                      { label: "Destino", data: result.details.lifePath },
                       { label: "Anima", data: result.details.soul },
-                      { label: "Espressione", data: result.details.expression },
+                      { label: "Io", data: result.details.expression },
                       { label: "Personalità", data: result.details.personality },
                     ].map(item => (
                       <div key={item.label} className="flex flex-col gap-2">

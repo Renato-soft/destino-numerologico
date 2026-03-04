@@ -11,6 +11,7 @@ interface NumerologyData {
   expression: number;
   soul: number;
   personality: number;
+  quintessenza: number;
   personalYear: number;
   personalMonth: number;
   cycles: {
@@ -86,11 +87,11 @@ export function generateNumerologyPdf(
   );
   y += 8;
 
-  // Life Path
-  addSection(`Cammino di Vita ${data.lifePath}`);
+  // Destino (was Life Path)
+  addSection(`Destino ${data.lifePath}`);
   const lpDesc = getNumberDescription(data.lifePath);
   addText(
-    `Il tuo Cammino di Vita ${data.lifePath} rivela la direzione fondamentale della tua esistenza. Le parole chiave che caratterizzano questo percorso sono: ${lpDesc.meaning?.keywords.join(", ")}. Questo numero indica che sei qui per sviluppare qualità di ${lpDesc.meaning?.talents.join(", ")}.`
+    `Il tuo Destino ${data.lifePath} rivela la direzione fondamentale della tua esistenza. Le parole chiave che caratterizzano questo percorso sono: ${lpDesc.meaning?.keywords.join(", ")}. Questo numero indica che sei qui per sviluppare qualità di ${lpDesc.meaning?.talents.join(", ")}.`
   );
   addText(
     `Il tuo percorso evolutivo ti chiede di ${lpDesc.meaning?.evolution}. Nella quotidianità, questo si manifesta nella tua capacità naturale di affrontare le situazioni con ${lpDesc.meaning?.talents[0]}. Tuttavia, dovrai fare attenzione alle ombre di questo numero: ${lpDesc.meaning?.shadows.join(", ")}.`
@@ -101,14 +102,14 @@ export function generateNumerologyPdf(
     );
   }
 
-  // Expression
-  addSection(`Numero di Espressione/Destino ${data.expression}`);
+  // Io (was Expression)
+  addSection(`Io ${data.expression}`);
   const exprDesc = getNumberDescription(data.expression);
   if (exprDesc.archetype) {
     addText(`Archetipo: ${exprDesc.archetype.archetype}. ${exprDesc.archetype.description}`);
   }
   addText(
-    `Il tuo Numero di Espressione ${data.expression}, derivato dalle lettere del tuo nome completo, indica il modo in cui ti esprimi nel mondo e il tuo potenziale naturale. I tuoi talenti innati includono: ${exprDesc.meaning?.talents.join(", ")}.`
+    `Il tuo numero dell'Io ${data.expression}, derivato dalle lettere del tuo nome completo, indica il modo in cui ti esprimi nel mondo e il tuo potenziale naturale. I tuoi talenti innati includono: ${exprDesc.meaning?.talents.join(", ")}.`
   );
   addText(
     `Nella vita quotidiana, questo si traduce nella capacità di ${exprDesc.meaning?.evolution}. Lavora consapevolmente sulle ombre (${exprDesc.meaning?.shadows.join(", ")}) per esprimere al meglio le qualità positive di questo numero.`
@@ -172,10 +173,11 @@ export function generateNumerologyPdf(
   const [birthYear, birthMonth, birthDay] = profile.birth_date.split("-").map(Number);
   addText(`Nome completo: ${profile.nome} ${profile.cognome}`, 10);
   addText(`Data di nascita: ${birthDay}/${birthMonth}/${birthYear}`, 10);
-  addText(`Life Path: ${birthDay} + ${birthMonth} + ${birthYear} → ${data.lifePath}`, 10);
-  addText(`Espressione: somma lettere nome completo → ${data.expression}`, 10);
+  addText(`Destino: ${birthDay} + ${birthMonth} + ${birthYear} → ${data.lifePath}`, 10);
+  addText(`Io: somma lettere nome completo → ${data.expression}`, 10);
   addText(`Anima: somma vocali → ${data.soul}`, 10);
   addText(`Personalità: somma consonanti → ${data.personality}`, 10);
+  addText(`Quintessenza: Io (${data.expression}) + Destino (${data.lifePath}) → ${data.quintessenza}`, 10);
   addText(`Anno Personale ${currentYear}: ${birthDay} + ${birthMonth} + ${currentYear} → ${data.personalYear}`, 10);
   addText(`Mese Personale: ${data.personalYear} + mese corrente → ${data.personalMonth}`, 10);
 
@@ -185,7 +187,7 @@ export function generateNumerologyPdf(
   addText("– Proiezione mese per mese basata sull'Anno Personale", 10);
   addText("– Analisi della giornata (oggi, domani o data specifica)", 10);
   addText("– Date favorevoli per obiettivi concreti (colloqui, firmare contratti, relazioni sentimentali, etc...)", 10);
-  addText("– Spiegami il mio Life Path in modo pratico", 10);
+  addText("– Spiegami il mio Destino in modo pratico", 10);
   addText("– Quali sono i miei talenti nascosti", 10);
   addText("– Quale lavoro è in linea con la mia mappa", 10);
   y += 4;

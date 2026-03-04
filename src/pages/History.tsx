@@ -152,11 +152,11 @@ const History = () => {
 
                   <div className="flex flex-wrap gap-2">
                     <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-sm">
-                      <span className="text-muted-foreground">LP:</span>
+                      <span className="text-muted-foreground">Dest:</span>
                       <span className="font-semibold text-primary">{map.life_path}</span>
                     </div>
                     <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-secondary/10 text-sm">
-                      <span className="text-muted-foreground">Expr:</span>
+                      <span className="text-muted-foreground">Io:</span>
                       <span className="font-semibold text-secondary">{map.destiny_expression}</span>
                     </div>
                     <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 text-sm">

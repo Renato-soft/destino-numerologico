@@ -12,7 +12,7 @@ const features = [
   {
     icon: Map,
     title: "Mappa Numerologica Completa",
-    description: "Calcolo di Life Path, Espressione, Anima, Personalità e Cicli della Vita secondo la numerologia pitagorica classica.",
+    description: "Calcolo di Destino, Io, Anima, Personalità, Quintessenza e Cicli della Vita secondo la numerologia pitagorica classica.",
   },
   {
     icon: MessageCircle,

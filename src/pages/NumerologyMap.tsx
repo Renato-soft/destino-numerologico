@@ -12,12 +12,15 @@ import {
   calculatePersonalYear,
   calculatePersonalMonth,
   calculateLifeCycles,
+  calculateQuintessenza,
   numberMeanings,
   masterMeanings,
   personalYearMeanings,
   destinyArchetypes,
 } from "@/lib/numerology";
+import { soulDescriptions } from "@/lib/soulDescriptions";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
+import NumerologyPyramid from "@/components/NumerologyPyramid";
 import {
   Sparkles,
   ArrowLeft,
@@ -40,6 +43,7 @@ interface NumerologyData {
   expression: number;
   soul: number;
   personality: number;
+  quintessenza: number;
   personalYear: number;
   personalMonth: number;
   cycles: ReturnType<typeof calculateLifeCycles>;
@@ -66,7 +70,6 @@ const NumerologyMap = () => {
       return;
     }
 
-    // Load profile
     const { data: profileData } = await supabase
       .from("profiles")
       .select("nome, cognome, birth_date")
@@ -80,7 +83,6 @@ const NumerologyMap = () => {
 
     setProfile(profileData);
 
-    // Check for existing map
     const { data: mapData } = await supabase
       .from("numerology_maps")
       .select("*")
@@ -91,11 +93,14 @@ const NumerologyMap = () => {
 
     if (mapData) {
       setExistingMapId(mapData.id);
+      const expression = mapData.destiny_expression;
+      const lifePath = mapData.life_path;
       setNumerologyData({
-        lifePath: mapData.life_path,
-        expression: mapData.destiny_expression,
+        lifePath,
+        expression,
         soul: mapData.soul,
         personality: mapData.personality,
+        quintessenza: calculateQuintessenza(expression, lifePath),
         personalYear: mapData.personal_year,
         personalMonth: mapData.personal_month || calculatePersonalMonth(mapData.personal_year, new Date().getMonth() + 1),
         cycles: mapData.cycles_json as ReturnType<typeof calculateLifeCycles>,
@@ -117,11 +122,11 @@ const NumerologyMap = () => {
       const currentMonth = new Date().getMonth() + 1;
       const fullName = `${profile.nome} ${profile.cognome}`;
 
-      // Calculate all numbers
       const lifePath = calculateLifePath(day, month, year);
       const expression = calculateExpression(fullName);
       const soul = calculateSoul(fullName);
       const personality = calculatePersonality(fullName);
+      const quintessenza = calculateQuintessenza(expression, lifePath);
       const personalYear = calculatePersonalYear(day, month, currentYear);
       const personalMonth = calculatePersonalMonth(personalYear, currentMonth);
       const cycles = calculateLifeCycles(day, month, year);
@@ -139,13 +144,13 @@ const NumerologyMap = () => {
         expression,
         soul,
         personality,
+        quintessenza,
         personalYear,
         personalMonth,
         cycles,
         rawCalculations,
       };
 
-      // Save to database
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
@@ -196,6 +201,10 @@ const NumerologyMap = () => {
     return { meaning, master, archetype };
   };
 
+  const getSoulDesc = (num: number) => {
+    return soulDescriptions[num] || soulDescriptions[num > 9 ? (num === 11 ? 11 : num === 22 ? 22 : num % 9 || 9) : num];
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -209,11 +218,9 @@ const NumerologyMap = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Background */}
       <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
       <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
 
-      {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -243,7 +250,6 @@ const NumerologyMap = () => {
         </div>
       </header>
 
-      {/* Main content */}
       <main className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
         {!numerologyData ? (
           <motion.div
@@ -299,12 +305,13 @@ const NumerologyMap = () => {
             </div>
 
             {/* Numbers grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[
-                { label: "Life Path", value: numerologyData.lifePath, key: 'lifePath' as const },
-                { label: "Espressione", value: numerologyData.expression, key: 'expression' as const },
+                { label: "Destino", value: numerologyData.lifePath, key: 'lifePath' as const },
+                { label: "Io", value: numerologyData.expression, key: 'expression' as const },
                 { label: "Anima", value: numerologyData.soul, key: 'soul' as const },
                 { label: "Personalità", value: numerologyData.personality, key: 'personality' as const },
+                { label: "Quintessenza", value: numerologyData.quintessenza, key: 'quintessenza' as const },
               ].map((item) => (
                 <div key={item.label} className="glass-cosmic rounded-xl p-6 text-center">
                   <div className="number-circle number-circle-lg mx-auto mb-3">
@@ -315,11 +322,20 @@ const NumerologyMap = () => {
               ))}
             </div>
 
-            {/* Life Path section */}
+            {/* Pyramid Diagram */}
+            <NumerologyPyramid
+              destino={numerologyData.lifePath}
+              io={numerologyData.expression}
+              anima={numerologyData.soul}
+              persona={numerologyData.personality}
+              quintessenza={numerologyData.quintessenza}
+            />
+
+            {/* Destino (was Life Path) section */}
             <section className="glass-cosmic rounded-2xl p-8">
               <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
                 <span className="number-circle">{numerologyData.lifePath}</span>
-                Cammino di Vita {numerologyData.lifePath}
+                Destino {numerologyData.lifePath}
               </h2>
               <div className="prose prose-invert max-w-none">
                 {(() => {
@@ -327,7 +343,7 @@ const NumerologyMap = () => {
                   return (
                     <>
                       <p className="text-foreground/90">
-                        Il tuo Cammino di Vita {numerologyData.lifePath} rivela la direzione fondamentale della tua esistenza.
+                        Il tuo Destino {numerologyData.lifePath} rivela la direzione fondamentale della tua esistenza.
                         Le parole chiave che caratterizzano questo percorso sono: <strong>{meaning?.keywords.join(', ')}</strong>.
                         Questo numero indica che sei qui per sviluppare qualità di {meaning?.talents.join(', ')}.
                       </p>
@@ -348,11 +364,11 @@ const NumerologyMap = () => {
               </div>
             </section>
 
-            {/* Expression section */}
+            {/* Io (was Expression) section */}
             <section className="glass-cosmic rounded-2xl p-8">
               <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
                 <span className="number-circle">{numerologyData.expression}</span>
-                Numero di Espressione/Destino {numerologyData.expression}
+                Io {numerologyData.expression}
               </h2>
               <div className="prose prose-invert max-w-none">
                 {(() => {
@@ -361,7 +377,7 @@ const NumerologyMap = () => {
                     <>
                       <p className="text-foreground/90">
                         {archetype && <strong>Archetipo: {archetype.archetype}. </strong>}
-                        Il tuo Numero di Espressione {numerologyData.expression}, derivato dalle lettere del tuo nome completo,
+                        Il tuo numero dell'Io {numerologyData.expression}, derivato dalle lettere del tuo nome completo,
                         indica il modo in cui ti esprimi nel mondo e il tuo potenziale naturale.
                         {archetype && ` ${archetype.description}`}
                       </p>
@@ -377,7 +393,7 @@ const NumerologyMap = () => {
               </div>
             </section>
 
-            {/* Soul section */}
+            {/* Soul section - Enhanced with soulDescriptions */}
             <section className="glass-cosmic rounded-2xl p-8">
               <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
                 <span className="number-circle">{numerologyData.soul}</span>
@@ -385,19 +401,58 @@ const NumerologyMap = () => {
               </h2>
               <div className="prose prose-invert max-w-none">
                 {(() => {
+                  const soulDesc = getSoulDesc(numerologyData.soul);
                   const { meaning } = getNumberDescription(numerologyData.soul, 'soul');
                   return (
                     <>
-                      <p className="text-foreground/90">
-                        Il Numero dell'Anima {numerologyData.soul}, calcolato dalle vocali del tuo nome,
-                        rivela i tuoi desideri più profondi e ciò che realmente ti motiva.
-                        Le parole chiave sono: {meaning?.keywords.join(', ')}.
-                      </p>
-                      <p className="text-foreground/90">
-                        Nel profondo del tuo cuore desideri esprimere {meaning?.talents.join(' e ')}.
-                        Questa è la forza che ti spinge nelle scelte più importanti della vita.
-                        Per soddisfare la tua anima, ricorda di {meaning?.evolution}.
-                      </p>
+                      {soulDesc ? (
+                        <>
+                          <p className="text-primary/80 font-medium italic mb-4">
+                            Visione: {soulDesc.vision}
+                          </p>
+                          <p className="text-foreground/90">
+                            {soulDesc.description}
+                          </p>
+                          
+                          <div className="mt-4 p-4 rounded-lg bg-background/50">
+                            <h4 className="font-semibold text-sm mb-2 text-primary">I tuoi valori</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {soulDesc.values.map((v, i) => (
+                                <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-xs text-foreground/80">{v}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="mt-4 p-4 rounded-lg bg-background/50">
+                            <h4 className="font-semibold text-sm mb-2 text-amber-400">Le chiavi della Fortuna</h4>
+                            <ul className="space-y-2">
+                              {soulDesc.fortuneKeys.map((k, i) => (
+                                <li key={i} className="text-sm text-foreground/80">✦ {k}</li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <p className="text-foreground/90 mt-4">
+                            <strong>Ombra da trasformare:</strong> {soulDesc.shadow}
+                          </p>
+
+                          <p className="text-primary/80 italic mt-3 text-sm">
+                            {soulDesc.keywords}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-foreground/90">
+                            Il Numero dell'Anima {numerologyData.soul}, calcolato dalle vocali del tuo nome,
+                            rivela i tuoi desideri più profondi e ciò che realmente ti motiva.
+                            Le parole chiave sono: {meaning?.keywords.join(', ')}.
+                          </p>
+                          <p className="text-foreground/90">
+                            Nel profondo del tuo cuore desideri esprimere {meaning?.talents.join(' e ')}.
+                            Per soddisfare la tua anima, ricorda di {meaning?.evolution}.
+                          </p>
+                        </>
+                      )}
                     </>
                   );
                 })()}
@@ -425,6 +480,44 @@ const NumerologyMap = () => {
                         Questa è l'immagine che proietti, anche se dentro di te potresti sentirti diversamente.
                         Lavorare sull'equilibrio tra personalità e anima ti aiuterà a {meaning?.evolution}.
                       </p>
+                    </>
+                  );
+                })()}
+              </div>
+            </section>
+
+            {/* Quintessenza section */}
+            <section className="glass-cosmic rounded-2xl p-8">
+              <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
+                <span className="number-circle">{numerologyData.quintessenza}</span>
+                Quintessenza {numerologyData.quintessenza}
+              </h2>
+              <div className="prose prose-invert max-w-none">
+                {(() => {
+                  const baseNum = numerologyData.quintessenza > 9 
+                    ? (numerologyData.quintessenza === 11 ? 2 : numerologyData.quintessenza === 22 ? 4 : numerologyData.quintessenza) 
+                    : numerologyData.quintessenza;
+                  const meaning = numberMeanings[baseNum];
+                  const master = masterMeanings[numerologyData.quintessenza];
+                  return (
+                    <>
+                      <p className="text-foreground/90">
+                        La Quintessenza è il numero che nasce dall'unione del tuo Io ({numerologyData.expression}) 
+                        e del tuo Destino ({numerologyData.lifePath}): rappresenta la sintesi più elevata del tuo potenziale, 
+                        l'area di eccellenza dove i tuoi talenti naturali incontrano la tua missione di vita.
+                      </p>
+                      <p className="text-foreground/90">
+                        Il tuo numero di Quintessenza {numerologyData.quintessenza} indica che la tua area di massima espressione 
+                        si trova nell'ambito di: <strong>{meaning?.keywords.join(', ')}</strong>. 
+                        Quando riesci ad allineare il tuo modo di essere (Io) con la direzione della tua vita (Destino), 
+                        attivi i talenti di {meaning?.talents.join(', ')}, trasformandoli nel tuo più grande dono.
+                      </p>
+                      {master && (
+                        <p className="text-primary/90 italic">
+                          Come numero maestro, la Quintessenza {numerologyData.quintessenza} porta con sé un'energia di trasformazione 
+                          superiore: {master.description}
+                        </p>
+                      )}
                     </>
                   );
                 })()}
@@ -519,7 +612,7 @@ const NumerologyMap = () => {
                 <li>– Proiezione mese per mese basata sull'Anno Personale</li>
                 <li>– Analisi della giornata (oggi, domani o data specifica)</li>
                 <li>– Date favorevoli per obiettivi concreti (colloqui, firmare contratti, relazioni sentimentali, etc...)</li>
-                <li>– Spiegami il mio Life Path in modo pratico</li>
+                <li>– Spiegami il mio Destino in modo pratico</li>
                 <li>– Quali sono i miei talenti nascosti</li>
                 <li>– Quale lavoro è in linea con la mia mappa</li>
               </ul>
