@@ -187,7 +187,7 @@ export function generateNumerologyPdf(
   addText("– Proiezione mese per mese basata sull'Anno Personale", 10);
   addText("– Analisi della giornata (oggi, domani o data specifica)", 10);
   addText("– Date favorevoli per obiettivi concreti (colloqui, firmare contratti, relazioni sentimentali, etc...)", 10);
-  addText("– Spiegami il mio Life Path in modo pratico", 10);
+  addText("– Spiegami il mio Destino in modo pratico", 10);
   addText("– Quali sono i miei talenti nascosti", 10);
   addText("– Quale lavoro è in linea con la mia mappa", 10);
   y += 4;
