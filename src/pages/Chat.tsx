@@ -32,8 +32,8 @@ interface Profile {
 }
 
 interface NumerologyContext {
-  lifePath: number;
-  expression: number;
+  destino: number;
+  io: number;
   soul: number;
   personality: number;
   personalYear: number;
