@@ -86,7 +86,7 @@ function generateFrictionPoints(a: PersonNumbers, b: PersonNumbers): string[] {
   const mB = numberMeanings[getBaseNumber(b.lifePath)];
 
   if (getPairScore(a.lifePath, b.lifePath) < 6) {
-    points.push(`Il tuo Life Path ${a.lifePath} (${mA?.keywords[0]}) e il suo ${b.lifePath} (${mB?.keywords[0]}) hanno direzioni diverse. Serve rispetto reciproco per i percorsi individuali.`);
+    points.push(`Il tuo Destino ${a.lifePath} (${mA?.keywords[0]}) e il suo ${b.lifePath} (${mB?.keywords[0]}) hanno direzioni diverse. Serve rispetto reciproco per i percorsi individuali.`);
   }
 
   if (getPairScore(a.soul, b.soul) < 6) {
