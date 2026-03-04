@@ -352,8 +352,8 @@ const Chat = () => {
                 <div className="mb-8 p-4 glass-cosmic rounded-xl inline-block">
                   <p className="text-sm text-muted-foreground mb-2">I tuoi numeri:</p>
                   <div className="flex gap-3 justify-center">
-                    <span className="number-circle text-sm">{numerologyContext.lifePath}</span>
-                    <span className="number-circle text-sm">{numerologyContext.expression}</span>
+                    <span className="number-circle text-sm">{numerologyContext.destino}</span>
+                    <span className="number-circle text-sm">{numerologyContext.io}</span>
                     <span className="number-circle text-sm">{numerologyContext.soul}</span>
                     <span className="number-circle text-sm">{numerologyContext.personality}</span>
                   </div>
