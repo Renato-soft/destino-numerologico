@@ -163,9 +163,9 @@ const Compatibility = () => {
     addText(`Compatibilità Professionale: ${result.professional}%`);
 
     addSection("Confronto Numeri");
-    addText(`Life Path: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
+    addText(`Destino: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
     addText(`Anima: ${myNumbers.soul} vs ${personBNumbers.soul} — ${result.details.soul.note}`);
-    addText(`Espressione: ${myNumbers.expression} vs ${personBNumbers.expression} — ${result.details.expression.note}`);
+    addText(`Io: ${myNumbers.expression} vs ${personBNumbers.expression} — ${result.details.expression.note}`);
     addText(`Personalità: ${myNumbers.personality} vs ${personBNumbers.personality} — ${result.details.personality.note}`);
 
     addSection("Dinamica della Relazione");
