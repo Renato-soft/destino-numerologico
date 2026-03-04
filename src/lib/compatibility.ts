@@ -135,7 +135,7 @@ function generateSuggestions(a: PersonNumbers, b: PersonNumbers): string[] {
   }
 
   // Generic wisdom
-  suggestions.push(`Comunicate apertamente le vostre esigenze: il tuo ${a.lifePath} e il suo ${b.lifePath} hanno bisogni diversi che vanno riconosciuti.`);
+  suggestions.push(`Comunicate apertamente le vostre esigenze: il tuo Destino ${a.lifePath} e il suo ${b.lifePath} hanno bisogni diversi che vanno riconosciuti.`);
 
   return suggestions.slice(0, 4);
 }

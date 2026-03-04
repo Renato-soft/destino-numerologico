@@ -336,9 +336,9 @@ const Compatibility = () => {
                   <h2 className="font-display text-xl font-bold mb-6">Confronto Numeri</h2>
                   <div className="space-y-6">
                     {[
-                      { label: "Life Path", data: result.details.lifePath },
+                      { label: "Destino", data: result.details.lifePath },
                       { label: "Anima", data: result.details.soul },
-                      { label: "Espressione", data: result.details.expression },
+                      { label: "Io", data: result.details.expression },
                       { label: "Personalità", data: result.details.personality },
                     ].map(item => (
                       <div key={item.label} className="flex flex-col gap-2">

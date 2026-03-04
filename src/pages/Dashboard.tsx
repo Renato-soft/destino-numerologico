@@ -222,12 +222,13 @@ const Dashboard = () => {
             className="mb-12"
           >
             <h2 className="font-display text-xl font-semibold mb-4">I tuoi numeri</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[
-                { label: "Life Path", value: latestMap.life_path },
-                { label: "Espressione", value: latestMap.destiny_expression },
+                { label: "Destino", value: latestMap.life_path },
+                { label: "Io", value: latestMap.destiny_expression },
                 { label: "Anima", value: latestMap.soul },
                 { label: "Personalità", value: latestMap.personality },
+                { label: "Quintessenza", value: (() => { const s = latestMap.destiny_expression + latestMap.life_path; let r = s; while (r > 9 && r !== 11 && r !== 22) { r = r.toString().split('').reduce((a, d) => a + parseInt(d), 0); } return r; })() },
               ].map((item, index) => (
                 <div
                   key={item.label}
