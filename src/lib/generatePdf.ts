@@ -11,6 +11,7 @@ interface NumerologyData {
   expression: number;
   soul: number;
   personality: number;
+  quintessenza: number;
   personalYear: number;
   personalMonth: number;
   cycles: {
