@@ -173,10 +173,11 @@ export function generateNumerologyPdf(
   const [birthYear, birthMonth, birthDay] = profile.birth_date.split("-").map(Number);
   addText(`Nome completo: ${profile.nome} ${profile.cognome}`, 10);
   addText(`Data di nascita: ${birthDay}/${birthMonth}/${birthYear}`, 10);
-  addText(`Life Path: ${birthDay} + ${birthMonth} + ${birthYear} → ${data.lifePath}`, 10);
-  addText(`Espressione: somma lettere nome completo → ${data.expression}`, 10);
+  addText(`Destino: ${birthDay} + ${birthMonth} + ${birthYear} → ${data.lifePath}`, 10);
+  addText(`Io: somma lettere nome completo → ${data.expression}`, 10);
   addText(`Anima: somma vocali → ${data.soul}`, 10);
   addText(`Personalità: somma consonanti → ${data.personality}`, 10);
+  addText(`Quintessenza: Io (${data.expression}) + Destino (${data.lifePath}) → ${data.quintessenza}`, 10);
   addText(`Anno Personale ${currentYear}: ${birthDay} + ${birthMonth} + ${currentYear} → ${data.personalYear}`, 10);
   addText(`Mese Personale: ${data.personalYear} + mese corrente → ${data.personalMonth}`, 10);
 
