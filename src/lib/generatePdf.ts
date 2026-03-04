@@ -102,14 +102,14 @@ export function generateNumerologyPdf(
     );
   }
 
-  // Expression
-  addSection(`Numero di Espressione/Destino ${data.expression}`);
+  // Io (was Expression)
+  addSection(`Io ${data.expression}`);
   const exprDesc = getNumberDescription(data.expression);
   if (exprDesc.archetype) {
     addText(`Archetipo: ${exprDesc.archetype.archetype}. ${exprDesc.archetype.description}`);
   }
   addText(
-    `Il tuo Numero di Espressione ${data.expression}, derivato dalle lettere del tuo nome completo, indica il modo in cui ti esprimi nel mondo e il tuo potenziale naturale. I tuoi talenti innati includono: ${exprDesc.meaning?.talents.join(", ")}.`
+    `Il tuo numero dell'Io ${data.expression}, derivato dalle lettere del tuo nome completo, indica il modo in cui ti esprimi nel mondo e il tuo potenziale naturale. I tuoi talenti innati includono: ${exprDesc.meaning?.talents.join(", ")}.`
   );
   addText(
     `Nella vita quotidiana, questo si traduce nella capacità di ${exprDesc.meaning?.evolution}. Lavora consapevolmente sulle ombre (${exprDesc.meaning?.shadows.join(", ")}) per esprimere al meglio le qualità positive di questo numero.`
