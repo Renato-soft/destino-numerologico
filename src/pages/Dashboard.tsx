@@ -245,6 +245,14 @@ const Dashboard = () => {
           </motion.section>
         )}
 
+        {/* Daily Analysis */}
+        {latestMap && (
+          <DailyAnalysis 
+            personalYear={latestMap.personal_year} 
+            lifePath={latestMap.life_path} 
+          />
+        )}
+
         {/* Quick actions */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
