@@ -277,12 +277,14 @@ Sesso dell'utente: ${userGender}
 Descrizione fisica dell'utente: ${appearanceDescription}
 Vibrazione del giorno ${dayVibration}: ${dayVibeDesc}
 IMPORTANTE: Suggerisci SOLO abbigliamento ${userGender === "uomo" ? "MASCHILE da uomo" : userGender === "donna" ? "FEMMINILE da donna" : "adeguato al sesso dell'utente"}.
+STILE OBBLIGATORIO: Abbigliamento SOBRIO, QUOTIDIANO, CASUAL-ELEGANTE. Come ci si veste per andare al lavoro in ufficio o per una serata tranquilla con amici. NIENTE abiti da cerimonia, NIENTE brillantini, paillettes, accessori vistosi o look da sfilata. Pensa a capi reali che si trovano in un normale negozio.
 Fornisci consigli dettagliati su cosa indossare basandoti su:
 1. La vibrazione numerologica del giorno (colori e stile associati)
 2. L'anno personale dell'utente
 3. La corporatura e tonalità della pelle dell'utente
 4. Il sesso dell'utente (${userGender})
-Sii specifico su colori, stili e accessori ${userGender === "uomo" ? "maschili" : userGender === "donna" ? "femminili" : ""}.`
+Sii specifico su colori, stili e accessori ${userGender === "uomo" ? "maschili" : userGender === "donna" ? "femminili" : ""}.
+L'immagine dell'outfit verrà generata automaticamente dal sistema. Tu descrivi solo il look in modo discorsivo, senza inserire codice o JSON.`
       : "";
 
     const systemPrompt = `Sei un consulente di numerologia pitagorica professionale per l'app "Destino Numerologico".
