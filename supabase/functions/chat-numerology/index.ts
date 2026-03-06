@@ -34,15 +34,15 @@ const personalYearMeanings: Record<number, string> = {
 };
 
 const dayVibeDescriptions: Record<number, string> = {
-  1: "energia dinamica, iniziativa, colori rosso e oro, stile deciso e autorevole",
-  2: "armonia, delicatezza, colori pastello e argento, stile morbido ed elegante",
-  3: "creatività, gioia, colori vivaci e giallo, stile espressivo e artistico",
-  4: "ordine, stabilità, colori terra e verde scuro, stile classico e strutturato",
-  5: "libertà, avventura, colori elettrici e turchese, stile versatile e moderno",
-  6: "bellezza, cura, colori rosa e verde, stile raffinato e romantico",
-  7: "introspezione, mistero, colori viola e indaco, stile minimalista e sofisticato",
-  8: "potere, successo, colori nero e oro, stile lussuoso e potente",
-  9: "universalità, compassione, colori bordeaux e bianco, stile eclettico e spirituale",
+  1: "energia dinamica, iniziativa, toni rosso scuro/bordeaux, stile sobrio e deciso",
+  2: "armonia, delicatezza, toni grigio chiaro e blu, stile morbido e pulito",
+  3: "creatività, gioia, toni giallo senape e beige, stile casual curato",
+  4: "ordine, stabilità, toni terra e verde oliva, stile classico quotidiano",
+  5: "libertà, avventura, toni blu elettrico e grigio, stile casual moderno",
+  6: "bellezza, cura, toni verde salvia e crema, stile raffinato ma semplice",
+  7: "introspezione, mistero, toni blu navy e antracite, stile minimalista pulito",
+  8: "potere, successo, toni nero e grigio scuro, stile elegante sobrio",
+  9: "universalità, compassione, toni bordeaux e bianco panna, stile curato senza eccessi",
 };
 
 function reduceNumber(num: number): number {
