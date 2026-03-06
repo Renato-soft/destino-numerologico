@@ -146,11 +146,11 @@ const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
 
               <div className="space-y-2">
                 <div className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                  <TrendingUp className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <p className="text-sm text-foreground">{insight.forza}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                  <AlertTriangle className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
                   <p className="text-sm text-muted-foreground">{insight.evita}</p>
                 </div>
               </div>
