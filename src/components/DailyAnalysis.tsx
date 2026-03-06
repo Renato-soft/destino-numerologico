@@ -191,6 +191,9 @@ const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
   const vibeKey = dayVibe > 9 ? reduceNumber(dayVibe % 10 + Math.floor(dayVibe / 10)) : dayVibe;
   const insights = dayVibrationInsights[vibeKey] || dayVibrationInsights[1];
   
+  // Get motivational message
+  const motivation = getMotivationalMessage(dayVibe, personalYear);
+
   // Get personal year sector data for context
   const yearKey = personalYear > 9 ? reduceNumber(personalYear) : personalYear;
   const yearSectors = personalYearSectors[yearKey];
@@ -213,6 +216,21 @@ const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
           </p>
         </div>
       </div>
+
+      {/* Motivational message */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.18 }}
+        className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-primary/15 via-accent/10 to-primary/5 border border-primary/20"
+      >
+        <div className="flex items-start gap-3">
+          <Sparkles className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+          <p className="text-foreground font-medium italic leading-relaxed">
+            "{motivation}"
+          </p>
+        </div>
+      </motion.div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sectors.map((sector, index) => {
