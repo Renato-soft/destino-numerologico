@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { reduceNumber } from "@/lib/numerology";
 import { sectorMeta, personalYearSectors, SectorKey } from "@/lib/personalYearSectors";
-import { Heart, Briefcase, DollarSign, Leaf, Star, TrendingUp, AlertTriangle } from "lucide-react";
+import { Heart, Briefcase, DollarSign, Leaf, Star, TrendingUp, AlertTriangle, Sparkles } from "lucide-react";
 
 interface DailyAnalysisProps {
   personalYear: number;
