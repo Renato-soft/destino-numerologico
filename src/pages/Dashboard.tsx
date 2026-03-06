@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronRight
 } from "lucide-react";
+import DailyAnalysis from "@/components/DailyAnalysis";
 
 interface Profile {
   nome: string;
