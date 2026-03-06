@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronRight
 } from "lucide-react";
+import DailyAnalysis from "@/components/DailyAnalysis";
 
 interface Profile {
   nome: string;
@@ -242,6 +243,14 @@ const Dashboard = () => {
               ))}
             </div>
           </motion.section>
+        )}
+
+        {/* Daily Analysis */}
+        {latestMap && (
+          <DailyAnalysis 
+            personalYear={latestMap.personal_year} 
+            lifePath={latestMap.life_path} 
+          />
         )}
 
         {/* Quick actions */}
