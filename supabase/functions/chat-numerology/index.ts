@@ -34,15 +34,15 @@ const personalYearMeanings: Record<number, string> = {
 };
 
 const dayVibeDescriptions: Record<number, string> = {
-  1: "energia dinamica, iniziativa, colori rosso e oro, stile deciso e autorevole",
-  2: "armonia, delicatezza, colori pastello e argento, stile morbido ed elegante",
-  3: "creatività, gioia, colori vivaci e giallo, stile espressivo e artistico",
-  4: "ordine, stabilità, colori terra e verde scuro, stile classico e strutturato",
-  5: "libertà, avventura, colori elettrici e turchese, stile versatile e moderno",
-  6: "bellezza, cura, colori rosa e verde, stile raffinato e romantico",
-  7: "introspezione, mistero, colori viola e indaco, stile minimalista e sofisticato",
-  8: "potere, successo, colori nero e oro, stile lussuoso e potente",
-  9: "universalità, compassione, colori bordeaux e bianco, stile eclettico e spirituale",
+  1: "energia dinamica, iniziativa, toni rosso scuro/bordeaux, stile sobrio e deciso",
+  2: "armonia, delicatezza, toni grigio chiaro e blu, stile morbido e pulito",
+  3: "creatività, gioia, toni giallo senape e beige, stile casual curato",
+  4: "ordine, stabilità, toni terra e verde oliva, stile classico quotidiano",
+  5: "libertà, avventura, toni blu elettrico e grigio, stile casual moderno",
+  6: "bellezza, cura, toni verde salvia e crema, stile raffinato ma semplice",
+  7: "introspezione, mistero, toni blu navy e antracite, stile minimalista pulito",
+  8: "potere, successo, toni nero e grigio scuro, stile elegante sobrio",
+  9: "universalità, compassione, toni bordeaux e bianco panna, stile curato senza eccessi",
 };
 
 function reduceNumber(num: number): number {
@@ -277,12 +277,14 @@ Sesso dell'utente: ${userGender}
 Descrizione fisica dell'utente: ${appearanceDescription}
 Vibrazione del giorno ${dayVibration}: ${dayVibeDesc}
 IMPORTANTE: Suggerisci SOLO abbigliamento ${userGender === "uomo" ? "MASCHILE da uomo" : userGender === "donna" ? "FEMMINILE da donna" : "adeguato al sesso dell'utente"}.
+STILE OBBLIGATORIO: Abbigliamento SOBRIO, QUOTIDIANO, CASUAL-ELEGANTE. Come ci si veste per andare al lavoro in ufficio o per una serata tranquilla con amici. NIENTE abiti da cerimonia, NIENTE brillantini, paillettes, accessori vistosi o look da sfilata. Pensa a capi reali che si trovano in un normale negozio.
 Fornisci consigli dettagliati su cosa indossare basandoti su:
 1. La vibrazione numerologica del giorno (colori e stile associati)
 2. L'anno personale dell'utente
 3. La corporatura e tonalità della pelle dell'utente
 4. Il sesso dell'utente (${userGender})
-Sii specifico su colori, stili e accessori ${userGender === "uomo" ? "maschili" : userGender === "donna" ? "femminili" : ""}.`
+Sii specifico su colori, stili e accessori ${userGender === "uomo" ? "maschili" : userGender === "donna" ? "femminili" : ""}.
+L'immagine dell'outfit verrà generata automaticamente dal sistema. Tu descrivi solo il look in modo discorsivo, senza inserire codice o JSON.`
       : "";
 
     const systemPrompt = `Sei un consulente di numerologia pitagorica professionale per l'app "Destino Numerologico".
@@ -293,6 +295,8 @@ REGOLE FONDAMENTALI:
 3. Usi linguaggio orientativo: "favorisce", "tende a", "è più probabile"
 4. Non fai promesse assolute o predizioni fatalistiche
 5. Rispondi in italiano in modo caldo e professionale
+6. NON inserire MAI blocchi di codice JSON, chiamate a funzioni, tool calls o azioni tecniche nella risposta. La generazione dell'immagine avviene automaticamente dal sistema, tu devi solo descrivere il look in modo discorsivo.
+7. NON usare mai formati come {"action": ...} o simili nella risposta.
 
 CONTESTO UTENTE:
 Nome: ${profile?.nome || "Utente"}
@@ -308,7 +312,8 @@ ISTRUZIONI:
 - Se ti chiedono delle date favorevoli, considera la compatibilità tra i numeri dell'utente e le vibrazioni delle date
 - Per consigli sulla giornata, integra la vibrazione del giorno con l'Anno Personale dell'utente
 - Se manca la mappa numerologica, suggerisci gentilmente di generarla prima
-- Mantieni un tono professionale ma accogliente`;
+- Mantieni un tono professionale ma accogliente
+- Quando suggerisci abbigliamento, descrivi outfit SOBRI, QUOTIDIANI e PRATICI, adatti per andare al lavoro o uscire con amici. Niente abiti da cerimonia, niente brillantini, niente look eccentrici o appariscenti.`;
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -354,8 +359,8 @@ ISTRUZIONI:
       const genderLabel = userGender === "uomo" ? "man" : userGender === "donna" ? "woman" : "person";
       
       const imagePrompt = userPhotoUrl
-        ? `CRITICAL INSTRUCTION: Keep the EXACT same face, facial features, skin tone, hair style, and body proportions from the input photo. This person must be clearly recognizable - it should look like THEM trying on new clothes in front of a mirror. Only change the clothing. Dress this ${genderLabel} in: ${dayVibeDesc} inspired style. ${userGender === "uomo" ? "Men's clothing ONLY: elegant shirt, trousers, leather shoes, watch, belt. NO feminine clothing." : "Women's clothing ONLY: elegant dress or blouse with skirt/pants, heels, jewelry. NO masculine clothing."} Full body shot showing head to toe. Clean, well-lit background. The face must remain IDENTICAL to the original photo.`
-        : `Fashion photo of a ${genderLabel} wearing an elegant outfit. Style: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's clothing: shirt, trousers, leather shoes, watch." : "Women's clothing: elegant dress, heels, jewelry."} Full body shot, professional fashion photography, elegant background.`;
+        ? `CRITICAL INSTRUCTION: Keep the EXACT same face, facial features, skin tone, hair style, and body proportions from the input photo. This person must be clearly recognizable - it should look like THEM trying on new clothes. Only change the clothing. Dress this ${genderLabel} in EVERYDAY CASUAL-SMART clothing inspired by these tones: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's EVERYDAY clothing ONLY: casual button-down shirt or polo, chinos or dark jeans, simple leather shoes or clean sneakers, maybe a simple watch. NO suits, NO ties, NO flashy accessories, NO gold, NO ceremonial clothing." : "Women's EVERYDAY clothing ONLY: simple blouse or knit top, jeans or tailored trousers, casual flats or ankle boots, minimal accessories. NO gowns, NO sequins, NO flashy jewelry, NO ceremonial clothing."} Full body shot. Clean neutral background, natural lighting. Realistic everyday look, like going to work or meeting friends.`
+        : `Realistic photo of a ${genderLabel} wearing everyday casual-smart clothing. Color palette: ${dayVibeDesc}. ${userGender === "uomo" ? "Men's everyday clothing: casual button-down shirt or polo, chinos or dark jeans, clean simple shoes. No suits, no ties, no flashy accessories." : "Women's everyday clothing: simple blouse or knit, jeans or tailored trousers, casual shoes. No gowns, no sequins."} Full body shot, natural lighting, neutral background. Realistic everyday look like going to work or meeting friends.`;
 
       const base64Image = await generateOutfitImage(userPhotoUrl, imagePrompt, apiKey);
       if (base64Image) {
