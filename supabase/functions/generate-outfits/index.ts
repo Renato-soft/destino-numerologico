@@ -6,16 +6,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const dayVibeStyles: Record<number, { dayColors: string; eveningColors: string; mood: string }> = {
-  1: { dayColors: "dark red/burgundy polo, dark navy jacket, charcoal trousers", eveningColors: "deep burgundy button-down shirt, dark grey fitted blazer, black trousers", mood: "authoritative, confident, decisive" },
-  2: { dayColors: "light grey sweater, white shirt underneath, navy chinos", eveningColors: "soft blue shirt, light grey blazer, dark navy trousers", mood: "harmonious, diplomatic, approachable" },
-  3: { dayColors: "mustard yellow polo, beige chinos, brown leather belt", eveningColors: "warm ochre shirt, tan blazer, dark brown trousers", mood: "creative, joyful, expressive" },
-  4: { dayColors: "olive green polo, khaki trousers, brown leather shoes", eveningColors: "forest green button-down, charcoal blazer, dark trousers", mood: "stable, grounded, reliable" },
-  5: { dayColors: "electric blue t-shirt under grey casual jacket, dark jeans", eveningColors: "cobalt blue shirt, dark grey modern blazer, black trousers", mood: "adventurous, dynamic, free" },
-  6: { dayColors: "sage green linen shirt, cream chinos, tan shoes", eveningColors: "soft green button-down, ivory blazer, beige trousers", mood: "caring, elegant, refined" },
-  7: { dayColors: "navy blue crew neck, dark grey trousers, minimalist watch", eveningColors: "dark navy shirt, anthracite blazer, black trousers", mood: "intellectual, mysterious, minimal" },
-  8: { dayColors: "black polo, charcoal trousers, dark leather belt", eveningColors: "dark charcoal shirt, black fitted blazer, dark trousers", mood: "powerful, sophisticated, commanding" },
-  9: { dayColors: "burgundy henley, off-white chinos, leather bracelet", eveningColors: "deep wine shirt, cream blazer, dark burgundy trousers", mood: "compassionate, wise, universal" },
+const dayVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+  1: { day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes", day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers", eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes", eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots", mood: "authoritative, confident, decisive" },
+  2: { day1: "light blue oxford shirt, beige chinos, white sneakers", day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes", eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers", eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers", mood: "harmonious, diplomatic, approachable" },
+  3: { day1: "mustard yellow polo, beige chinos, brown leather belt, tan shoes", day2: "warm terracotta henley, dark olive cargo pants, brown boots", eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes", eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots", mood: "creative, joyful, expressive" },
+  4: { day1: "olive green polo, khaki trousers, brown leather shoes", day2: "camel crew-neck sweater, dark green corduroy trousers, brown boots", eve1: "forest green button-down, charcoal wool blazer, dark trousers, black shoes", eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots", mood: "stable, grounded, reliable" },
+  5: { day1: "bright blue crew-neck t-shirt, grey casual jacket, dark jeans, white sneakers", day2: "teal henley shirt, dark grey jogger-chinos, navy blue slip-on sneakers", eve1: "cobalt blue fitted shirt, dark grey modern blazer, black trousers, black leather shoes", eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers", mood: "adventurous, dynamic, free" },
+  6: { day1: "sage green linen shirt, cream chinos, tan leather shoes", day2: "soft mint polo, light beige trousers, white canvas sneakers", eve1: "muted green button-down, ivory cotton blazer, beige trousers, cognac loafers", eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes", mood: "caring, elegant, refined" },
+  7: { day1: "navy blue crew-neck sweater, dark grey trousers, minimalist black watch", day2: "dark grey henley, black slim jeans, navy blue canvas sneakers", eve1: "dark navy fitted shirt, anthracite blazer, black trousers, black leather shoes", eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots", mood: "intellectual, mysterious, minimal" },
+  8: { day1: "black polo shirt, charcoal trousers, dark leather belt and shoes", day2: "dark grey crew-neck sweater, black jeans, black leather sneakers", eve1: "dark charcoal button-down shirt, black fitted blazer, dark trousers, polished black shoes", eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots", mood: "powerful, sophisticated, commanding" },
+  9: { day1: "burgundy henley, off-white chinos, brown leather shoes", day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots", eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes", eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers", mood: "compassionate, wise, universal" },
 };
 
 function reduceNumber(num: number): number {
@@ -71,28 +71,35 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Parse body for force refresh
+    let force = false;
+    try {
+      const body = await req.json();
+      force = body?.force === true;
+    } catch { /* no body is fine */ }
+
     // Check if we already generated outfits today
     const today = new Date().toISOString().split("T")[0];
-    const storagePath = `${user.id}/outfits/${today}`;
 
-    // Check existing cached files
-    const { data: existingFiles } = await supabase.storage
-      .from("user-photos")
-      .list(`${user.id}/outfits`, { search: today });
+    if (!force) {
+      // Check existing cached files
+      const { data: existingFiles } = await supabase.storage
+        .from("user-photos")
+        .list(`${user.id}/outfits`, { search: today });
 
-    if (existingFiles && existingFiles.length >= 4) {
-      // Return cached URLs
-      const urls = await Promise.all(
-        existingFiles.slice(0, 4).map(async (file) => {
-          const { data } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
-          return data?.signedUrl;
-        })
-      );
-      return new Response(JSON.stringify({ outfits: urls.filter(Boolean) }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (existingFiles && existingFiles.length >= 4) {
+        const urls = await Promise.all(
+          existingFiles.slice(0, 4).map(async (file) => {
+            const { data } = await supabase.storage
+              .from("user-photos")
+              .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
+            return data?.signedUrl;
+          })
+        );
+        return new Response(JSON.stringify({ outfits: urls.filter(Boolean) }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     // Get user photo for reference
@@ -115,23 +122,25 @@ Deno.serve(async (req) => {
     const vibeKey = dayVibe > 9 ? reduceNumber(dayVibe) : dayVibe;
     const style = dayVibeStyles[vibeKey] || dayVibeStyles[1];
 
-    // Define 4 outfit prompts
+    // Define 4 outfit prompts - each with COMPLETELY DIFFERENT garments
+    const baseRules = "IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular person who wants to look good. Show full body from head to feet in a realistic photo.";
+    
     const outfitPrompts = [
       {
         label: "day1",
-        prompt: `Generate a realistic full-body photo of a man wearing EVERYDAY CASUAL-SMART clothing for daytime work. Outfit: ${style.dayColors}. Style mood: ${style.mood}. The man is standing in a modern urban setting with natural daylight. IMPORTANT: The clothing must be SIMPLE, SOBER, EVERYDAY wear suitable for going to work or meeting people casually. NO suits, NO ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins. Just clean, well-fitted, normal everyday clothes that make a good impression. Show full body from head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC daytime outfit: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street with natural daylight. ${baseRules}`,
       },
       {
         label: "day2",
-        prompt: `Generate a realistic full-body photo of a man wearing a DIFFERENT CASUAL-SMART daytime outfit. Outfit variation: swap the colors slightly - ${style.dayColors} but with a different combination. Style mood: ${style.mood}. Standing in a clean, bright environment. IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for work or casual meetings. NO suits, NO ties, NO flashy items, NO gold, NO ceremonial wear. Clean, well-fitted, normal clothes. Full body head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE daytime outfit (COMPLETELY DIFFERENT from a polo with chinos): ${style.day2}. Mood: ${style.mood}. Setting: bright office entrance or café terrace. ${baseRules}`,
       },
       {
         label: "eve1",
-        prompt: `Generate a realistic full-body photo of a man wearing SMART-CASUAL evening clothing for a dinner or social gathering. Outfit: ${style.eveningColors}. Style mood: ${style.mood}. The man is in a sophisticated but relaxed evening setting (restaurant or lounge). IMPORTANT: The clothing must be ELEVATED but SOBER - suitable for a nice dinner or evening with friends. NO tuxedos, NO bow ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter. Just well-chosen, elegant everyday evening wear. Show full body from head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC evening outfit for dinner: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant entrance with warm lighting. ${baseRules}`,
       },
       {
         label: "eve2",
-        prompt: `Generate a realistic full-body photo of a man wearing a DIFFERENT SMART-CASUAL evening outfit. Outfit variation: ${style.eveningColors} in a different arrangement. Style mood: ${style.mood}. Evening setting with warm ambient lighting. IMPORTANT: ELEVATED but SOBER evening wear for dinner or social events. NO tuxedos, NO bow ties, NO flashy items, NO gold, NO ceremonial clothing. Elegant everyday clothes. Full body head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
       },
     ];
 

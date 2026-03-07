@@ -10,7 +10,7 @@ const DailyOutfits = () => {
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
-  const fetchOutfits = async () => {
+  const fetchOutfits = async (force = false) => {
     setLoading(true);
     setError(null);
 
@@ -20,6 +20,7 @@ const DailyOutfits = () => {
 
       const { data, error: fnError } = await supabase.functions.invoke("generate-outfits", {
         headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { force },
       });
 
       if (fnError) {
@@ -78,7 +79,7 @@ const DailyOutfits = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={fetchOutfits}
+             onClick={() => fetchOutfits(true)}
             title="Rigenera outfit"
           >
             <RefreshCw className="w-4 h-4" />
@@ -99,7 +100,7 @@ const DailyOutfits = () => {
       ) : error ? (
         <div className="glass-cosmic rounded-2xl p-8 text-center">
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button variant="cosmic-outline" size="sm" onClick={fetchOutfits}>
+          <Button variant="cosmic-outline" size="sm" onClick={() => fetchOutfits(true)}>
             <RefreshCw className="w-4 h-4 mr-2" />
             Riprova
           </Button>
