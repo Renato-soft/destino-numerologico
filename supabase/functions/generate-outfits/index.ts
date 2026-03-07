@@ -115,23 +115,25 @@ Deno.serve(async (req) => {
     const vibeKey = dayVibe > 9 ? reduceNumber(dayVibe) : dayVibe;
     const style = dayVibeStyles[vibeKey] || dayVibeStyles[1];
 
-    // Define 4 outfit prompts
+    // Define 4 outfit prompts - each with COMPLETELY DIFFERENT garments
+    const baseRules = "IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular person who wants to look good. Show full body from head to feet in a realistic photo.";
+    
     const outfitPrompts = [
       {
         label: "day1",
-        prompt: `Generate a realistic full-body photo of a man wearing EVERYDAY CASUAL-SMART clothing for daytime work. Outfit: ${style.dayColors}. Style mood: ${style.mood}. The man is standing in a modern urban setting with natural daylight. IMPORTANT: The clothing must be SIMPLE, SOBER, EVERYDAY wear suitable for going to work or meeting people casually. NO suits, NO ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins. Just clean, well-fitted, normal everyday clothes that make a good impression. Show full body from head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC daytime outfit: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street with natural daylight. ${baseRules}`,
       },
       {
         label: "day2",
-        prompt: `Generate a realistic full-body photo of a man wearing a DIFFERENT CASUAL-SMART daytime outfit. Outfit variation: swap the colors slightly - ${style.dayColors} but with a different combination. Style mood: ${style.mood}. Standing in a clean, bright environment. IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for work or casual meetings. NO suits, NO ties, NO flashy items, NO gold, NO ceremonial wear. Clean, well-fitted, normal clothes. Full body head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE daytime outfit (COMPLETELY DIFFERENT from a polo with chinos): ${style.day2}. Mood: ${style.mood}. Setting: bright office entrance or café terrace. ${baseRules}`,
       },
       {
         label: "eve1",
-        prompt: `Generate a realistic full-body photo of a man wearing SMART-CASUAL evening clothing for a dinner or social gathering. Outfit: ${style.eveningColors}. Style mood: ${style.mood}. The man is in a sophisticated but relaxed evening setting (restaurant or lounge). IMPORTANT: The clothing must be ELEVATED but SOBER - suitable for a nice dinner or evening with friends. NO tuxedos, NO bow ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter. Just well-chosen, elegant everyday evening wear. Show full body from head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC evening outfit for dinner: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant entrance with warm lighting. ${baseRules}`,
       },
       {
         label: "eve2",
-        prompt: `Generate a realistic full-body photo of a man wearing a DIFFERENT SMART-CASUAL evening outfit. Outfit variation: ${style.eveningColors} in a different arrangement. Style mood: ${style.mood}. Evening setting with warm ambient lighting. IMPORTANT: ELEVATED but SOBER evening wear for dinner or social events. NO tuxedos, NO bow ties, NO flashy items, NO gold, NO ceremonial clothing. Elegant everyday clothes. Full body head to feet.`,
+        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
       },
     ];
 
