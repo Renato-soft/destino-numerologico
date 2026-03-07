@@ -100,7 +100,7 @@ const DailyOutfits = () => {
       ) : error ? (
         <div className="glass-cosmic rounded-2xl p-8 text-center">
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button variant="cosmic-outline" size="sm" onClick={fetchOutfits}>
+          <Button variant="cosmic-outline" size="sm" onClick={() => fetchOutfits(true)}>
             <RefreshCw className="w-4 h-4 mr-2" />
             Riprova
           </Button>
