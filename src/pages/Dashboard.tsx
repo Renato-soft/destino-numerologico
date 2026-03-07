@@ -254,6 +254,9 @@ const Dashboard = () => {
           />
         )}
 
+        {/* Daily Outfits */}
+        <DailyOutfits />
+
         {/* Quick actions */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
