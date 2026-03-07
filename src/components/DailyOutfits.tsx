@@ -20,6 +20,7 @@ const DailyOutfits = () => {
 
       const { data, error: fnError } = await supabase.functions.invoke("generate-outfits", {
         headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { force },
       });
 
       if (fnError) {
