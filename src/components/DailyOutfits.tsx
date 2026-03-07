@@ -79,7 +79,7 @@ const DailyOutfits = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={fetchOutfits}
+             onClick={() => fetchOutfits(true)}
             title="Rigenera outfit"
           >
             <RefreshCw className="w-4 h-4" />
