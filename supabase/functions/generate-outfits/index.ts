@@ -71,28 +71,35 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Parse body for force refresh
+    let force = false;
+    try {
+      const body = await req.json();
+      force = body?.force === true;
+    } catch { /* no body is fine */ }
+
     // Check if we already generated outfits today
     const today = new Date().toISOString().split("T")[0];
-    const storagePath = `${user.id}/outfits/${today}`;
 
-    // Check existing cached files
-    const { data: existingFiles } = await supabase.storage
-      .from("user-photos")
-      .list(`${user.id}/outfits`, { search: today });
+    if (!force) {
+      // Check existing cached files
+      const { data: existingFiles } = await supabase.storage
+        .from("user-photos")
+        .list(`${user.id}/outfits`, { search: today });
 
-    if (existingFiles && existingFiles.length >= 4) {
-      // Return cached URLs
-      const urls = await Promise.all(
-        existingFiles.slice(0, 4).map(async (file) => {
-          const { data } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
-          return data?.signedUrl;
-        })
-      );
-      return new Response(JSON.stringify({ outfits: urls.filter(Boolean) }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (existingFiles && existingFiles.length >= 4) {
+        const urls = await Promise.all(
+          existingFiles.slice(0, 4).map(async (file) => {
+            const { data } = await supabase.storage
+              .from("user-photos")
+              .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
+            return data?.signedUrl;
+          })
+        );
+        return new Response(JSON.stringify({ outfits: urls.filter(Boolean) }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     // Get user photo for reference

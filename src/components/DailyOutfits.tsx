@@ -10,7 +10,7 @@ const DailyOutfits = () => {
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
-  const fetchOutfits = async () => {
+  const fetchOutfits = async (force = false) => {
     setLoading(true);
     setError(null);
 
