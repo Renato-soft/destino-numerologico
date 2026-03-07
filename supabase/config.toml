@@ -1,1 +1,4 @@
 project_id = "oxkurjhomofoibihhmoq"
+
+[functions.generate-outfits]
+verify_jwt = false

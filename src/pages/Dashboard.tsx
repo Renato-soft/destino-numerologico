@@ -17,6 +17,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
+import DailyOutfits from "@/components/DailyOutfits";
 
 interface Profile {
   nome: string;
@@ -252,6 +253,9 @@ const Dashboard = () => {
             lifePath={latestMap.life_path} 
           />
         )}
+
+        {/* Daily Outfits */}
+        <DailyOutfits />
 
         {/* Quick actions */}
         <motion.section
