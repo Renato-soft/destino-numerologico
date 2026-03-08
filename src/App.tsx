@@ -18,6 +18,7 @@ import BrandAnalyzer from "./pages/BrandAnalyzer";
 import Pillars from "./pages/Pillars";
 import AdvancedReport from "./pages/AdvancedReport";
 import HouseAnalyzer from "./pages/HouseAnalyzer";
+import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
