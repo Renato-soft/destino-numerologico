@@ -151,6 +151,40 @@ const ProfilePage = () => {
     navigate("/map");
   };
 
+  const handleDisableAccount = async () => {
+    const confirmed = window.confirm(
+      "Sei sicuro di voler disabilitare il tuo account? Non potrai più accedere fino alla riattivazione."
+    );
+    if (!confirmed) return;
+
+    setDisabling(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase.functions.invoke("disable-account", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.signOut();
+      toast({
+        title: "Account disabilitato",
+        description: "Il tuo account è stato disabilitato. Contatta il supporto per riattivarlo.",
+      });
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Errore",
+        description: error.message || "Impossibile disabilitare l'account.",
+        variant: "destructive",
+      });
+    } finally {
+      setDisabling(false);
+    }
+  };
+
   const handlePhotoUpload = async (type: string, file: File) => {
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: "File troppo grande", description: "Max 5MB", variant: "destructive" });
