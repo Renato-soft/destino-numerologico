@@ -184,6 +184,63 @@ export type Database = {
         }
         Relationships: []
       }
+      pillar_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pillar_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          exercise_completed: boolean
+          id: string
+          meditation_completed: boolean
+          pillar_index: number
+          started_at: string | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          exercise_completed?: boolean
+          id?: string
+          meditation_completed?: boolean
+          pillar_index: number
+          started_at?: string | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          exercise_completed?: boolean
+          id?: string
+          meditation_completed?: boolean
+          pillar_index?: number
+          started_at?: string | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           birth_date: string
