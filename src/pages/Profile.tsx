@@ -230,6 +230,23 @@ const ProfilePage = () => {
     }
   };
 
+  const handlePhotoDelete = async (photo: UserPhoto) => {
+    const confirmed = window.confirm("Sei sicuro di voler eliminare questa foto?");
+    if (!confirmed) return;
+
+    setUploadingPhoto(photo.type);
+    try {
+      await supabase.storage.from("user-photos").remove([photo.storage_path]);
+      await supabase.from("photos").delete().eq("id", photo.id);
+      setPhotos(prev => prev.filter(p => p.id !== photo.id));
+      toast({ title: "Foto eliminata" });
+    } catch (error: any) {
+      toast({ title: "Errore", description: error.message, variant: "destructive" });
+    } finally {
+      setUploadingPhoto(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
