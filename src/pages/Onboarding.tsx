@@ -96,6 +96,10 @@ const Onboarding = () => {
       newErrors.cognome = cognomeResult.error.errors[0].message;
     }
 
+    if (!formData.sesso) {
+      newErrors.sesso = "Seleziona il tuo sesso";
+    }
+
     const dateResult = dateSchema.safeParse(formData.birthDate);
     if (!dateResult.success) {
       newErrors.birthDate = dateResult.error.errors[0].message;
