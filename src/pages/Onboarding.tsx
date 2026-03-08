@@ -14,7 +14,8 @@ import {
   ChevronRight, 
   ChevronLeft,
   Check,
-  Upload
+  Upload,
+  LogOut
 } from "lucide-react";
 import { z } from "zod";
 
