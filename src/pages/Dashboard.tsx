@@ -156,6 +156,13 @@ const Dashboard = () => {
       color: "from-pink-500 to-rose-500",
     },
     {
+      title: "Analizzatore Brand",
+      description: "Testa la vibrazione numerologica di un nome",
+      icon: Target,
+      href: "/brand",
+      color: "from-violet-500 to-fuchsia-500",
+    },
+    {
       title: "WhatsApp",
       description: "Configura il buongiorno quotidiano",
       icon: Smartphone,

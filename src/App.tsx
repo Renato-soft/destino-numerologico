@@ -36,6 +36,7 @@ const App = () => (
           <Route path="/dates" element={<FavorableDates />} />
           <Route path="/whatsapp" element={<WhatsApp />} />
           <Route path="/compatibility" element={<Compatibility />} />
+          <Route path="/brand" element={<BrandAnalyzer />} />
           <Route path="/profile" element={<ProfilePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
