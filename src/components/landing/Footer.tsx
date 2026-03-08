@@ -1,9 +1,10 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <footer className="py-12 border-t border-border/50">
+    <footer ref={ref} className="py-12 border-t border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
@@ -18,20 +19,20 @@ const Footer = () => {
 
           {/* Links */}
           <nav className="flex items-center gap-6">
-            <Link 
-              to="/privacy" 
+            <Link
+              to="/privacy"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Privacy
             </Link>
-            <Link 
-              to="/terms" 
+            <Link
+              to="/terms"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Termini
             </Link>
-            <Link 
-              to="/auth" 
+            <Link
+              to="/auth"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Accedi
@@ -46,6 +47,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;

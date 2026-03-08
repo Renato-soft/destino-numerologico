@@ -1,14 +1,15 @@
+import { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
 
-const CTA = () => {
+const CTA = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section ref={ref} className="py-24 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-b from-muted/30 via-secondary/10 to-background" />
-      
+
       <motion.div
         className="absolute top-10 left-10 text-primary/10"
         animate={{ rotate: 360 }}
@@ -37,18 +38,13 @@ const CTA = () => {
             <br />
             <span className="text-gradient-gold">chi sei davvero?</span>
           </h2>
-          
+
           <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-            La tua mappa numerologica ti aspetta. Inizia oggi stesso il viaggio 
+            La tua mappa numerologica ti aspetta. Inizia oggi stesso il viaggio
             verso la consapevolezza di te stesso.
           </p>
 
-          <Button
-            asChild
-            variant="cosmic"
-            size="xl"
-            className="group"
-          >
+          <Button asChild variant="cosmic" size="xl" className="group">
             <Link to="/auth">
               Crea il tuo profilo gratuito
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -62,6 +58,8 @@ const CTA = () => {
       </div>
     </section>
   );
-};
+});
+
+CTA.displayName = "CTA";
 
 export default CTA;
