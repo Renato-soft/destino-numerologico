@@ -127,7 +127,7 @@ export const brandVibrationMeanings: Record<
 };
 
 // Objectives for compatibility
-export const brandObjectives = [
+export const brandObjectives: { id: string; label: string; alignedNumbers: number[] }[] = [
   { id: "financial", label: "Successo economico", alignedNumbers: [8, 1, 22, 4] },
   { id: "creative", label: "Creatività ed espressione", alignedNumbers: [3, 5, 9, 11] },
   { id: "stability", label: "Stabilità e longevità", alignedNumbers: [4, 6, 8, 22] },
@@ -135,7 +135,7 @@ export const brandObjectives = [
   { id: "community", label: "Comunità e impatto sociale", alignedNumbers: [9, 6, 33, 2] },
   { id: "luxury", label: "Lusso e prestigio", alignedNumbers: [8, 1, 7, 22] },
   { id: "wellness", label: "Benessere e crescita personale", alignedNumbers: [6, 7, 9, 33] },
-] as const;
+];
 
 // Calculate compatibility score with Life Path
 export function getLifePathCompatibility(vibration: number, lifePath: number): {
