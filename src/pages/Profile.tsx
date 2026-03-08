@@ -390,6 +390,20 @@ const ProfilePage = () => {
                           <div className="absolute inset-0 bg-black/0 hover:bg-black/30 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
                             <span className="text-white text-sm font-medium">Cambia foto</span>
                           </div>
+                          {pt.key !== "face" && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handlePhotoDelete(existingPhoto);
+                              }}
+                              className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors z-10"
+                              title="Elimina foto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-2 text-muted-foreground">
