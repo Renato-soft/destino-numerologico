@@ -105,6 +105,7 @@ export default function Community() {
     setNotifications((prev) => prev.map((n: any) => ({ ...n, read: true })));
   };
 
+  const loadPosts = useCallback(async () => {
     let query = supabase
       .from("community_posts")
       .select("*")
