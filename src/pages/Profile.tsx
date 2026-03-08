@@ -47,6 +47,7 @@ const ProfilePage = () => {
   const [cognome, setCognome] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
+  const [disabling, setDisabling] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -148,6 +149,40 @@ const ProfilePage = () => {
 
   const handleRegenerateMap = () => {
     navigate("/map");
+  };
+
+  const handleDisableAccount = async () => {
+    const confirmed = window.confirm(
+      "Sei sicuro di voler disabilitare il tuo account? Non potrai più accedere fino alla riattivazione."
+    );
+    if (!confirmed) return;
+
+    setDisabling(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase.functions.invoke("disable-account", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.signOut();
+      toast({
+        title: "Account disabilitato",
+        description: "Il tuo account è stato disabilitato. Contatta il supporto per riattivarlo.",
+      });
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Errore",
+        description: error.message || "Impossibile disabilitare l'account.",
+        variant: "destructive",
+      });
+    } finally {
+      setDisabling(false);
+    }
   };
 
   const handlePhotoUpload = async (type: string, file: File) => {
@@ -380,6 +415,29 @@ const ProfilePage = () => {
           {/* Timezone info */}
           <div className="text-center text-sm text-muted-foreground">
             <p>Fuso orario: {profile?.timezone || "Europe/Rome"}</p>
+          </div>
+
+          {/* Disable account */}
+          <div className="glass-cosmic rounded-xl p-6">
+            <h3 className="font-display font-semibold mb-2 text-destructive">Disabilita Account</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Il tuo account verrà disabilitato e non potrai più accedere. I tuoi dati verranno conservati e potrai riattivarlo contattando il supporto.
+            </p>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={handleDisableAccount}
+              disabled={disabling}
+            >
+              {disabling ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Disabilitazione...
+                </>
+              ) : (
+                "Disabilita il mio account"
+              )}
+            </Button>
           </div>
         </motion.div>
       </main>
