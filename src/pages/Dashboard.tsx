@@ -17,7 +17,8 @@ import {
   Compass,
   ScrollText,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
