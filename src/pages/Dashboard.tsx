@@ -13,6 +13,7 @@ import {
   Smartphone,
   User,
   Users,
+  Target,
   LogOut,
   ChevronRight
 } from "lucide-react";
