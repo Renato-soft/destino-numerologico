@@ -180,10 +180,13 @@ export default function Community() {
       .on("postgres_changes", { event: "*", schema: "public", table: "community_posts" }, () => {
         loadPosts();
       })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "community_notifications" }, () => {
+        loadNotifications();
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [loadPosts]);
+  }, [loadPosts, loadNotifications]);
 
   const handleCreatePost = async () => {
     const trimmed = newPostContent.trim();
