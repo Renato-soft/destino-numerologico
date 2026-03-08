@@ -16,6 +16,7 @@ import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
 import Pillars from "./pages/Pillars";
+import AdvancedReport from "./pages/AdvancedReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
