@@ -9,9 +9,6 @@ import {
   FileText,
   Sparkles,
   Download,
-  Pencil,
-  Check,
-  X,
   Loader2,
   RefreshCw,
   ChevronDown,
@@ -28,7 +25,6 @@ interface Report {
   id: string;
   status: string;
   sections: Record<string, ReportSection>;
-  edited_sections: Record<string, ReportSection> | null;
   generated_at: string | null;
   finalized_at: string | null;
 }
@@ -67,8 +63,6 @@ export default function AdvancedReport() {
   const [report, setReport] = useState<Report | null>(null);
   const [profile, setProfile] = useState<{ nome: string; cognome: string; birth_date: string } | null>(null);
   const [numerology, setNumerology] = useState<NumerologyData | null>(null);
-  const [editingSection, setEditingSection] = useState<string | null>(null);
-  const [editContent, setEditContent] = useState("");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(sectionOrder));
 
   useEffect(() => {
@@ -92,7 +86,6 @@ export default function AdvancedReport() {
           id: r.id,
           status: r.status,
           sections: (r.sections as unknown as Record<string, ReportSection>) || {},
-          edited_sections: r.edited_sections as unknown as Record<string, ReportSection> | null,
           generated_at: r.generated_at,
           finalized_at: r.finalized_at,
         });
@@ -114,7 +107,6 @@ export default function AdvancedReport() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Create report record
       const { data: newReport, error: insertErr } = await supabase
         .from("advanced_reports")
         .insert({ user_id: session.user.id, status: "generating" })
@@ -127,12 +119,10 @@ export default function AdvancedReport() {
         id: newReport.id,
         status: "generating",
         sections: {},
-        edited_sections: null,
         generated_at: null,
         finalized_at: null,
       });
 
-      // Call edge function
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-advanced-report`,
         {
@@ -164,12 +154,11 @@ export default function AdvancedReport() {
         id: newReport.id,
         status: "ready",
         sections: result.sections,
-        edited_sections: null,
         generated_at: new Date().toISOString(),
         finalized_at: null,
       });
 
-      toast({ title: "Report generato con successo! ✨", description: "Puoi ora rivederlo e modificarlo prima del download." });
+      toast({ title: "Report generato con successo! ✨", description: "Puoi ora scaricarlo in PDF." });
     } catch (e) {
       console.error(e);
       toast({ title: "Errore", description: "Impossibile generare il report.", variant: "destructive" });
@@ -178,52 +167,10 @@ export default function AdvancedReport() {
     setGenerating(false);
   };
 
-  const getEffectiveSections = (): Record<string, ReportSection> => {
-    if (!report) return {};
-    const base = { ...report.sections };
-    if (report.edited_sections) {
-      for (const [key, val] of Object.entries(report.edited_sections)) {
-        base[key] = val;
-      }
-    }
-    return base;
-  };
-
-  const handleStartEdit = (sectionKey: string) => {
-    const sections = getEffectiveSections();
-    setEditingSection(sectionKey);
-    setEditContent(sections[sectionKey]?.content || "");
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingSection || !report) return;
-
-    const currentEdited = report.edited_sections || {};
-    const sections = getEffectiveSections();
-    const updatedEdited = {
-      ...currentEdited,
-      [editingSection]: {
-        title: sections[editingSection]?.title || "",
-        content: editContent,
-      },
-    };
-
-    await supabase
-      .from("advanced_reports")
-      .update({ edited_sections: updatedEdited as any })
-      .eq("id", report.id);
-
-    setReport({ ...report, edited_sections: updatedEdited });
-    setEditingSection(null);
-    toast({ title: "Sezione aggiornata" });
-  };
-
   const handleDownloadPdf = () => {
     if (!profile || !numerology || !report) return;
-    const sections = getEffectiveSections();
-    generateAdvancedReportPdf(profile, numerology, sections);
+    generateAdvancedReportPdf(profile, numerology, report.sections);
 
-    // Mark as finalized
     if (!report.finalized_at) {
       supabase
         .from("advanced_reports")
@@ -250,7 +197,6 @@ export default function AdvancedReport() {
     );
   }
 
-  const effectiveSections = getEffectiveSections();
   const hasReport = report && report.status !== "generating" && Object.keys(report.sections).length > 0;
 
   return (
@@ -258,7 +204,6 @@ export default function AdvancedReport() {
       <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
       <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
 
-      {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild>
@@ -277,7 +222,6 @@ export default function AdvancedReport() {
       </header>
 
       <main className="relative z-10 container mx-auto px-4 py-8 max-w-3xl space-y-6">
-        {/* Status / Generate */}
         {!hasReport && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -348,10 +292,8 @@ export default function AdvancedReport() {
           </motion.div>
         )}
 
-        {/* Report preview */}
         {hasReport && (
           <>
-            {/* Actions bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -359,11 +301,7 @@ export default function AdvancedReport() {
             >
               <div>
                 <h2 className="font-display font-semibold">Il tuo Report</h2>
-                <p className="text-xs text-muted-foreground">
-                  {report?.edited_sections
-                    ? "Contiene modifiche manuali"
-                    : "Generato dall'AI — puoi modificare ogni sezione"}
-                </p>
+                <p className="text-xs text-muted-foreground">Generato dall'AI</p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -386,13 +324,10 @@ export default function AdvancedReport() {
               </div>
             </motion.div>
 
-            {/* Sections */}
             {sectionOrder.map((key, i) => {
-              const section = effectiveSections[key];
+              const section = report?.sections[key];
               if (!section) return null;
               const isExpanded = expandedSections.has(key);
-              const isEditing = editingSection === key;
-              const wasEdited = report?.edited_sections?.[key] !== undefined;
 
               return (
                 <motion.div
@@ -402,21 +337,13 @@ export default function AdvancedReport() {
                   transition={{ delay: i * 0.05 }}
                   className="glass-cosmic rounded-2xl overflow-hidden"
                 >
-                  {/* Section header */}
                   <button
                     onClick={() => toggleSection(key)}
                     className="w-full flex items-center gap-3 p-5 text-left hover:bg-muted/20 transition-colors"
                   >
                     <span className="text-xl">{sectionIcons[key] || "📄"}</span>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-display font-semibold">{section.title}</h3>
-                        {wasEdited && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-accent/20 text-accent rounded-full">
-                            Modificato
-                          </span>
-                        )}
-                      </div>
+                      <h3 className="font-display font-semibold">{section.title}</h3>
                     </div>
                     {isExpanded ? (
                       <ChevronUp className="w-4 h-4 text-muted-foreground" />
@@ -425,56 +352,17 @@ export default function AdvancedReport() {
                     )}
                   </button>
 
-                  {/* Section content */}
                   {isExpanded && (
                     <div className="px-5 pb-5 border-t border-border/30">
-                      {isEditing ? (
-                        <div className="mt-4 space-y-3">
-                          <textarea
-                            value={editContent}
-                            onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full min-h-[300px] bg-input/50 rounded-xl p-4 text-sm text-foreground border border-border/50 focus:border-primary/50 focus:outline-none resize-y"
-                          />
-                          <div className="flex gap-2 justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setEditingSection(null)}
-                            >
-                              <X className="w-4 h-4 mr-1" /> Annulla
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={handleSaveEdit}
-                              className="bg-gradient-to-r from-primary to-accent text-primary-foreground"
-                            >
-                              <Check className="w-4 h-4 mr-1" /> Salva
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="mt-4">
-                          <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed">
-                            {section.content.split("\n").map((p, pi) =>
-                              p.trim() ? (
-                                <p key={pi} className="mb-3 text-sm">
-                                  {p.replace(/\*\*/g, "").replace(/##?\s*/g, "")}
-                                </p>
-                              ) : null
-                            )}
-                          </div>
-                          <div className="mt-4 flex justify-end">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleStartEdit(key)}
-                              className="text-muted-foreground hover:text-foreground"
-                            >
-                              <Pencil className="w-3.5 h-3.5 mr-1" /> Modifica
-                            </Button>
-                          </div>
-                        </div>
-                      )}
+                      <div className="mt-4 prose prose-sm max-w-none text-muted-foreground leading-relaxed">
+                        {section.content.split("\n").map((p, pi) =>
+                          p.trim() ? (
+                            <p key={pi} className="mb-3 text-sm">
+                              {p.replace(/\*\*/g, "").replace(/##?\s*/g, "")}
+                            </p>
+                          ) : null
+                        )}
+                      </div>
                     </div>
                   )}
                 </motion.div>
