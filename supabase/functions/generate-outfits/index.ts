@@ -148,7 +148,8 @@ Deno.serve(async (req) => {
     }
     const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
 
-    // Cache key includes vibration so different vibrations = different outfits
+    // Cache key includes vibration (season changes within a day won't happen, but the season
+    // is baked into the prompt so regeneration after season change happens naturally via date change)
     const cachePrefix = `${today}_v${vibeKey}`;
 
     if (!force) {
