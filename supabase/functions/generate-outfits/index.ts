@@ -58,6 +58,19 @@ function getPersonalDayVibration(personalYear: number): number {
   return reduceNumber(day + personalMonth);
 }
 
+function getCurrentSeason(): { name: string; hint: string; fabric: string } {
+  const month = new Date().getMonth() + 1; // 1-12
+  if (month >= 3 && month <= 5) {
+    return { name: "spring", hint: "Light layers, breathable fabrics. Mild weather ~15-22°C.", fabric: "cotton, light linen, light knits, denim" };
+  } else if (month >= 6 && month <= 8) {
+    return { name: "summer", hint: "Hot weather ~25-35°C. Lightweight, airy clothing. Short sleeves, open shoes.", fabric: "linen, light cotton, chambray, breathable blends" };
+  } else if (month >= 9 && month <= 11) {
+    return { name: "autumn", hint: "Cool weather ~8-18°C. Layering is key. Warm tones.", fabric: "wool, corduroy, heavier cotton, suede, leather" };
+  } else {
+    return { name: "winter", hint: "Cold weather ~0-10°C. Warm, cozy clothing. Coats, scarves, boots.", fabric: "wool, cashmere, heavy knits, leather, flannel" };
+  }
+}
+
 function buildNumerologyContext(map: any, personalDay: number, universalDay: number): string {
   const parts: string[] = [];
   parts.push(`Numerology profile: Life Path ${map.life_path}, Expression ${map.destiny_expression}, Soul ${map.soul}, Personality ${map.personality}.`);
