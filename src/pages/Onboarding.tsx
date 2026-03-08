@@ -263,6 +263,19 @@ const Onboarding = () => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-lg relative z-10"
       >
+        {/* Logout button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/");
+            }}
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            Esci
+          </button>
+        </div>
         {/* Progress steps */}
         <div className="flex items-center justify-center gap-2 mb-8">
           {steps.map((step, index) => (

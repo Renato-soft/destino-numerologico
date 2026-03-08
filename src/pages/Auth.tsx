@@ -129,14 +129,26 @@ const Auth = () => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Back link */}
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Torna alla home
-        </Link>
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-8">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Torna alla home
+          </Link>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate("/");
+            }}
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            Esci
+          </button>
+        </div>
 
         {/* Card */}
         <div className="glass-cosmic rounded-2xl p-8">
