@@ -220,7 +220,7 @@ const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
             Analisi del giorno — {new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Vibrazione del giorno: <span className="text-primary font-semibold">{dayVibe}</span> · Anno Personale: <span className="text-primary font-semibold">{personalYear}</span>
+            Vibrazione personale del giorno: <span className="text-primary font-semibold">{dayVibe}</span> · Anno Personale: <span className="text-primary font-semibold">{personalYear}</span>
           </p>
         </div>
       </div>
