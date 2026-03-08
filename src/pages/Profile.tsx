@@ -48,6 +48,7 @@ const ProfilePage = () => {
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [sesso, setSesso] = useState("");
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
   const [disabling, setDisabling] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
