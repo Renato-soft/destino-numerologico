@@ -15,6 +15,8 @@ import {
   ChevronDown,
   Filter,
   Sparkles,
+  Bell,
+  X,
 } from "lucide-react";
 
 // Vibrational reaction emojis for numbers 1-9
@@ -79,6 +81,29 @@ export default function Community() {
   const [showGuidelines, setShowGuidelines] = useState(false);
   const [reportingId, setReportingId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
+
+  const loadNotifications = useCallback(async () => {
+    if (!userId) return;
+    const { data } = await supabase
+      .from("community_notifications" as any)
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(30);
+    setNotifications(data || []);
+  }, [userId]);
+
+  const markAllRead = async () => {
+    if (!userId) return;
+    await (supabase.from("community_notifications" as any) as any)
+      .update({ read: true })
+      .eq("user_id", userId)
+      .eq("read", false);
+    setNotifications((prev) => prev.map((n: any) => ({ ...n, read: true })));
+  };
 
   const loadPosts = useCallback(async () => {
     let query = supabase
@@ -143,6 +168,11 @@ export default function Community() {
     init();
   }, [navigate, loadPosts]);
 
+  // Load notifications when userId is available
+  useEffect(() => {
+    if (userId) loadNotifications();
+  }, [userId, loadNotifications]);
+
   // Realtime subscription
   useEffect(() => {
     const channel = supabase
@@ -150,10 +180,13 @@ export default function Community() {
       .on("postgres_changes", { event: "*", schema: "public", table: "community_posts" }, () => {
         loadPosts();
       })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "community_notifications" }, () => {
+        loadNotifications();
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [loadPosts]);
+  }, [loadPosts, loadNotifications]);
 
   const handleCreatePost = async () => {
     const trimmed = newPostContent.trim();
@@ -291,14 +324,71 @@ export default function Community() {
               <p className="text-xs text-muted-foreground">Condividi il tuo viaggio numerologico</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowGuidelines(!showGuidelines)}
-            className="text-xs text-muted-foreground"
-          >
-            Linee guida
-          </Button>
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAllRead(); }}
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-destructive text-destructive-foreground rounded-full text-[10px] flex items-center justify-center font-bold">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </Button>
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    className="absolute right-0 top-12 w-80 max-h-96 overflow-y-auto rounded-xl border border-border bg-background shadow-xl z-50"
+                  >
+                    <div className="p-3 border-b border-border flex items-center justify-between">
+                      <h3 className="font-semibold text-sm">Notifiche</h3>
+                      <Button variant="ghost" size="icon" className="w-6 h-6" onClick={() => setShowNotifications(false)}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    {notifications.length === 0 ? (
+                      <p className="p-4 text-sm text-muted-foreground text-center">Nessuna notifica</p>
+                    ) : (
+                      <div className="divide-y divide-border">
+                        {notifications.map((n: any) => (
+                          <div
+                            key={n.id}
+                            className={`p-3 text-sm hover:bg-muted/50 cursor-pointer transition-colors ${!n.read ? "bg-primary/5" : ""}`}
+                            onClick={() => {
+                              setShowNotifications(false);
+                              // Scroll to post area
+                            }}
+                          >
+                            <p className="font-medium">
+                              {n.type === "reaction"
+                                ? `${n.actor_name} ha reagito ${vibrationEmojis[n.vibration]?.emoji || "✨"} al tuo post`
+                                : `${n.actor_name} ha commentato il tuo post`}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5 truncate">"{n.post_preview}"</p>
+                            <p className="text-xs text-muted-foreground mt-1">{formatTime(n.created_at)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowGuidelines(!showGuidelines)}
+              className="text-xs text-muted-foreground"
+            >
+              Linee guida
+            </Button>
+          </div>
         </div>
       </header>
 

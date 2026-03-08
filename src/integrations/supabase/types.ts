@@ -150,6 +150,50 @@ export type Database = {
           },
         ]
       }
+      community_notifications: {
+        Row: {
+          actor_name: string
+          created_at: string
+          id: string
+          post_id: string
+          post_preview: string
+          read: boolean
+          type: string
+          user_id: string
+          vibration: number | null
+        }
+        Insert: {
+          actor_name: string
+          created_at?: string
+          id?: string
+          post_id: string
+          post_preview?: string
+          read?: boolean
+          type: string
+          user_id: string
+          vibration?: number | null
+        }
+        Update: {
+          actor_name?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          post_preview?: string
+          read?: boolean
+          type?: string
+          user_id?: string
+          vibration?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_notifications_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_posts: {
         Row: {
           author_name: string
