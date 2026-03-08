@@ -173,7 +173,7 @@ export default function Community() {
     if (userId) loadNotifications();
   }, [userId, loadNotifications]);
 
-  // Realtime subscription
+  // Realtime subscription + auto-refresh every 2 minutes
   useEffect(() => {
     const channel = supabase
       .channel("community-posts")
@@ -185,7 +185,15 @@ export default function Community() {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    const refreshInterval = setInterval(() => {
+      loadPosts();
+      loadNotifications();
+    }, 2 * 60 * 1000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(refreshInterval);
+    };
   }, [loadPosts, loadNotifications]);
 
   const handleCreatePost = async () => {
