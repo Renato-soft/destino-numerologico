@@ -1,12 +1,11 @@
-import { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
 
-const CTA = forwardRef<HTMLElement>((_, ref) => {
+const CTA = () => {
   return (
-    <section ref={ref} className="py-24 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-b from-muted/30 via-secondary/10 to-background" />
 
@@ -58,8 +57,6 @@ const CTA = forwardRef<HTMLElement>((_, ref) => {
       </div>
     </section>
   );
-});
-
-CTA.displayName = "CTA";
+};
 
 export default CTA;
