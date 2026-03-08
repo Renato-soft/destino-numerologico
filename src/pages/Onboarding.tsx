@@ -26,6 +26,7 @@ interface FormData {
   nome: string;
   cognome: string;
   birthDate: string;
+  sesso: string;
   photos: {
     face: File | null;
     fullFront: File | null;
