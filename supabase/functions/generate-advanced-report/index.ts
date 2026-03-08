@@ -189,10 +189,15 @@ Deno.serve(async (req) => {
     };
 
     const sections: Record<string, { title: string; content: string }> = {};
+    const generatedSoFar: string[] = [];
 
     // Generate each section sequentially to avoid rate limits
     for (const section of sectionDefinitions) {
       const prompt = fillTemplate(section.prompt);
+
+      const contextNote = generatedSoFar.length > 0
+        ? `\n\nIMPORTANTE: Queste sezioni sono GIÀ state scritte nel report (NON ripetere saluti, presentazioni, frasi di benvenuto o concetti già espressi):\n${generatedSoFar.map((s, i) => `--- Sezione ${i + 1} ---\n${s.substring(0, 200)}...`).join("\n")}\n\nScrivi SOLO il contenuto della sezione richiesta senza ripetere frasi come "Caro/a {nome}", "che gioia", "che onore" o simili aperture già usate. Vai dritto al contenuto.`
+        : "";
 
       const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -209,9 +214,16 @@ Deno.serve(async (req) => {
 Scrivi in italiano, in modo discorsivo, profondo e accessibile. 
 NON usare markdown, asterischi, hashtag o formattazione tecnica. 
 Usa paragrafi naturali. Rivolgiti direttamente alla persona con il suo nome.
-Non inventare numeri o calcoli: usa solo i dati forniti.`
+Non inventare numeri o calcoli: usa solo i dati forniti.
+
+REGOLE FONDAMENTALI DI STILE:
+- NON iniziare MAI con "Caro/a [nome]" o frasi di saluto/benvenuto (a meno che non sia la primissima sezione del report)
+- NON ripetere frasi come "che gioia", "che onore", "è un piacere"
+- Ogni sezione deve avere un'apertura UNICA e DIVERSA dalle altre
+- Varia il tuo stile: a volte inizia con una domanda retorica, a volte con un'affermazione, a volte con una metafora
+- Evita formule ripetitive tra le sezioni`
             },
-            { role: "user", content: prompt },
+            { role: "user", content: prompt + contextNote },
           ],
         }),
       });
@@ -240,6 +252,7 @@ Non inventare numeri o calcoli: usa solo i dati forniti.`
       const aiData = await aiResponse.json();
       const content = aiData.choices?.[0]?.message?.content || "Contenuto non generato.";
       sections[section.key] = { title: section.title, content };
+      generatedSoFar.push(content);
 
       // Small delay between requests to avoid rate limits
       await new Promise(r => setTimeout(r, 500));
