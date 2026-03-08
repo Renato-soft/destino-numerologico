@@ -83,6 +83,7 @@ const ProfilePage = () => {
       setNome(profileResult.data.nome);
       setCognome(profileResult.data.cognome);
       setBirthDate(profileResult.data.birth_date);
+      setSesso(profileResult.data.sesso || "");
     }
 
     if (photosResult.data && photosResult.data.length > 0) {
