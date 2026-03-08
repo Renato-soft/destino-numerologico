@@ -47,6 +47,7 @@ const Onboarding = () => {
     nome: "",
     cognome: "",
     birthDate: "",
+    sesso: "",
     photos: {
       face: null,
       fullFront: null,
