@@ -187,6 +187,13 @@ const Dashboard = () => {
       color: "from-green-500 to-emerald-500",
     },
     {
+      title: "Vibrazione Casa",
+      description: "Analizza l'energia del tuo spazio",
+      icon: Home,
+      href: "/house",
+      color: "from-cyan-500 to-sky-500",
+    },
+    {
       title: "Profilo",
       description: "Modifica i tuoi dati personali",
       icon: User,
