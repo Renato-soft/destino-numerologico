@@ -96,9 +96,6 @@ export default function AdvancedReport() {
           generated_at: r.generated_at,
           finalized_at: r.finalized_at,
         });
-          generated_at: r.generated_at,
-          finalized_at: r.finalized_at,
-        });
       }
       setLoading(false);
     };
