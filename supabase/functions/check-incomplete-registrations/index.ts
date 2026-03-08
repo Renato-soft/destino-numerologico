@@ -13,9 +13,13 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Get all profiles where onboarding is NOT completed
+    if (!resendApiKey) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+
     const { data: incompleteProfiles, error: profilesError } = await adminClient
       .from("profiles")
       .select("user_id, created_at, nome, cognome")
@@ -37,7 +41,6 @@ Deno.serve(async (req) => {
       const hoursElapsed = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
 
       try {
-        // Get user email
         const { data: userData, error: userError } = await adminClient.auth.admin.getUserById(profile.user_id);
         if (userError || !userData?.user?.email) {
           results.errors.push(`Could not get email for user ${profile.user_id}`);
@@ -45,17 +48,13 @@ Deno.serve(async (req) => {
         }
 
         const email = userData.user.email;
-        const nome = profile.nome;
+        const nome = profile.nome || "Utente";
 
         if (hoursElapsed >= 48) {
-          // Send deletion notice email via auth recovery (workaround to reach user)
-          // Then delete the user
           console.log(`Deleting user ${profile.user_id} (${email}) - 48h+ without completing onboarding`);
 
-          // Send final notice email
-          await sendEmail(supabaseUrl, serviceRoleKey, email, nome, "deletion");
+          await sendEmailWithResend(resendApiKey, email, nome, "deletion");
 
-          // Delete user data
           await adminClient.from("photos").delete().eq("user_id", profile.user_id);
           await adminClient.from("chat_messages").delete().eq("user_id", profile.user_id);
           await adminClient.from("chat_sessions").delete().eq("user_id", profile.user_id);
@@ -63,7 +62,6 @@ Deno.serve(async (req) => {
           await adminClient.from("daily_reports").delete().eq("user_id", profile.user_id);
           await adminClient.from("profiles").delete().eq("user_id", profile.user_id);
 
-          // Delete auth user
           const { error: deleteError } = await adminClient.auth.admin.deleteUser(profile.user_id);
           if (deleteError) {
             results.errors.push(`Failed to delete user ${profile.user_id}: ${deleteError.message}`);
@@ -72,9 +70,8 @@ Deno.serve(async (req) => {
           }
 
         } else if (hoursElapsed >= 24) {
-          // Send reminder email
           console.log(`Sending reminder to ${email} - 24h+ without completing onboarding`);
-          await sendEmail(supabaseUrl, serviceRoleKey, email, nome, "reminder");
+          await sendEmailWithResend(resendApiKey, email, nome, "reminder");
           results.reminders++;
         }
       } catch (err) {
@@ -95,9 +92,8 @@ Deno.serve(async (req) => {
   }
 });
 
-async function sendEmail(
-  supabaseUrl: string,
-  serviceRoleKey: string,
+async function sendEmailWithResend(
+  resendApiKey: string,
   toEmail: string,
   nome: string,
   type: "reminder" | "deletion"
@@ -106,50 +102,53 @@ async function sendEmail(
     ? "📸 Completa la tua registrazione su Destino Numerologico"
     : "⚠️ La tua utenza su Destino Numerologico verrà cancellata";
 
-  const body = type === "reminder"
-    ? `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a2e;">Ciao ${nome}! 👋</h2>
-        <p>Abbiamo notato che non hai ancora completato la registrazione su <strong>Destino Numerologico</strong>.</p>
-        <p>Per offrirti consigli di stile personalizzati, abbiamo bisogno delle tue 3 foto (viso, figura intera frontale e laterale). È il passo fondamentale per sbloccare tutti i suggerimenti di outfit su misura per te!</p>
-        <p style="margin-top: 20px;"><strong>Accedi ora e completa il tuo profilo in pochi minuti.</strong></p>
-        <p style="color: #888; font-size: 12px; margin-top: 30px;">Se non hai creato tu questo account, ignora questa email.</p>
+  const html = type === "reminder"
+    ? `<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background: #ffffff;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #1a1a2e; font-size: 24px; margin: 0;">Destino Numerologico</h1>
+        </div>
+        <h2 style="color: #1a1a2e; font-size: 20px;">Ciao ${nome}! 👋</h2>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Abbiamo notato che non hai ancora completato la registrazione su <strong>Destino Numerologico</strong>.</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Per offrirti consigli di stile personalizzati basati sulla tua fisionomia, abbiamo bisogno delle tue <strong>3 foto</strong> (viso, figura intera frontale e laterale).</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">È il passo fondamentale per sbloccare tutti i suggerimenti di outfit su misura per te!</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="https://destino-numerologico.lovable.app" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Completa la registrazione</a>
+        </div>
+        <p style="color: #999; font-size: 12px; margin-top: 30px; text-align: center;">⏰ Hai ancora 24 ore per completare la registrazione prima che l'account venga rimosso.</p>
+        <p style="color: #aaa; font-size: 11px; text-align: center;">Se non hai creato tu questo account, ignora questa email.</p>
       </div>`
-    : `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a2e;">Ciao ${nome},</h2>
-        <p>Purtroppo non hai completato la registrazione su <strong>Destino Numerologico</strong> entro 48 ore.</p>
-        <p>Per motivi di sicurezza e per mantenere la qualità del servizio, la tua utenza è stata cancellata.</p>
-        <p>Se desideri riprovare, puoi registrarti nuovamente in qualsiasi momento!</p>
-        <p style="color: #888; font-size: 12px; margin-top: 30px;">Se non hai creato tu questo account, ignora questa email.</p>
+    : `<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background: #ffffff;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="color: #1a1a2e; font-size: 24px; margin: 0;">Destino Numerologico</h1>
+        </div>
+        <h2 style="color: #1a1a2e; font-size: 20px;">Ciao ${nome},</h2>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Purtroppo non hai completato la registrazione su <strong>Destino Numerologico</strong> entro 48 ore.</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Per motivi di sicurezza e per mantenere la qualità del servizio, la tua utenza è stata cancellata.</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Se desideri riprovare, puoi registrarti nuovamente in qualsiasi momento!</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="https://destino-numerologico.lovable.app" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Registrati di nuovo</a>
+        </div>
+        <p style="color: #aaa; font-size: 11px; text-align: center; margin-top: 30px;">Se non hai creato tu questo account, ignora questa email.</p>
       </div>`;
 
-  // Use Supabase's built-in email via admin API
-  // We'll use the auth.admin.inviteUserByEmail as a workaround won't work here
-  // Instead, let's use a simple fetch to a mail service or log for now
-  
-  // For now, we use Supabase's auth admin to send a recovery email as notification
-  // This is a workaround - ideally you'd integrate a proper transactional email service
-  console.log(`[EMAIL ${type.toUpperCase()}] To: ${toEmail}, Subject: ${subject}`);
-  console.log(`[EMAIL BODY] ${body}`);
-  
-  // Try sending via Lovable API if available
-  const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
-  if (lovableApiKey) {
-    try {
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-notification-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${serviceRoleKey}`,
-        },
-        body: JSON.stringify({ to: toEmail, subject, html: body }),
-      });
-      if (response.ok) {
-        console.log(`Email sent successfully to ${toEmail}`);
-      } else {
-        console.log(`Email send failed: ${response.status}`);
-      }
-    } catch (e) {
-      console.log(`Email send error: ${e.message}`);
-    }
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${resendApiKey}`,
+    },
+    body: JSON.stringify({
+      from: "Destino Numerologico <onboarding@resend.dev>",
+      to: [toEmail],
+      subject,
+      html,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    throw new Error(`Resend API error [${response.status}]: ${errorData}`);
   }
+
+  console.log(`Email (${type}) sent successfully to ${toEmail}`);
 }
