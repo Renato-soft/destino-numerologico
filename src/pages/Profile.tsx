@@ -15,6 +15,7 @@ import {
   RefreshCw,
   Camera,
   Upload,
+  Trash2,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -229,6 +230,23 @@ const ProfilePage = () => {
     }
   };
 
+  const handlePhotoDelete = async (photo: UserPhoto) => {
+    const confirmed = window.confirm("Sei sicuro di voler eliminare questa foto?");
+    if (!confirmed) return;
+
+    setUploadingPhoto(photo.type);
+    try {
+      await supabase.storage.from("user-photos").remove([photo.storage_path]);
+      await supabase.from("photos").delete().eq("id", photo.id);
+      setPhotos(prev => prev.filter(p => p.id !== photo.id));
+      toast({ title: "Foto eliminata" });
+    } catch (error: any) {
+      toast({ title: "Errore", description: error.message, variant: "destructive" });
+    } finally {
+      setUploadingPhoto(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -372,6 +390,20 @@ const ProfilePage = () => {
                           <div className="absolute inset-0 bg-black/0 hover:bg-black/30 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
                             <span className="text-white text-sm font-medium">Cambia foto</span>
                           </div>
+                          {pt.key !== "face" && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handlePhotoDelete(existingPhoto);
+                              }}
+                              className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors z-10"
+                              title="Elimina foto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-2 text-muted-foreground">
