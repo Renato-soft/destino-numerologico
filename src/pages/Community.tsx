@@ -168,6 +168,11 @@ export default function Community() {
     init();
   }, [navigate, loadPosts]);
 
+  // Load notifications when userId is available
+  useEffect(() => {
+    if (userId) loadNotifications();
+  }, [userId, loadNotifications]);
+
   // Realtime subscription
   useEffect(() => {
     const channel = supabase
