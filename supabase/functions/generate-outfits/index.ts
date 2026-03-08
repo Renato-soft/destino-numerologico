@@ -267,7 +267,7 @@ Deno.serve(async (req) => {
         const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
         const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 
-        const filePath = `${user.id}/outfits/${today}_${label}.png`;
+        const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
         const { error: uploadError } = await supabase.storage
           .from("user-photos")
           .upload(filePath, binaryData, {
