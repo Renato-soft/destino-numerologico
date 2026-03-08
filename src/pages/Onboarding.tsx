@@ -400,6 +400,10 @@ const Onboarding = () => {
                   La foto in primo piano è <span className="font-semibold text-foreground">obbligatoria</span> per fornirti ogni giorno consigli di abbigliamento personalizzati, 
                   basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura.
                 </p>
+                <p className="text-sm text-muted-foreground text-center mb-2">
+                  💡 <span className="font-medium text-foreground">Consiglio:</span> carica anche le foto a figura intera per ottenere suggerimenti di outfit ancora più precisi, 
+                  basati sulla tua corporatura reale.
+                </p>
                 <p className="text-xs text-muted-foreground text-center mb-8 italic">
                   Le foto sono private e visibili solo a te. Verranno utilizzate esclusivamente per generare suggerimenti di outfit su misura.
                 </p>
@@ -407,8 +411,8 @@ const Onboarding = () => {
                 <div className="grid gap-4">
                   {[
                     { key: "face" as const, label: "Viso (obbligatoria)", required: true },
-                    { key: "fullFront" as const, label: "Figura intera frontale (opzionale)", required: false },
-                    { key: "fullSide" as const, label: "Figura intera laterale (opzionale)", required: false },
+                    { key: "fullFront" as const, label: "Figura intera frontale (consigliata)", required: false },
+                    { key: "fullSide" as const, label: "Figura intera laterale (consigliata)", required: false },
                   ].map((photo) => (
                     <div key={photo.key} className="space-y-2">
                       <Label>{photo.label}</Label>
