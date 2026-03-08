@@ -260,10 +260,10 @@ const Auth = () => {
           {!isLogin && (
             <div className="mt-6 p-4 rounded-xl bg-accent/10 border border-accent/20">
               <p className="text-sm text-foreground font-medium mb-1">
-                📸 Dopo la registrazione ti chiederemo 3 foto
+                📸 Dopo la registrazione ti chiederemo una foto in primo piano
               </p>
               <p className="text-xs text-muted-foreground">
-                Per offrirti suggerimenti di outfit personalizzati in base alla tua fisicità, avremo bisogno di una foto del viso, una figura intera frontale e una laterale. È il segreto per consigli di stile su misura per te!
+                Per offrirti suggerimenti di outfit personalizzati in base alla tua fisicità, avremo bisogno almeno di una foto del viso. Potrai aggiungere anche foto a figura intera per consigli ancora più precisi!
               </p>
               <p className="text-xs text-muted-foreground mt-2">
                 Riceverai un'email di conferma per attivare il tuo account.

@@ -109,7 +109,7 @@ async function sendEmailWithResend(
         </div>
         <h2 style="color: #1a1a2e; font-size: 20px;">Ciao ${nome}! 👋</h2>
         <p style="color: #333; font-size: 16px; line-height: 1.6;">Abbiamo notato che non hai ancora completato la registrazione su <strong>Destino Numerologico</strong>.</p>
-        <p style="color: #333; font-size: 16px; line-height: 1.6;">Per offrirti consigli di stile personalizzati basati sulla tua fisionomia, abbiamo bisogno delle tue <strong>3 foto</strong> (viso, figura intera frontale e laterale).</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">Per offrirti consigli di stile personalizzati basati sulla tua fisionomia, abbiamo bisogno almeno della tua <strong>foto in primo piano</strong>.</p>
         <p style="color: #333; font-size: 16px; line-height: 1.6;">È il passo fondamentale per sbloccare tutti i suggerimenti di outfit su misura per te!</p>
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://destino-numerologico.lovable.app" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Completa la registrazione</a>
