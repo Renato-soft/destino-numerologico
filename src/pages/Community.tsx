@@ -81,8 +81,30 @@ export default function Community() {
   const [showGuidelines, setShowGuidelines] = useState(false);
   const [reportingId, setReportingId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
 
-  const loadPosts = useCallback(async () => {
+  const loadNotifications = useCallback(async () => {
+    if (!userId) return;
+    const { data } = await supabase
+      .from("community_notifications" as any)
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(30);
+    setNotifications(data || []);
+  }, [userId]);
+
+  const markAllRead = async () => {
+    if (!userId) return;
+    await (supabase.from("community_notifications" as any) as any)
+      .update({ read: true })
+      .eq("user_id", userId)
+      .eq("read", false);
+    setNotifications((prev) => prev.map((n: any) => ({ ...n, read: true })));
+  };
+
     let query = supabase
       .from("community_posts")
       .select("*")
