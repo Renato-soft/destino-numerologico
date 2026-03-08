@@ -15,6 +15,7 @@ import WhatsApp from "./pages/WhatsApp";
 import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
+import Pillars from "./pages/Pillars";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
