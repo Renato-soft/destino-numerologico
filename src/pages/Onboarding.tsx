@@ -116,9 +116,6 @@ const Onboarding = () => {
     if (!formData.photos.face) {
       newErrors.face = "Foto viso richiesta";
     }
-    if (!formData.photos.fullFront) {
-      newErrors.fullFront = "Foto frontale richiesta";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
