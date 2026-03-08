@@ -26,6 +26,7 @@ interface FormData {
   nome: string;
   cognome: string;
   birthDate: string;
+  sesso: string;
   photos: {
     face: File | null;
     fullFront: File | null;
@@ -46,6 +47,7 @@ const Onboarding = () => {
     nome: "",
     cognome: "",
     birthDate: "",
+    sesso: "",
     photos: {
       face: null,
       fullFront: null,
@@ -92,6 +94,10 @@ const Onboarding = () => {
     const cognomeResult = nameSchema.safeParse(formData.cognome);
     if (!cognomeResult.success) {
       newErrors.cognome = cognomeResult.error.errors[0].message;
+    }
+
+    if (!formData.sesso) {
+      newErrors.sesso = "Seleziona il tuo sesso";
     }
 
     const dateResult = dateSchema.safeParse(formData.birthDate);
@@ -205,8 +211,9 @@ const Onboarding = () => {
         nome: formData.nome,
         cognome: formData.cognome,
         birth_date: birthDate.toISOString().split("T")[0],
+        sesso: formData.sesso,
         onboarding_completed: true,
-      });
+      } as any);
 
       if (profileError) throw profileError;
 
@@ -361,6 +368,35 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
+                    <Label>Sesso</Label>
+                    <div className="flex gap-3">
+                      {[
+                        { value: "M", label: "Uomo" },
+                        { value: "F", label: "Donna" },
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, sesso: option.value });
+                            if (errors.sesso) setErrors({ ...errors, sesso: "" });
+                          }}
+                          className={`flex-1 py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                            formData.sesso === option.value
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border hover:border-primary/50 text-muted-foreground"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                    {errors.sesso && (
+                      <p className="text-sm text-destructive">{errors.sesso}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="birthDate">Data di nascita</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -481,6 +517,10 @@ const Onboarding = () => {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Cognome</span>
                       <span className="font-medium">{formData.cognome}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Sesso</span>
+                      <span className="font-medium">{formData.sesso === "M" ? "Uomo" : "Donna"}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Data di nascita</span>

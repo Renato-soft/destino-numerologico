@@ -6,7 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const dayVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+// Male outfit styles by vibration number
+const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
   1: { day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes", day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers", eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes", eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots", mood: "authoritative, confident, decisive" },
   2: { day1: "light blue oxford shirt, beige chinos, white sneakers", day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes", eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers", eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers", mood: "harmonious, diplomatic, approachable" },
   3: { day1: "mustard yellow polo, beige chinos, brown leather belt, tan shoes", day2: "warm terracotta henley, dark olive cargo pants, brown boots", eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes", eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots", mood: "creative, joyful, expressive" },
@@ -18,6 +19,19 @@ const dayVibeStyles: Record<number, { day1: string; day2: string; eve1: string; 
   9: { day1: "burgundy henley, off-white chinos, brown leather shoes", day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots", eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes", eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers", mood: "compassionate, wise, universal" },
 };
 
+// Female outfit styles by vibration number
+const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+  1: { day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels", day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots", eve1: "deep wine wrap dress, delicate gold necklace, black stiletto heels", eve2: "black fitted jumpsuit, dark red clutch, strappy heels", mood: "authoritative, confident, decisive" },
+  2: { day1: "soft blue cashmere sweater, white midi skirt, nude flats", day2: "light grey knit top, powder blue wide-leg pants, white sneakers", eve1: "pale blue silk midi dress, silver bracelet, nude heels", eve2: "lavender blouse, navy tailored trousers, grey suede pumps", mood: "harmonious, diplomatic, approachable" },
+  3: { day1: "mustard yellow blouse, camel wide-leg trousers, tan leather sandals", day2: "terracotta wrap top, dark olive midi skirt, brown ankle boots", eve1: "warm gold satin blouse, dark brown fitted pants, cognac heels", eve2: "burnt orange knit dress, tan leather belt, brown suede boots", mood: "creative, joyful, expressive" },
+  4: { day1: "olive green linen shirt dress, brown leather belt, tan sandals", day2: "camel turtleneck, dark green corduroy pants, brown boots", eve1: "forest green fitted dress, gold stud earrings, dark leather heels", eve2: "brown knit sweater, olive tailored trousers, dark ankle boots", mood: "stable, grounded, reliable" },
+  5: { day1: "bright blue silk blouse, white jeans, colorful sneakers", day2: "teal wrap top, dark grey tailored pants, navy loafers", eve1: "cobalt blue one-shoulder dress, silver earrings, black strappy heels", eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps", mood: "adventurous, dynamic, free" },
+  6: { day1: "sage green linen blouse, cream wide-leg pants, woven sandals", day2: "soft pink knit top, beige midi skirt, white ballet flats", eve1: "emerald green wrap dress, gold pendant, nude heels", eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps", mood: "caring, elegant, refined" },
+  7: { day1: "navy blue cashmere sweater, dark grey slim pants, minimal silver jewelry", day2: "charcoal silk blouse, black tailored trousers, dark loafers", eve1: "midnight blue midi dress, subtle silver cuff, black heels", eve2: "dark grey wrap dress, navy clutch, black suede ankle boots", mood: "intellectual, mysterious, minimal" },
+  8: { day1: "black blazer over charcoal top, dark trousers, pointed black heels", day2: "dark grey fitted dress, black leather belt, black ankle boots", eve1: "black fitted dress, statement silver earrings, black stilettos", eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels", mood: "powerful, sophisticated, commanding" },
+  9: { day1: "burgundy wrap blouse, off-white wide-leg pants, brown leather sandals", day2: "wine-red knit dress, dark brown belt, tan ankle boots", eve1: "deep wine velvet midi dress, gold earrings, cognac heels", eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps", mood: "compassionate, wise, universal" },
+};
+
 function reduceNumber(num: number): number {
   while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
     num = num.toString().split("").reduce((sum, digit) => sum + parseInt(digit), 0);
@@ -25,13 +39,38 @@ function reduceNumber(num: number): number {
   return num;
 }
 
-function getDayVibration(): number {
+function getUniversalDayVibration(): number {
   const today = new Date();
   const day = today.getDate();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
   const sum = day + month + reduceNumber(year);
   return reduceNumber(sum);
+}
+
+function getPersonalDayVibration(personalYear: number): number {
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  // Personal month = calendar month + personal year (reduced)
+  const personalMonth = reduceNumber(month + personalYear);
+  // Personal day = day + personal month (reduced)
+  return reduceNumber(day + personalMonth);
+}
+
+function buildNumerologyContext(map: any, personalDay: number, universalDay: number): string {
+  const parts: string[] = [];
+  parts.push(`Numerology profile: Life Path ${map.life_path}, Expression ${map.destiny_expression}, Soul ${map.soul}, Personality ${map.personality}.`);
+  parts.push(`Personal Year: ${map.personal_year}. Personal Day vibration: ${personalDay}. Universal Day vibration: ${universalDay}.`);
+  
+  // Add specific guidance based on life path
+  const lpReduced = map.life_path > 9 ? reduceNumber(map.life_path) : map.life_path;
+  const soulReduced = map.soul > 9 ? reduceNumber(map.soul) : map.soul;
+  
+  parts.push(`The outfit should resonate with the energy of Personal Day ${personalDay}, while honoring the person's Life Path ${lpReduced} (their core identity) and Soul number ${soulReduced} (their inner desires).`);
+  parts.push(`Use colors and styles that align with the vibration of the day (${personalDay}) but also complement the person's numerological essence.`);
+  
+  return parts.join(" ");
 }
 
 Deno.serve(async (req) => {
@@ -61,7 +100,6 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get user from token
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
@@ -71,18 +109,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Parse body for force refresh
     let force = false;
     try {
       const body = await req.json();
       force = body?.force === true;
     } catch { /* no body is fine */ }
 
-    // Check if we already generated outfits today
     const today = new Date().toISOString().split("T")[0];
 
     if (!force) {
-      // Check existing cached files
       const { data: existingFiles } = await supabase.storage
         .from("user-photos")
         .list(`${user.id}/outfits`, { search: today });
@@ -102,13 +137,17 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Get user profile for age calculation
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("birth_date")
-      .eq("user_id", user.id)
-      .single();
+    // Fetch profile, numerology map, and photos in parallel
+    const [profileResult, mapResult, photosResult] = await Promise.all([
+      supabase.from("profiles").select("birth_date, sesso").eq("user_id", user.id).single(),
+      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", user.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("photos").select("type, storage_path").eq("user_id", user.id),
+    ]);
 
+    const profile = profileResult.data;
+    const numMap = mapResult.data;
+
+    // Calculate age
     let userAge: number | null = null;
     if (profile?.birth_date) {
       const birth = new Date(profile.birth_date);
@@ -120,13 +159,29 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Get user photo for reference
-    const { data: photos } = await supabase
-      .from("photos")
-      .select("type, storage_path")
-      .eq("user_id", user.id);
+    // Determine gender
+    const gender = profile?.sesso || "M"; // default male for backward compat
+    const isFemale = gender === "F";
+    const genderLabel = isFemale ? "woman" : "man";
 
+    // Calculate vibrations
+    const universalDay = getUniversalDayVibration();
+    let personalDay = universalDay;
+    let numerologyContext = "";
+    
+    if (numMap) {
+      personalDay = getPersonalDayVibration(numMap.personal_year);
+      numerologyContext = buildNumerologyContext(numMap, personalDay, universalDay);
+    }
+
+    // Pick style based on personal day vibration (prioritized over universal)
+    const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
+    const vibeStyles = isFemale ? femaleVibeStyles : maleVibeStyles;
+    const style = vibeStyles[vibeKey] || vibeStyles[1];
+
+    // Get user photo
     let userPhotoUrl: string | null = null;
+    const photos = photosResult.data;
     if (photos && photos.length > 0) {
       const preferred = photos.find(p => p.type === "full_front") || photos.find(p => p.type === "face") || photos[0];
       const { data } = await supabase.storage
@@ -135,34 +190,29 @@ Deno.serve(async (req) => {
       userPhotoUrl = data?.signedUrl || null;
     }
 
-    const dayVibe = getDayVibration();
-    const vibeKey = dayVibe > 9 ? reduceNumber(dayVibe) : dayVibe;
-    const style = dayVibeStyles[vibeKey] || dayVibeStyles[1];
-
-    // Define 4 outfit prompts - each with COMPLETELY DIFFERENT garments
+    // Build prompts
     const ageHint = userAge ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.` : "";
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular person who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint}`;
-    
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
+
     const outfitPrompts = [
       {
         label: "day1",
-        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC daytime outfit: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street with natural daylight. ${baseRules}`,
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC daytime outfit: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street with natural daylight. ${baseRules}`,
       },
       {
         label: "day2",
-        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE daytime outfit (COMPLETELY DIFFERENT from a polo with chinos): ${style.day2}. Mood: ${style.mood}. Setting: bright office entrance or café terrace. ${baseRules}`,
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE daytime outfit (COMPLETELY DIFFERENT garments): ${style.day2}. Mood: ${style.mood}. Setting: bright office entrance or café terrace. ${baseRules}`,
       },
       {
         label: "eve1",
-        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC evening outfit for dinner: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant entrance with warm lighting. ${baseRules}`,
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC evening outfit for dinner: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant entrance with warm lighting. ${baseRules}`,
       },
       {
         label: "eve2",
-        prompt: `Generate a realistic full-body photo of a man wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
       },
     ];
 
-    // If we have user photo, use image editing to preserve their appearance
     const generateImage = async (prompt: string, label: string) => {
       try {
         const messages: any[] = [];
@@ -171,7 +221,7 @@ Deno.serve(async (req) => {
           messages.push({
             role: "user",
             content: [
-              { type: "text", text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ''}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. ${prompt}` },
+              { type: "text", text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ''}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. This is a ${genderLabel}. ${prompt}` },
               { type: "image_url", image_url: { url: userPhotoUrl } },
             ],
           });
@@ -208,11 +258,9 @@ Deno.serve(async (req) => {
           return null;
         }
 
-        // Extract base64 data
         const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
         const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 
-        // Upload to storage
         const filePath = `${user.id}/outfits/${today}_${label}.png`;
         const { error: uploadError } = await supabase.storage
           .from("user-photos")
@@ -237,7 +285,6 @@ Deno.serve(async (req) => {
       }
     };
 
-    // Generate all 4 in parallel
     const results = await Promise.all(
       outfitPrompts.map(op => generateImage(op.prompt, op.label))
     );

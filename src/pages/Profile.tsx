@@ -23,6 +23,7 @@ interface Profile {
   nome: string;
   cognome: string;
   birth_date: string;
+  sesso: string | null;
   timezone: string | null;
   created_at: string;
 }
@@ -47,6 +48,7 @@ const ProfilePage = () => {
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [sesso, setSesso] = useState("");
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
   const [disabling, setDisabling] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
@@ -67,9 +69,9 @@ const ProfilePage = () => {
     const [profileResult, photosResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("nome, cognome, birth_date, timezone, created_at")
+        .select("nome, cognome, birth_date, sesso, timezone, created_at")
         .eq("user_id", session.user.id)
-        .maybeSingle(),
+        .maybeSingle() as any,
       supabase
         .from("photos")
         .select("id, type, storage_path")
@@ -81,6 +83,7 @@ const ProfilePage = () => {
       setNome(profileResult.data.nome);
       setCognome(profileResult.data.cognome);
       setBirthDate(profileResult.data.birth_date);
+      setSesso(profileResult.data.sesso || "");
     }
 
     if (photosResult.data && photosResult.data.length > 0) {
@@ -120,7 +123,8 @@ const ProfilePage = () => {
           nome: nome.trim(),
           cognome: cognome.trim(),
           birth_date: birthDate,
-        })
+          sesso: sesso || null,
+        } as any)
         .eq("user_id", session.user.id);
 
       if (error) throw error;
@@ -322,6 +326,29 @@ const ProfilePage = () => {
                 onChange={(e) => setCognome(e.target.value)}
                 className="mt-2"
               />
+            </div>
+
+            <div>
+              <Label>Sesso</Label>
+              <div className="flex gap-3 mt-2">
+                {[
+                  { value: "M", label: "Uomo" },
+                  { value: "F", label: "Donna" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setSesso(option.value)}
+                    className={`flex-1 py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                      sesso === option.value
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-muted-foreground"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>
