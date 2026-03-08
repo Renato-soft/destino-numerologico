@@ -23,6 +23,7 @@ interface Profile {
   nome: string;
   cognome: string;
   birth_date: string;
+  sesso: string | null;
   timezone: string | null;
   created_at: string;
 }
