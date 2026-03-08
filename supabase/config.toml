@@ -2,3 +2,6 @@ project_id = "oxkurjhomofoibihhmoq"
 
 [functions.generate-outfits]
 verify_jwt = false
+
+[functions.check-incomplete-registrations]
+verify_jwt = false
