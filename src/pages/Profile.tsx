@@ -329,6 +329,29 @@ const ProfilePage = () => {
             </div>
 
             <div>
+              <Label>Sesso</Label>
+              <div className="flex gap-3 mt-2">
+                {[
+                  { value: "M", label: "Uomo" },
+                  { value: "F", label: "Donna" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setSesso(option.value)}
+                    className={`flex-1 py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                      sesso === option.value
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-muted-foreground"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <Label htmlFor="birthDate" className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Data di nascita

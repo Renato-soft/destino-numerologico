@@ -519,6 +519,10 @@ const Onboarding = () => {
                       <span className="font-medium">{formData.cognome}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-muted-foreground">Sesso</span>
+                      <span className="font-medium">{formData.sesso === "M" ? "Uomo" : "Donna"}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-muted-foreground">Data di nascita</span>
                       <span className="font-medium">{formData.birthDate}</span>
                     </div>
