@@ -381,6 +381,29 @@ const ProfilePage = () => {
           <div className="text-center text-sm text-muted-foreground">
             <p>Fuso orario: {profile?.timezone || "Europe/Rome"}</p>
           </div>
+
+          {/* Disable account */}
+          <div className="glass-cosmic rounded-xl p-6">
+            <h3 className="font-display font-semibold mb-2 text-destructive">Disabilita Account</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Il tuo account verrà disabilitato e non potrai più accedere. I tuoi dati verranno conservati e potrai riattivarlo contattando il supporto.
+            </p>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={handleDisableAccount}
+              disabled={disabling}
+            >
+              {disabling ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Disabilitazione...
+                </>
+              ) : (
+                "Disabilita il mio account"
+              )}
+            </Button>
+          </div>
         </motion.div>
       </main>
     </div>

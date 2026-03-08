@@ -385,8 +385,12 @@ const Onboarding = () => {
                 <h2 className="font-display text-2xl font-bold text-center mb-2">
                   Le tue foto
                 </h2>
-                <p className="text-muted-foreground text-center mb-8">
-                  Carica foto chiare per completare il tuo profilo
+                <p className="text-muted-foreground text-center mb-6">
+                  Le tue foto sono <span className="font-semibold text-foreground">obbligatorie</span> per fornirti ogni giorno consigli di abbigliamento personalizzati, 
+                  basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura.
+                </p>
+                <p className="text-xs text-muted-foreground text-center mb-8 italic">
+                  Le foto sono private e visibili solo a te. Verranno utilizzate esclusivamente per generare suggerimenti di outfit su misura.
                 </p>
 
                 <div className="grid gap-4">
