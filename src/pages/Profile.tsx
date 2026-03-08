@@ -123,7 +123,8 @@ const ProfilePage = () => {
           nome: nome.trim(),
           cognome: cognome.trim(),
           birth_date: birthDate,
-        })
+          sesso: sesso || null,
+        } as any)
         .eq("user_id", session.user.id);
 
       if (error) throw error;
