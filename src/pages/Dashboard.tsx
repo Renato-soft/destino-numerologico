@@ -194,7 +194,13 @@ const Dashboard = () => {
       color: "from-cyan-500 to-sky-500",
     },
     {
-      title: "Profilo",
+      title: "Community",
+      description: "Condividi il tuo viaggio numerologico",
+      icon: MessageCircle,
+      href: "/community",
+      color: "from-indigo-500 to-purple-500",
+    },
+    {
       description: "Modifica i tuoi dati personali",
       icon: User,
       href: "/profile",
