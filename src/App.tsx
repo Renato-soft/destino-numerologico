@@ -16,6 +16,7 @@ import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
 import Pillars from "./pages/Pillars";
+import AdvancedReport from "./pages/AdvancedReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/compatibility" element={<Compatibility />} />
           <Route path="/brand" element={<BrandAnalyzer />} />
           <Route path="/pillars" element={<Pillars />} />
+          <Route path="/advanced-report" element={<AdvancedReport />} />
           <Route path="/profile" element={<ProfilePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

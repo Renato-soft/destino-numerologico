@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.check-incomplete-registrations]
 verify_jwt = false
+
+[functions.generate-advanced-report]
+verify_jwt = false
