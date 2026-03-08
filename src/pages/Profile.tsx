@@ -69,9 +69,9 @@ const ProfilePage = () => {
     const [profileResult, photosResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("nome, cognome, birth_date, timezone, created_at")
+        .select("nome, cognome, birth_date, sesso, timezone, created_at")
         .eq("user_id", session.user.id)
-        .maybeSingle(),
+        .maybeSingle() as any,
       supabase
         .from("photos")
         .select("id, type, storage_path")
