@@ -102,6 +102,24 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Get user profile for age calculation
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("birth_date")
+      .eq("user_id", user.id)
+      .single();
+
+    let userAge: number | null = null;
+    if (profile?.birth_date) {
+      const birth = new Date(profile.birth_date);
+      const now = new Date();
+      userAge = now.getFullYear() - birth.getFullYear();
+      const monthDiff = now.getMonth() - birth.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+        userAge--;
+      }
+    }
+
     // Get user photo for reference
     const { data: photos } = await supabase
       .from("photos")
@@ -110,7 +128,6 @@ Deno.serve(async (req) => {
 
     let userPhotoUrl: string | null = null;
     if (photos && photos.length > 0) {
-      // Prefer full_front, then face
       const preferred = photos.find(p => p.type === "full_front") || photos.find(p => p.type === "face") || photos[0];
       const { data } = await supabase.storage
         .from("user-photos")
@@ -123,7 +140,8 @@ Deno.serve(async (req) => {
     const style = dayVibeStyles[vibeKey] || dayVibeStyles[1];
 
     // Define 4 outfit prompts - each with COMPLETELY DIFFERENT garments
-    const baseRules = "IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular person who wants to look good. Show full body from head to feet in a realistic photo.";
+    const ageHint = userAge ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.` : "";
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular person who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint}`;
     
     const outfitPrompts = [
       {
@@ -153,7 +171,7 @@ Deno.serve(async (req) => {
           messages.push({
             role: "user",
             content: [
-              { type: "text", text: `Based on this person's appearance (face, skin tone, body type, hair), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. ${prompt}` },
+              { type: "text", text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ''}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. ${prompt}` },
               { type: "image_url", image_url: { url: userPhotoUrl } },
             ],
           });
