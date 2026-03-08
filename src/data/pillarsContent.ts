@@ -379,18 +379,4 @@ export const pillarsContent: PillarContent[] = [
   },
 ];
 
-// Karmic lessons: numbers missing from full name
-export function calculateKarmicLessons(fullName: string): number[] {
-  const { normalizeText, letterToNumber } = require("@/lib/numerology");
-  const normalized = normalizeText(fullName);
-  const presentNumbers = new Set<number>();
-  for (const letter of normalized) {
-    const num = letterToNumber[letter];
-    if (num) presentNumbers.add(num);
-  }
-  const missing: number[] = [];
-  for (let i = 1; i <= 9; i++) {
-    if (!presentNumbers.has(i)) missing.push(i);
-  }
-  return missing;
-}
+// Karmic lessons helper is in src/lib/karmicLessons.ts
