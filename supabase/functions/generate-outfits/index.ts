@@ -102,6 +102,24 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Get user profile for age calculation
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("birth_date")
+      .eq("user_id", user.id)
+      .single();
+
+    let userAge: number | null = null;
+    if (profile?.birth_date) {
+      const birth = new Date(profile.birth_date);
+      const now = new Date();
+      userAge = now.getFullYear() - birth.getFullYear();
+      const monthDiff = now.getMonth() - birth.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+        userAge--;
+      }
+    }
+
     // Get user photo for reference
     const { data: photos } = await supabase
       .from("photos")
@@ -110,7 +128,6 @@ Deno.serve(async (req) => {
 
     let userPhotoUrl: string | null = null;
     if (photos && photos.length > 0) {
-      // Prefer full_front, then face
       const preferred = photos.find(p => p.type === "full_front") || photos.find(p => p.type === "face") || photos[0];
       const { data } = await supabase.storage
         .from("user-photos")
