@@ -367,6 +367,35 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
+                    <Label>Sesso</Label>
+                    <div className="flex gap-3">
+                      {[
+                        { value: "M", label: "Uomo" },
+                        { value: "F", label: "Donna" },
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, sesso: option.value });
+                            if (errors.sesso) setErrors({ ...errors, sesso: "" });
+                          }}
+                          className={`flex-1 py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                            formData.sesso === option.value
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border hover:border-primary/50 text-muted-foreground"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                    {errors.sesso && (
+                      <p className="text-sm text-destructive">{errors.sesso}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="birthDate">Data di nascita</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
