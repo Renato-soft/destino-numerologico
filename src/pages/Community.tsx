@@ -15,6 +15,8 @@ import {
   ChevronDown,
   Filter,
   Sparkles,
+  Bell,
+  X,
 } from "lucide-react";
 
 // Vibrational reaction emojis for numbers 1-9
