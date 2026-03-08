@@ -17,7 +17,8 @@ import {
   Compass,
   ScrollText,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
@@ -184,6 +185,13 @@ const Dashboard = () => {
       icon: Smartphone,
       href: "/whatsapp",
       color: "from-green-500 to-emerald-500",
+    },
+    {
+      title: "Vibrazione Casa",
+      description: "Analizza l'energia del tuo spazio",
+      icon: Home,
+      href: "/house",
+      color: "from-cyan-500 to-sky-500",
     },
     {
       title: "Profilo",
