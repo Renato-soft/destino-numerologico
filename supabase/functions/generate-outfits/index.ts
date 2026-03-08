@@ -58,6 +58,19 @@ function getPersonalDayVibration(personalYear: number): number {
   return reduceNumber(day + personalMonth);
 }
 
+function getCurrentSeason(): { name: string; hint: string; fabric: string } {
+  const month = new Date().getMonth() + 1; // 1-12
+  if (month >= 3 && month <= 5) {
+    return { name: "spring", hint: "Light layers, breathable fabrics. Mild weather ~15-22°C.", fabric: "cotton, light linen, light knits, denim" };
+  } else if (month >= 6 && month <= 8) {
+    return { name: "summer", hint: "Hot weather ~25-35°C. Lightweight, airy clothing. Short sleeves, open shoes.", fabric: "linen, light cotton, chambray, breathable blends" };
+  } else if (month >= 9 && month <= 11) {
+    return { name: "autumn", hint: "Cool weather ~8-18°C. Layering is key. Warm tones.", fabric: "wool, corduroy, heavier cotton, suede, leather" };
+  } else {
+    return { name: "winter", hint: "Cold weather ~0-10°C. Warm, cozy clothing. Coats, scarves, boots.", fabric: "wool, cashmere, heavy knits, leather, flannel" };
+  }
+}
+
 function buildNumerologyContext(map: any, personalDay: number, universalDay: number): string {
   const parts: string[] = [];
   parts.push(`Numerology profile: Life Path ${map.life_path}, Expression ${map.destiny_expression}, Soul ${map.soul}, Personality ${map.personality}.`);
@@ -135,7 +148,8 @@ Deno.serve(async (req) => {
     }
     const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
 
-    // Cache key includes vibration so different vibrations = different outfits
+    // Cache key includes vibration (season changes within a day won't happen, but the season
+    // is baked into the prompt so regeneration after season change happens naturally via date change)
     const cachePrefix = `${today}_v${vibeKey}`;
 
     if (!force) {
@@ -196,9 +210,13 @@ Deno.serve(async (req) => {
       userPhotoUrl = data?.signedUrl || null;
     }
 
+    // Season context
+    const season = getCurrentSeason();
+    const seasonHint = `SEASON: ${season.name}. ${season.hint} Preferred fabrics: ${season.fabric}. Adapt the outfit to be seasonally appropriate — if the described garments are too heavy or too light for the current season, substitute with equivalent items in suitable fabrics while keeping the same color palette and style.`;
+
     // Build prompts
     const ageHint = userAge ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.` : "";
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
 
     const outfitPrompts = [
       {
