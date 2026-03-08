@@ -213,7 +213,7 @@ export default function AdvancedReport() {
 
     await supabase
       .from("advanced_reports")
-      .update({ edited_sections: updatedEdited })
+      .update({ edited_sections: updatedEdited as unknown as Record<string, unknown> })
       .eq("id", report.id);
 
     setReport({ ...report, edited_sections: updatedEdited });
