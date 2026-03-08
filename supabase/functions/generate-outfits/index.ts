@@ -209,9 +209,13 @@ Deno.serve(async (req) => {
       userPhotoUrl = data?.signedUrl || null;
     }
 
+    // Season context
+    const season = getCurrentSeason();
+    const seasonHint = `SEASON: ${season.name}. ${season.hint} Preferred fabrics: ${season.fabric}. Adapt the outfit to be seasonally appropriate — if the described garments are too heavy or too light for the current season, substitute with equivalent items in suitable fabrics while keeping the same color palette and style.`;
+
     // Build prompts
     const ageHint = userAge ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.` : "";
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
 
     const outfitPrompts = [
       {
