@@ -144,6 +144,13 @@ const Dashboard = () => {
       color: "from-secondary to-purple-500",
     },
     {
+      title: "Report Avanzato",
+      description: "Analisi AI di 20+ pagine con revisione manuale",
+      icon: ScrollText,
+      href: "/advanced-report",
+      color: "from-amber-600 to-yellow-700",
+    },
+    {
       title: "Storico Mappe",
       description: "Visualizza e scarica i tuoi report PDF",
       icon: FileText,
