@@ -192,6 +192,7 @@ export type Database = {
           id: string
           nome: string
           onboarding_completed: boolean | null
+          sesso: string | null
           timezone: string | null
           updated_at: string
           user_id: string
@@ -207,6 +208,7 @@ export type Database = {
           id?: string
           nome: string
           onboarding_completed?: boolean | null
+          sesso?: string | null
           timezone?: string | null
           updated_at?: string
           user_id: string
@@ -222,6 +224,7 @@ export type Database = {
           id?: string
           nome?: string
           onboarding_completed?: boolean | null
+          sesso?: string | null
           timezone?: string | null
           updated_at?: string
           user_id?: string

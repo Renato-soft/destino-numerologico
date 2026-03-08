@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN sesso text DEFAULT NULL;
