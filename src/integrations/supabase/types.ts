@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      advanced_reports: {
+        Row: {
+          created_at: string
+          edited_sections: Json | null
+          finalized_at: string | null
+          generated_at: string | null
+          id: string
+          pdf_url: string | null
+          sections: Json
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          edited_sections?: Json | null
+          finalized_at?: string | null
+          generated_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          sections?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          edited_sections?: Json | null
+          finalized_at?: string | null
+          generated_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          sections?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string
