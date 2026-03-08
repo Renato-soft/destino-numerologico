@@ -40,6 +40,7 @@ const App = () => (
           <Route path="/compatibility" element={<Compatibility />} />
           <Route path="/brand" element={<BrandAnalyzer />} />
           <Route path="/pillars" element={<Pillars />} />
+          <Route path="/advanced-report" element={<AdvancedReport />} />
           <Route path="/profile" element={<ProfilePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
