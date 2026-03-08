@@ -14,6 +14,7 @@ import {
   User,
   Users,
   Target,
+  Compass,
   LogOut,
   ChevronRight
 } from "lucide-react";
