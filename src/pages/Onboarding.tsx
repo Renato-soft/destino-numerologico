@@ -211,8 +211,9 @@ const Onboarding = () => {
         nome: formData.nome,
         cognome: formData.cognome,
         birth_date: birthDate.toISOString().split("T")[0],
+        sesso: formData.sesso,
         onboarding_completed: true,
-      });
+      } as any);
 
       if (profileError) throw profileError;
 
