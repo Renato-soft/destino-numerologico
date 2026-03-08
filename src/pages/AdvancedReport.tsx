@@ -91,8 +91,11 @@ export default function AdvancedReport() {
         setReport({
           id: r.id,
           status: r.status,
-          sections: (r.sections || {}) as Record<string, ReportSection>,
-          edited_sections: r.edited_sections as Record<string, ReportSection> | null,
+          sections: (r.sections as unknown as Record<string, ReportSection>) || {},
+          edited_sections: r.edited_sections as unknown as Record<string, ReportSection> | null,
+          generated_at: r.generated_at,
+          finalized_at: r.finalized_at,
+        });
           generated_at: r.generated_at,
           finalized_at: r.finalized_at,
         });
