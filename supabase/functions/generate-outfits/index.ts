@@ -117,10 +117,31 @@ Deno.serve(async (req) => {
 
     const today = new Date().toISOString().split("T")[0];
 
+    // Fetch profile, numerology map, and photos in parallel
+    const [profileResult, mapResult, photosResult] = await Promise.all([
+      supabase.from("profiles").select("birth_date, sesso").eq("user_id", user.id).single(),
+      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", user.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("photos").select("type, storage_path").eq("user_id", user.id),
+    ]);
+
+    const profile = profileResult.data;
+    const numMap = mapResult.data;
+
+    // Calculate personal day vibration BEFORE cache check
+    const universalDay = getUniversalDayVibration();
+    let personalDay = universalDay;
+    if (numMap) {
+      personalDay = getPersonalDayVibration(numMap.personal_year);
+    }
+    const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
+
+    // Cache key includes vibration so different vibrations = different outfits
+    const cachePrefix = `${today}_v${vibeKey}`;
+
     if (!force) {
       const { data: existingFiles } = await supabase.storage
         .from("user-photos")
-        .list(`${user.id}/outfits`, { search: today });
+        .list(`${user.id}/outfits`, { search: cachePrefix });
 
       if (existingFiles && existingFiles.length >= 4) {
         const urls = await Promise.all(
@@ -137,16 +158,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Fetch profile, numerology map, and photos in parallel
-    const [profileResult, mapResult, photosResult] = await Promise.all([
-      supabase.from("profiles").select("birth_date, sesso").eq("user_id", user.id).single(),
-      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", user.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
-      supabase.from("photos").select("type, storage_path").eq("user_id", user.id),
-    ]);
-
-    const profile = profileResult.data;
-    const numMap = mapResult.data;
-
     // Calculate age
     let userAge: number | null = null;
     if (profile?.birth_date) {
@@ -160,22 +171,17 @@ Deno.serve(async (req) => {
     }
 
     // Determine gender
-    const gender = profile?.sesso || "M"; // default male for backward compat
+    const gender = profile?.sesso || "M";
     const isFemale = gender === "F";
     const genderLabel = isFemale ? "woman" : "man";
 
-    // Calculate vibrations
-    const universalDay = getUniversalDayVibration();
-    let personalDay = universalDay;
+    // Build numerology context
     let numerologyContext = "";
-    
     if (numMap) {
-      personalDay = getPersonalDayVibration(numMap.personal_year);
       numerologyContext = buildNumerologyContext(numMap, personalDay, universalDay);
     }
 
-    // Pick style based on personal day vibration (prioritized over universal)
-    const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
+    // Pick style based on personal day vibration
     const vibeStyles = isFemale ? femaleVibeStyles : maleVibeStyles;
     const style = vibeStyles[vibeKey] || vibeStyles[1];
 
@@ -261,7 +267,7 @@ Deno.serve(async (req) => {
         const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
         const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 
-        const filePath = `${user.id}/outfits/${today}_${label}.png`;
+        const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
         const { error: uploadError } = await supabase.storage
           .from("user-photos")
           .upload(filePath, binaryData, {
