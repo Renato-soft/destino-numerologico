@@ -174,7 +174,7 @@ function getMotivationalMessage(dayVibe: number, personalYear: number): string {
   return motivationalMessages[`${dv}-${py}`] || "Oggi è un giorno unico: ascolta la tua voce interiore e lasciati guidare dalla saggezza dei numeri.";
 }
 
-function getDayVibration(): number {
+function getUniversalDayVibration(): number {
   const today = new Date();
   const day = today.getDate();
   const month = today.getMonth() + 1;
@@ -183,8 +183,17 @@ function getDayVibration(): number {
   return reduceNumber(sum);
 }
 
+function getPersonalDayVibration(personalYear: number): number {
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  const personalMonth = reduceNumber(month + personalYear);
+  return reduceNumber(day + personalMonth);
+}
+
 const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
-  const dayVibe = getDayVibration();
+  const dayVibe = getPersonalDayVibration(personalYear);
+  const universalVibe = getUniversalDayVibration();
   const sectors: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
   
   // Get insights for today's vibration (fallback to reduced if master number)
@@ -212,7 +221,7 @@ const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
             Analisi del giorno — {new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Vibrazione del giorno: <span className="text-primary font-semibold">{dayVibe}</span> · Anno Personale: <span className="text-primary font-semibold">{personalYear}</span>
+            Vibrazione personale del giorno: <span className="text-primary font-semibold">{dayVibe}</span> · Anno Personale: <span className="text-primary font-semibold">{personalYear}</span>
           </p>
         </div>
       </div>
