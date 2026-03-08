@@ -174,13 +174,21 @@ function getMotivationalMessage(dayVibe: number, personalYear: number): string {
   return motivationalMessages[`${dv}-${py}`] || "Oggi è un giorno unico: ascolta la tua voce interiore e lasciati guidare dalla saggezza dei numeri.";
 }
 
-function getDayVibration(): number {
+function getUniversalDayVibration(): number {
   const today = new Date();
   const day = today.getDate();
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
   const sum = day + month + reduceNumber(year);
   return reduceNumber(sum);
+}
+
+function getPersonalDayVibration(personalYear: number): number {
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  const personalMonth = reduceNumber(month + personalYear);
+  return reduceNumber(day + personalMonth);
 }
 
 const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
