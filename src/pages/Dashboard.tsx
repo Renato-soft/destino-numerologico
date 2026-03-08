@@ -14,6 +14,7 @@ import {
   User,
   Users,
   Target,
+  Compass,
   LogOut,
   ChevronRight
 } from "lucide-react";
@@ -120,12 +121,19 @@ const Dashboard = () => {
 
   const quickActions = [
     {
+      title: "I 7 Pilastri del Destino",
+      description: "Percorso evolutivo guidato a tappe",
+      icon: Compass,
+      href: "/pillars",
+      color: "from-fuchsia-500 to-purple-600",
+      primary: true,
+    },
+    {
       title: "Genera la tua Mappa",
       description: "Calcola i tuoi numeri e genera il report completo",
       icon: Map,
       href: "/map",
       color: "from-primary to-accent",
-      primary: true,
     },
     {
       title: "Chat con l'Esperto",
