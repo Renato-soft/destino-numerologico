@@ -15,6 +15,7 @@ import {
   Users,
   Target,
   Compass,
+  ScrollText,
   LogOut,
   ChevronRight
 } from "lucide-react";
