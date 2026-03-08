@@ -194,6 +194,7 @@ function getPersonalDayVibration(personalYear: number): number {
 const DailyAnalysis = ({ personalYear, lifePath }: DailyAnalysisProps) => {
   const dayVibe = getPersonalDayVibration(personalYear);
   const universalVibe = getUniversalDayVibration();
+  const sectors: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
   
   // Get insights for today's vibration (fallback to reduced if master number)
   const vibeKey = dayVibe > 9 ? reduceNumber(dayVibe % 10 + Math.floor(dayVibe / 10)) : dayVibe;
