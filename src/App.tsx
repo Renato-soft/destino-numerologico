@@ -23,6 +23,7 @@ import HouseAnalyzer from "./pages/HouseAnalyzer";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
 import PersonalYear from "./pages/PersonalYear";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/advanced-report" element={<ProtectedRoute route="/advanced-report"><AdvancedReport /></ProtectedRoute>} />
             <Route path="/house" element={<ProtectedRoute route="/house"><HouseAnalyzer /></ProtectedRoute>} />
             <Route path="/community" element={<Community />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/profile" element={<ProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
