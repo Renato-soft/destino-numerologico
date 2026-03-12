@@ -59,6 +59,8 @@ const NumerologyMap = () => {
   const [existingMapId, setExistingMapId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { canAccess } = useSubscription();
+  const hasMapAccess = canAccess("/map");
 
   useEffect(() => {
     loadData();
