@@ -226,6 +226,8 @@ const Dashboard = () => {
         {latestMap && canAccess("/dates") && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {canAccess("/dates") && <DailyOutfits />}
 
+        <PersonalYearBlock profile={profile} latestMap={latestMap} />
+
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -264,26 +266,77 @@ const Dashboard = () => {
             ))}
           </div>
         </motion.section>
-
-        {latestMap && (
-          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-12">
-            <div className="glass-cosmic rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
-              <div className="number-circle number-circle-lg">{latestMap.personal_year}</div>
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-2">
-                  {t("dashboard.personalYear", { year: new Date().getFullYear() })}
-                </h3>
-                <p className="text-muted-foreground">{t("dashboard.personalYearDesc")}</p>
-                <Button variant="cosmic-outline" size="sm" className="mt-4" asChild>
-                  <Link to="/map">{t("dashboard.readInterpretation")}</Link>
-                </Button>
-              </div>
-            </div>
-          </motion.section>
-        )}
       </main>
     </div>
   );
 };
+
+// Personal Year Block component
+function PersonalYearBlock({ profile, latestMap }: { profile: Profile | null; latestMap: NumerologyMap | null }) {
+  const [expandedSector, setExpandedSector] = useState<SectorKey | null>(null);
+  const { t } = useTranslation();
+
+  const personalYear = useMemo(() => {
+    if (latestMap) return latestMap.personal_year;
+    if (!profile?.birth_date) return null;
+    const bd = new Date(profile.birth_date);
+    return calculatePersonalYear(bd.getDate(), bd.getMonth() + 1, new Date().getFullYear());
+  }, [profile, latestMap]);
+
+  if (!personalYear || !profile) return null;
+
+  const sectors = personalYearSectors[personalYear];
+  if (!sectors) return null;
+
+  const sectorKeys: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
+
+  return (
+    <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="mb-12">
+      <div className="glass-cosmic rounded-2xl p-6 md:p-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
+          <div className="number-circle number-circle-lg shrink-0">{personalYear}</div>
+          <div>
+            <h2 className="font-display text-2xl font-bold mb-1">
+              {t("dashboard.personalYear", { year: new Date().getFullYear() })}
+            </h2>
+            <p className="text-muted-foreground">{t("dashboard.personalYearDesc")}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {sectorKeys.map((key) => {
+            const meta = sectorMeta[key];
+            const sector = sectors[key];
+            const isExpanded = expandedSector === key;
+
+            return (
+              <div key={key} className="rounded-xl border border-border/50 bg-card/30 overflow-hidden">
+                <button
+                  onClick={() => setExpandedSector(isExpanded ? null : key)}
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/20 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{meta.icon}</span>
+                    <div>
+                      <span className="font-semibold text-sm">{meta.title}</span>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{sector.summary}</p>
+                    </div>
+                  </div>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+                </button>
+                {isExpanded && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="px-4 pb-4">
+                    <p className="text-sm text-muted-foreground mb-3">{sector.summary}</p>
+                    <p className="text-sm leading-relaxed">{sector.detail}</p>
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
 
 export default Dashboard;
