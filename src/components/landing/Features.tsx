@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Map, MessageCircle, Smartphone, ScrollText, Calendar, Sparkles, Compass, Users, Target, Home, Shirt } from "lucide-react";
+import { Map, MessageCircle, ScrollText, Calendar, Sparkles, Compass, Users, Target, Home, Shirt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
@@ -23,7 +23,6 @@ const Features = () => {
         { icon: Users, title: t("landing.feature8Title"), description: t("landing.feature8Desc") },
         { icon: Calendar, title: t("landing.feature5Title"), description: t("landing.feature5Desc") },
         { icon: Shirt, title: t("landing.feature9Title"), description: t("landing.feature9Desc") },
-        { icon: Smartphone, title: t("landing.feature6Title"), description: t("landing.feature6Desc") },
       ],
     },
     {
