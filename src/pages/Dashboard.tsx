@@ -97,7 +97,8 @@ const Dashboard = () => {
   }
 
   const quickActions = [
-    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600", primary: true },
+    { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
+    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
     { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
     { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
     { title: t("dashboard.advancedReport"), description: t("dashboard.advancedReportDesc"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700" },
