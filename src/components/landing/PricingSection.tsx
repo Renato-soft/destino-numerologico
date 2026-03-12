@@ -14,9 +14,10 @@ const PricingSection = () => {
       icon: Zap,
       gradient: "from-blue-500 to-cyan-500",
       popular: false,
+      oneTime: true,
       features: [
         { label: t("pricing.featureMap"), included: true },
-        { label: t("pricing.featureDailyAnalysis"), included: false },
+        { label: t("pricing.featurePersonalYear"), included: true },
         { label: t("pricing.featureHistory"), included: false },
         { label: t("pricing.featurePillars"), included: false },
         { label: t("pricing.featureChat"), included: false },
