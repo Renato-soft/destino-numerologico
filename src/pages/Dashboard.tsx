@@ -196,6 +196,21 @@ const Dashboard = () => {
               <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
                 <Link to={action.href}>
                   <div className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
+                    {ROUTE_TIERS[action.href] && !canAccess(action.href) && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5 gap-1`}>
+                          <Lock className="w-3 h-3" />
+                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        </Badge>
+                      </div>
+                    )}
+                    {ROUTE_TIERS[action.href] && canAccess(action.href) && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5`}>
+                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        </Badge>
+                      </div>
+                    )}
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4`}>
                       <action.icon className="w-6 h-6 text-white" />
                     </div>
