@@ -29,6 +29,8 @@ import {
   RefreshCw,
   Loader2,
   ChevronDown,
+  Lock,
+  Crown,
 } from "lucide-react";
 import { getPersonalYearSectors, sectorMeta, type SectorKey } from "@/lib/personalYearSectors";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
