@@ -77,9 +77,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, tier: "free", loading: false }));
+        setState(prev => ({ ...prev, subscribed: false, tier: "free", loading: false, freeRequestsUsed: 0 }));
         return;
       }
+
+      // Load per-user free requests count
+      const userKey = `free_requests_used_${session.user.id}`;
+      const usedCount = parseInt(localStorage.getItem(userKey) || "0", 10);
 
       const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
@@ -91,6 +95,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         tier,
         subscriptionEnd: data.subscription_end,
         loading: false,
+        freeRequestsUsed: usedCount,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
