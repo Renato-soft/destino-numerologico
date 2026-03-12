@@ -118,17 +118,21 @@ const Dashboard = () => {
   };
 
   const quickActions = [
+    // Pricing
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
-    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
+    // BASE
     { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
+    // PRO
+    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
+    { title: t("dashboard.compatibility"), description: t("dashboard.compatibilityDesc"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500" },
+    { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
+    // GOLD
     { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
     { title: t("dashboard.advancedReport"), description: t("dashboard.advancedReportDesc"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700" },
-    { title: t("dashboard.history"), description: t("dashboard.historyDesc"), icon: FileText, href: "/history", color: "from-emerald-500 to-teal-500" },
-    { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
-    { title: t("dashboard.compatibility"), description: t("dashboard.compatibilityDesc"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500" },
     { title: t("dashboard.brandAnalyzer"), description: t("dashboard.brandAnalyzerDesc"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500" },
-    { title: t("dashboard.whatsapp"), description: t("dashboard.whatsappDesc"), icon: Smartphone, href: "/whatsapp", color: "from-green-500 to-emerald-500" },
     { title: t("dashboard.houseVibration"), description: t("dashboard.houseVibrationDesc"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500" },
+    // Other
+    { title: t("dashboard.whatsapp"), description: t("dashboard.whatsappDesc"), icon: Smartphone, href: "/whatsapp", color: "from-green-500 to-emerald-500" },
     { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
     { description: t("dashboard.profileDesc"), icon: User, href: "/profile", color: "from-blue-500 to-cyan-500" },
   ];
