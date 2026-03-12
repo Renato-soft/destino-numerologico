@@ -43,6 +43,7 @@ const getSteps = (t: any) => [
 
 const Onboarding = () => {
   const { t, i18n } = useTranslation();
+  const steps = getSteps(t);
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
