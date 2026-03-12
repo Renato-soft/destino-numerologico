@@ -343,11 +343,11 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Sesso</Label>
+                    <Label>{t("onboarding.gender")}</Label>
                     <div className="flex gap-3">
                       {[
-                        { value: "M", label: "Uomo" },
-                        { value: "F", label: "Donna" },
+                        { value: "M", label: t("onboarding.male") },
+                        { value: "F", label: t("onboarding.female") },
                       ].map((option) => (
                         <button
                           key={option.value}
