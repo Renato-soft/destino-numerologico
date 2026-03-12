@@ -124,10 +124,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return state.tier === "free" && state.freeRequestsUsed < 2;
   }, [state.tier, state.freeRequestsUsed]);
 
-  const incrementFreeRequests = useCallback(() => {
+  const incrementFreeRequests = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userKey = session?.user?.id ? `free_requests_used_${session.user.id}` : "free_requests_used";
     setState(prev => {
       const newCount = prev.freeRequestsUsed + 1;
-      localStorage.setItem("free_requests_used", newCount.toString());
+      localStorage.setItem(userKey, newCount.toString());
       return { ...prev, freeRequestsUsed: newCount };
     });
   }, []);
