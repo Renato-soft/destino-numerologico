@@ -41,6 +41,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/map" element={<ProtectedRoute route="/map"><NumerologyMap /></ProtectedRoute>} />
+            <Route path="/personal-year" element={<ProtectedRoute route="/map"><PersonalYear /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute route="/chat"><Chat /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute route="/history"><History /></ProtectedRoute>} />
             <Route path="/dates" element={<ProtectedRoute route="/dates"><FavorableDates /></ProtectedRoute>} />
