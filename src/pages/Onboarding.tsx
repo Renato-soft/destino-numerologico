@@ -215,11 +215,7 @@ const Onboarding = () => {
 
       navigate("/dashboard");
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Errore",
-        description: error.message || "Si è verificato un errore. Riprova.",
-      });
+      toast({ variant: "destructive", title: t("common.error"), description: error.message || t("auth.genericError") });
     } finally {
       setLoading(false);
     }
