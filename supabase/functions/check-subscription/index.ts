@@ -7,6 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Base plan product ID (one-time payment)
+const BASE_PRODUCT_ID = "prod_U8ShObzMBDIryb";
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
@@ -53,29 +56,56 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found customer", { customerId });
 
+    // Check active subscriptions (Pro/Gold)
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
       limit: 1,
     });
 
-    const hasActiveSub = subscriptions.data.length > 0;
-    let productId = null;
-    let subscriptionEnd = null;
-
-    if (hasActiveSub) {
+    if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      productId = subscription.items.data[0].price.product;
+      const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      const productId = subscription.items.data[0].price.product;
       logStep("Active subscription found", { productId, subscriptionEnd });
-    } else {
-      logStep("No active subscription");
+
+      return new Response(JSON.stringify({
+        subscribed: true,
+        product_id: productId,
+        subscription_end: subscriptionEnd,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
     }
 
+    // Check one-time purchases (Base plan)
+    const sessions = await stripe.checkout.sessions.list({
+      customer: customerId,
+      limit: 100,
+    });
+
+    const hasBasePurchase = sessions.data.some((session) => {
+      return session.payment_status === "paid" && session.mode === "payment";
+    });
+
+    if (hasBasePurchase) {
+      logStep("One-time Base purchase found");
+      return new Response(JSON.stringify({
+        subscribed: true,
+        product_id: BASE_PRODUCT_ID,
+        subscription_end: null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    logStep("No active subscription or purchase");
     return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
-      product_id: productId,
-      subscription_end: subscriptionEnd,
+      subscribed: false,
+      product_id: null,
+      subscription_end: null,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

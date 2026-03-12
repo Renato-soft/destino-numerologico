@@ -19,11 +19,11 @@ const Pricing = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async (priceId: string, mode: string) => {
     setLoadingPlan(priceId);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId },
+        body: { priceId, mode },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
@@ -52,13 +52,15 @@ const Pricing = () => {
       name: "Base",
       price: "4.99",
       priceId: PLANS.base.price_id,
+      mode: PLANS.base.mode,
       icon: Zap,
       gradient: "from-blue-500 to-cyan-500",
       popular: false,
+      oneTime: true,
       features: [
         { icon: Map, label: t("pricing.featureMap"), included: true },
-        { icon: BarChart3, label: t("pricing.featureDailyAnalysis"), included: true },
-        { icon: Calendar, label: t("pricing.featureHistory"), included: true },
+        { icon: BarChart3, label: t("pricing.featurePersonalYear"), included: true },
+        { icon: Calendar, label: t("pricing.featureHistory"), included: false },
         { icon: Compass, label: t("pricing.featurePillars"), included: false },
         { icon: Users, label: t("pricing.featureCompatibility"), included: false },
         { icon: Calendar, label: t("pricing.featureDates"), included: false },
@@ -74,6 +76,7 @@ const Pricing = () => {
       name: "Pro",
       price: "9.99",
       priceId: PLANS.pro.price_id,
+      mode: PLANS.pro.mode,
       icon: Star,
       gradient: "from-primary to-accent",
       popular: true,
@@ -96,6 +99,7 @@ const Pricing = () => {
       name: "Gold",
       price: "14.99",
       priceId: PLANS.gold.price_id,
+      mode: PLANS.gold.mode,
       icon: Crown,
       gradient: "from-amber-500 to-yellow-600",
       popular: false,
@@ -184,7 +188,9 @@ const Pricing = () => {
                     <h3 className="font-display text-xl font-bold">{plan.name}</h3>
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-bold">€{plan.price}</span>
-                      <span className="text-muted-foreground text-sm">/{t("pricing.month")}</span>
+                      <span className="text-muted-foreground text-sm">
+                        {plan.oneTime ? ` ${t("pricing.oneTime")}` : `/${t("pricing.month")}`}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -219,7 +225,7 @@ const Pricing = () => {
                   variant={plan.popular ? "cosmic" : "outline"}
                   className="w-full"
                   disabled={isCurrentPlan || !!loadingPlan}
-                  onClick={() => handleSubscribe(plan.priceId)}
+                  onClick={() => handleSubscribe(plan.priceId, plan.mode || "subscription")}
                 >
                   {loadingPlan === plan.priceId
                     ? t("common.loading")
