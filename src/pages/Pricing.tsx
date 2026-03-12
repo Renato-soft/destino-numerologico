@@ -60,7 +60,6 @@ const Pricing = () => {
       features: [
         { icon: Map, label: t("pricing.featureMap"), included: true },
         { icon: BarChart3, label: t("pricing.featurePersonalYear"), included: true },
-        { icon: Calendar, label: t("pricing.featureHistory"), included: false },
         { icon: Compass, label: t("pricing.featurePillars"), included: false },
         { icon: Users, label: t("pricing.featureCompatibility"), included: false },
         { icon: Calendar, label: t("pricing.featureDates"), included: false },
