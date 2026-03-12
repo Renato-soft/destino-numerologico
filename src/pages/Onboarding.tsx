@@ -211,10 +211,7 @@ const Onboarding = () => {
         if (photosError) throw photosError;
       }
 
-      toast({
-        title: "Profilo completato!",
-        description: "Ora puoi generare la tua mappa numerologica.",
-      });
+      toast({ title: t("onboarding.profileComplete"), description: t("onboarding.profileCompleteDesc") });
 
       navigate("/dashboard");
     } catch (error: any) {
