@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { canAccess } = useSubscription();
+  const { canAccess, tier, canUseFreeRequest, loading: subLoading } = useSubscription();
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
