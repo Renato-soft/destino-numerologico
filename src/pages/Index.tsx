@@ -33,7 +33,7 @@ const Index = () => {
 
       <Hero />
       <Features />
-      <NumbersShowcase />
+      <PricingSection />
       <CTA />
       <Footer />
     </div>
