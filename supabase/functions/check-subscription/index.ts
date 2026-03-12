@@ -50,6 +50,19 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
 
+    // Check manual overrides first
+    if (GOLD_OVERRIDES.includes(user.email.toLowerCase())) {
+      logStep("Manual Gold override found", { email: user.email });
+      return new Response(JSON.stringify({
+        subscribed: true,
+        product_id: GOLD_PRODUCT_ID,
+        subscription_end: null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
