@@ -269,6 +269,8 @@
     "featureAdvancedReport": "Advanced AI report (20+ pages)",
     "featureChat": "Chat with AI expert",
     "featureBrand": "Brand vibration analyzer",
-    "featureHouse": "House vibration analysis"
+    "featureHouse": "House vibration analysis",
+    "featurePersonalYear": "Personal year analysis",
+    "oneTime": "one-time"
   }
 }
