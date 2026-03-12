@@ -18,7 +18,6 @@ const PricingSection = () => {
       features: [
         { label: t("pricing.featureMap"), included: true },
         { label: t("pricing.featurePersonalYear"), included: true },
-        { label: t("pricing.featureHistory"), included: false },
         { label: t("pricing.featurePillars"), included: false },
         { label: t("pricing.featureChat"), included: false },
       ],
@@ -34,6 +33,7 @@ const PricingSection = () => {
         { label: t("pricing.featureDailyAnalysis"), included: true },
         { label: t("pricing.featurePillars"), included: true },
         { label: t("pricing.featureCompatibility"), included: true },
+        { label: t("pricing.featureDates"), included: true },
         { label: t("pricing.featureOutfit"), included: true },
       ],
     },
