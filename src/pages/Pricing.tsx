@@ -99,6 +99,7 @@ const Pricing = () => {
       name: "Gold",
       price: "14.99",
       priceId: PLANS.gold.price_id,
+      mode: PLANS.gold.mode,
       icon: Crown,
       gradient: "from-amber-500 to-yellow-600",
       popular: false,
