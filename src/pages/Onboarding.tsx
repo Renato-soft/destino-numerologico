@@ -301,10 +301,10 @@ const Onboarding = () => {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Raccontaci di te
+                  {t("onboarding.tellUs")}
                 </h2>
                 <p className="text-muted-foreground text-center mb-8">
-                  I tuoi dati sono fondamentali per calcolare la mappa numerologica
+                  {t("onboarding.tellUsDesc")}
                 </p>
 
                 <div className="space-y-4">
