@@ -3,15 +3,16 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useSubscription, PlanTier } from "@/hooks/useSubscription";
 
 interface Profile {
   nome: string;
@@ -36,6 +37,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { canAccess } = useSubscription();
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
@@ -95,6 +97,25 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  const ROUTE_TIERS: Record<string, PlanTier> = {
+    "/map": "base",
+    "/history": "pro",
+    "/pillars": "pro",
+    "/compatibility": "pro",
+    "/dates": "pro",
+    "/chat": "gold",
+    "/advanced-report": "gold",
+    "/brand": "gold",
+    "/house": "gold",
+  };
+
+  const TIER_COLORS: Record<PlanTier, string> = {
+    free: "",
+    base: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    pro: "bg-primary/20 text-primary border-primary/30",
+    gold: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  };
 
   const quickActions = [
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
@@ -176,6 +197,21 @@ const Dashboard = () => {
               <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
                 <Link to={action.href}>
                   <div className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
+                    {ROUTE_TIERS[action.href] && !canAccess(action.href) && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5 gap-1`}>
+                          <Lock className="w-3 h-3" />
+                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        </Badge>
+                      </div>
+                    )}
+                    {ROUTE_TIERS[action.href] && canAccess(action.href) && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5`}>
+                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        </Badge>
+                      </div>
+                    )}
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4`}>
                       <action.icon className="w-6 h-6 text-white" />
                     </div>

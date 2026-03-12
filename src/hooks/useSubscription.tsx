@@ -24,7 +24,7 @@ export type PlanTier = "free" | "base" | "pro" | "gold";
 // Feature access map
 const FEATURE_ACCESS: Record<string, PlanTier> = {
   "/map": "base",
-  "/history": "base",
+  "/history": "pro",
   "/pillars": "pro",
   "/compatibility": "pro",
   "/dates": "pro",
