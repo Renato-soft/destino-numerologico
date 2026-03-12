@@ -82,6 +82,7 @@ const Auth = () => {
           return;
         }
         toast({ title: t("auth.registerSuccess"), description: t("auth.registerSuccessDesc") });
+        navigate("/onboarding");
       }
     } catch (error: any) {
       toast({ variant: "destructive", title: t("common.error"), description: error.message || t("auth.genericError") });
