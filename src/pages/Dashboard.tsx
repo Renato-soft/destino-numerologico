@@ -37,7 +37,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { canAccess } = useSubscription();
+  const { canAccess, tier, canUseFreeRequest, loading: subLoading } = useSubscription();
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
@@ -87,13 +87,35 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  if (loading) {
+  if (loading || subLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
           <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
+      </div>
+    );
+  }
+
+  // Free users who have exhausted free requests must pay
+  if (tier === "free" && !canUseFreeRequest()) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md text-center space-y-6 relative z-10">
+          <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+            <Crown className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="font-display text-2xl font-bold">{t("pricing.upgradeRequired")}</h2>
+          <p className="text-muted-foreground">
+            Hai esaurito le prove gratuite. Scegli un piano per continuare ad accedere alla tua area riservata e a tutti i servizi.
+          </p>
+          <Button variant="cosmic" size="lg" onClick={() => navigate("/pricing")}>
+            <Crown className="w-5 h-5 mr-2" />
+            Scegli il tuo Piano
+          </Button>
+        </motion.div>
       </div>
     );
   }
