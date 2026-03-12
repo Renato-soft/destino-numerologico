@@ -211,13 +211,10 @@ const Pricing = () => {
 
                 {/* Outfit preview for Pro plan */}
                 {plan.id === "pro" && (
-                  <div className="mb-4 rounded-xl overflow-hidden border border-border/30">
-                    <img
-                      src={outfitImageUrl}
-                      alt="Outfit example"
-                      className="w-full h-40 object-cover"
-                    />
-                    <p className="text-xs text-muted-foreground text-center py-2">{t("pricing.outfitExample")}</p>
+                  <div className="mb-4 rounded-xl overflow-hidden border border-border/30 bg-gradient-to-br from-primary/10 to-accent/10 p-4 text-center">
+                    <Shirt className="w-10 h-10 mx-auto text-primary mb-2" />
+                    <p className="text-sm font-medium">{t("pricing.featureOutfit")}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("pricing.outfitExample")}</p>
                   </div>
                 )}
 
