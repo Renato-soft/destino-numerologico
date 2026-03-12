@@ -3,10 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ChevronDown, ChevronUp, Calendar } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, Calendar, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { calculatePersonalYear } from "@/lib/numerology";
 import { personalYearSectors, sectorMeta, SectorKey } from "@/lib/personalYearSectors";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const sectorKeys: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
 
