@@ -368,6 +368,31 @@ const NumerologyMap = () => {
               </div>
             </section>
 
+            {/* Remaining sections - blurred for free users */}
+            <div className="relative">
+              {!hasMapAccess && (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
+                  <div className="absolute inset-0 bg-background/60 backdrop-blur-md rounded-2xl" />
+                  <div className="relative z-30 text-center p-8 max-w-md">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Lock className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="font-display text-2xl font-bold mb-3">Sblocca la Mappa Completa</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Acquista il piano Base per accedere alla mappa numerologica completa con tutti i numeri, 
+                      i cicli della vita e l'analisi dell'anno personale.
+                    </p>
+                    <Button variant="cosmic" size="lg" asChild>
+                      <Link to="/pricing">
+                        <Crown className="w-5 h-5 mr-2" />
+                        Scegli il tuo Piano
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className={!hasMapAccess ? "pointer-events-none select-none" : ""}>
+
             {/* Io (was Expression) section */}
             <section className="glass-cosmic rounded-2xl p-8">
               <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
