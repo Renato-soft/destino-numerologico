@@ -102,7 +102,9 @@ const PricingSection = () => {
               <h3 className="font-display text-xl font-bold">{plan.name}</h3>
               <div className="flex items-baseline gap-1 mt-2 mb-6">
                 <span className="text-3xl font-bold">€{plan.price}</span>
-                <span className="text-muted-foreground text-sm">/{t("pricing.month")}</span>
+                <span className="text-muted-foreground text-sm">
+                  {plan.oneTime ? ` ${t("pricing.oneTime")}` : `/${t("pricing.month")}`}
+                </span>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
