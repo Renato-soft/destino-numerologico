@@ -7,14 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ChevronDown, ChevronUp
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
 import { useSubscription, PlanTier } from "@/hooks/useSubscription";
 import { calculatePersonalYear } from "@/lib/numerology";
-import { personalYearSectors, sectorMeta, SectorKey } from "@/lib/personalYearSectors";
 
 interface Profile {
   nome: string;
@@ -154,6 +153,7 @@ const Dashboard = () => {
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
     // BASE
     { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
+    { title: t("dashboard.personalYear", { year: new Date().getFullYear() }), description: t("dashboard.personalYearDesc"), icon: Calendar, href: "/personal-year", color: "from-orange-500 to-amber-500" },
     // PRO
     { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
     { title: t("dashboard.compatibility"), description: t("dashboard.compatibilityDesc"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500" },
@@ -226,7 +226,7 @@ const Dashboard = () => {
         {latestMap && canAccess("/dates") && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {canAccess("/dates") && <DailyOutfits />}
 
-        <PersonalYearBlock profile={profile} latestMap={latestMap} />
+        {/* Personal Year card is in quickActions below */}
 
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
@@ -270,73 +270,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-// Personal Year Block component
-function PersonalYearBlock({ profile, latestMap }: { profile: Profile | null; latestMap: NumerologyMap | null }) {
-  const [expandedSector, setExpandedSector] = useState<SectorKey | null>(null);
-  const { t } = useTranslation();
-
-  const personalYear = useMemo(() => {
-    if (latestMap) return latestMap.personal_year;
-    if (!profile?.birth_date) return null;
-    const bd = new Date(profile.birth_date);
-    return calculatePersonalYear(bd.getDate(), bd.getMonth() + 1, new Date().getFullYear());
-  }, [profile, latestMap]);
-
-  if (!personalYear || !profile) return null;
-
-  const sectors = personalYearSectors[personalYear];
-  if (!sectors) return null;
-
-  const sectorKeys: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
-
-  return (
-    <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="mb-12">
-      <div className="glass-cosmic rounded-2xl p-6 md:p-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
-          <div className="number-circle number-circle-lg shrink-0">{personalYear}</div>
-          <div>
-            <h2 className="font-display text-2xl font-bold mb-1">
-              {t("dashboard.personalYear", { year: new Date().getFullYear() })}
-            </h2>
-            <p className="text-muted-foreground">{t("dashboard.personalYearDesc")}</p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {sectorKeys.map((key) => {
-            const meta = sectorMeta[key];
-            const sector = sectors[key];
-            const isExpanded = expandedSector === key;
-
-            return (
-              <div key={key} className="rounded-xl border border-border/50 bg-card/30 overflow-hidden">
-                <button
-                  onClick={() => setExpandedSector(isExpanded ? null : key)}
-                  className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/20 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{meta.icon}</span>
-                    <div>
-                      <span className="font-semibold text-sm">{meta.title}</span>
-                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{sector.summary}</p>
-                    </div>
-                  </div>
-                  {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
-                </button>
-                {isExpanded && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="px-4 pb-4">
-                    <p className="text-sm text-muted-foreground mb-3">{sector.summary}</p>
-                    <p className="text-sm leading-relaxed">{sector.detail}</p>
-                  </motion.div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </motion.section>
-  );
-}
 
 export default Dashboard;
