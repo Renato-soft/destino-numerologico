@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-const nameSchema = z.string().min(2, "Minimo 2 caratteri").max(50, "Massimo 50 caratteri");
-const dateSchema = z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/, "Formato: gg/mm/aaaa");
+const nameSchema = z.string().min(2).max(50);
+const dateSchema = z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/);
 
 interface FormData {
   nome: string;
