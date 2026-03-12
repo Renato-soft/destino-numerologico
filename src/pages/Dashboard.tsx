@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,12 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ChevronDown, ChevronUp
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
 import { useSubscription, PlanTier } from "@/hooks/useSubscription";
+import { calculatePersonalYear } from "@/lib/numerology";
+import { personalYearSectors, sectorMeta, SectorKey } from "@/lib/personalYearSectors";
 
 interface Profile {
   nome: string;
