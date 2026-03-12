@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
