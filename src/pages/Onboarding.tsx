@@ -405,25 +405,23 @@ const Onboarding = () => {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Le tue foto
+                  {t("onboarding.photosTitle")}
                 </h2>
                 <p className="text-muted-foreground text-center mb-6">
-                  La foto in primo piano è <span className="font-semibold text-foreground">obbligatoria</span> per fornirti ogni giorno consigli di abbigliamento personalizzati, 
-                  basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura.
+                  {t("onboarding.photosDesc").split("<1>")[0]}<span className="font-semibold text-foreground">{t("onboarding.photosDesc").split("<1>")[1]?.split("</1>")[0]}</span>{t("onboarding.photosDesc").split("</1>")[1] || ""}
                 </p>
                 <p className="text-sm text-muted-foreground text-center mb-2">
-                  💡 <span className="font-medium text-foreground">Consiglio:</span> carica anche le foto a figura intera per ottenere suggerimenti di outfit ancora più precisi, 
-                  basati sulla tua corporatura reale.
+                  {t("onboarding.photosTip").split("<1>")[0]}<span className="font-medium text-foreground">{t("onboarding.photosTip").split("<1>")[1]?.split("</1>")[0]}</span>{t("onboarding.photosTip").split("</1>")[1] || ""}
                 </p>
                 <p className="text-xs text-muted-foreground text-center mb-8 italic">
-                  Le foto sono private e visibili solo a te. Verranno utilizzate esclusivamente per generare suggerimenti di outfit su misura.
+                  {t("onboarding.photosPrivacy")}
                 </p>
 
                 <div className="grid gap-4">
                   {[
-                    { key: "face" as const, label: "Viso (obbligatoria)", required: true },
-                    { key: "fullFront" as const, label: "Figura intera frontale (consigliata)", required: false },
-                    { key: "fullSide" as const, label: "Figura intera laterale (consigliata)", required: false },
+                    { key: "face" as const, label: t("onboarding.facePhoto"), required: true },
+                    { key: "fullFront" as const, label: t("onboarding.frontPhoto"), required: false },
+                    { key: "fullSide" as const, label: t("onboarding.sidePhoto"), required: false },
                   ].map((photo) => (
                     <div key={photo.key} className="space-y-2">
                       <Label>{photo.label}</Label>
