@@ -97,6 +97,25 @@ const Dashboard = () => {
     );
   }
 
+  const ROUTE_TIERS: Record<string, PlanTier> = {
+    "/map": "base",
+    "/history": "pro",
+    "/pillars": "pro",
+    "/compatibility": "pro",
+    "/dates": "pro",
+    "/chat": "gold",
+    "/advanced-report": "gold",
+    "/brand": "gold",
+    "/house": "gold",
+  };
+
+  const TIER_COLORS: Record<PlanTier, string> = {
+    free: "",
+    base: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    pro: "bg-primary/20 text-primary border-primary/30",
+    gold: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  };
+
   const quickActions = [
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
     { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
