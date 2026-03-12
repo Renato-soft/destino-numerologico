@@ -518,39 +518,22 @@ const Onboarding = () => {
           {/* Navigation buttons */}
           <div className="flex gap-3 mt-8">
             {currentStep > 1 && (
-              <Button
-                variant="outline"
-                onClick={handlePrev}
-                className="flex-1"
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Indietro
+              <Button variant="outline" onClick={handlePrev} className="flex-1">
+                <ChevronLeft className="w-4 h-4 mr-1" />{t("common.back")}
               </Button>
             )}
             {currentStep < 3 ? (
-              <Button
-                variant="cosmic"
-                onClick={handleNext}
-                className="flex-1"
-              >
-                Avanti
-                <ChevronRight className="w-4 h-4 ml-1" />
+              <Button variant="cosmic" onClick={handleNext} className="flex-1">
+                {t("common.next")}<ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             ) : (
-              <Button
-                variant="cosmic"
-                onClick={handleSubmit}
-                disabled={loading}
-                className="flex-1"
-              >
+              <Button variant="cosmic" onClick={handleSubmit} disabled={loading} className="flex-1">
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Salvataggio...
+                    {t("onboarding.completing")}
                   </span>
-                ) : (
-                  "Completa"
-                )}
+                ) : t("onboarding.completeProfile")}
               </Button>
             )}
           </div>
