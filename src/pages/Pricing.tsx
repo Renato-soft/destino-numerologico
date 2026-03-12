@@ -225,7 +225,7 @@ const Pricing = () => {
                   variant={plan.popular ? "cosmic" : "outline"}
                   className="w-full"
                   disabled={isCurrentPlan || !!loadingPlan}
-                  onClick={() => handleSubscribe(plan.priceId)}
+                  onClick={() => handleSubscribe(plan.priceId, plan.mode || "subscription")}
                 >
                   {loadingPlan === plan.priceId
                     ? t("common.loading")
