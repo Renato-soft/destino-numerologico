@@ -70,7 +70,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     tier: "free",
     subscriptionEnd: null,
     loading: true,
-    freeRequestsUsed: parseInt(localStorage.getItem("free_requests_used") || "0", 10),
+    freeRequestsUsed: 0,
   });
 
   const checkSubscription = useCallback(async () => {
