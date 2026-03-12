@@ -50,7 +50,7 @@ const Pricing = () => {
     {
       id: "base" as PlanTier,
       name: "Base",
-      price: "9.99",
+      price: "4.99",
       priceId: PLANS.base.price_id,
       icon: Zap,
       gradient: "from-blue-500 to-cyan-500",
