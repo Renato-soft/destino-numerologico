@@ -445,8 +445,8 @@ const Onboarding = () => {
                           </div>
                         ) : (
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                            <Upload className="w-8 h-8" />
-                            <span className="text-sm">Clicca per caricare</span>
+                          <Upload className="w-8 h-8" />
+                            <span className="text-sm">{t("onboarding.clickToUpload")}</span>
                           </div>
                         )}
                         <input
