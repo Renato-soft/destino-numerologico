@@ -115,11 +115,7 @@ const Onboarding = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "File troppo grande",
-          description: "La foto deve essere inferiore a 5MB",
-        });
+        toast({ variant: "destructive", title: t("onboarding.fileTooLarge"), description: t("onboarding.fileTooLargeDesc") });
         return;
       }
 
