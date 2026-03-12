@@ -5,23 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Sparkles, 
-  Map, 
-  MessageCircle, 
-  FileText, 
-  Calendar, 
-  Smartphone,
-  User,
-  Users,
-  Target,
-  Compass,
-  ScrollText,
-  LogOut,
-  ChevronRight,
-  Home
+  Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
+import { useTranslation } from "react-i18next";
 
 interface Profile {
   nome: string;
@@ -40,6 +29,7 @@ interface NumerologyMap {
 }
 
 const Dashboard = () => {
+  const { t, i18n } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [latestMap, setLatestMap] = useState<NumerologyMap | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,31 +39,24 @@ const Dashboard = () => {
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
+      if (!session) { navigate("/auth"); return; }
 
-      // Load profile
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("nome, cognome, birth_date")
+        .select("nome, cognome, birth_date, language")
         .eq("user_id", session.user.id)
-        .maybeSingle();
+        .maybeSingle() as any;
 
-      if (profileError) {
-        console.error("Error loading profile:", profileError);
-      }
+      if (profileError) console.error("Error loading profile:", profileError);
+      if (!profileData || !profileData.nome) { navigate("/onboarding"); return; }
 
-      if (!profileData || !profileData.nome) {
-        navigate("/onboarding");
-        return;
+      // Apply user language
+      if (profileData.language && profileData.language !== i18n.language) {
+        i18n.changeLanguage(profileData.language);
       }
 
       setProfile(profileData);
 
-      // Load latest map
       const { data: mapData } = await supabase
         .from("numerology_maps")
         .select("*")
@@ -82,31 +65,22 @@ const Dashboard = () => {
         .limit(1)
         .maybeSingle();
 
-      if (mapData) {
-        setLatestMap(mapData);
-      }
-
+      if (mapData) setLatestMap(mapData);
       setLoading(false);
     };
 
     checkAuthAndLoadData();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") {
-        navigate("/auth");
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") navigate("/auth");
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, i18n]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast({
-      title: "Arrivederci!",
-      description: "Sei stato disconnesso.",
-    });
+    toast({ title: t("dashboard.logoutSuccess"), description: t("dashboard.logoutSuccessDesc") });
     navigate("/");
   };
 
@@ -115,120 +89,43 @@ const Dashboard = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-muted-foreground">Caricamento...</p>
+          <p className="text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
   }
 
   const quickActions = [
-    {
-      title: "I 7 Pilastri del Destino",
-      description: "Percorso evolutivo guidato a tappe",
-      icon: Compass,
-      href: "/pillars",
-      color: "from-fuchsia-500 to-purple-600",
-      primary: true,
-    },
-    {
-      title: "Genera la tua Mappa",
-      description: "Calcola i tuoi numeri e genera il report completo",
-      icon: Map,
-      href: "/map",
-      color: "from-primary to-accent",
-    },
-    {
-      title: "Chat con l'Esperto",
-      description: "Parla con il consulente numerologico AI",
-      icon: MessageCircle,
-      href: "/chat",
-      color: "from-secondary to-purple-500",
-    },
-    {
-      title: "Report Avanzato",
-      description: "Analisi AI di 20+ pagine con revisione manuale",
-      icon: ScrollText,
-      href: "/advanced-report",
-      color: "from-amber-600 to-yellow-700",
-    },
-    {
-      title: "Storico Mappe",
-      description: "Visualizza e scarica i tuoi report PDF",
-      icon: FileText,
-      href: "/history",
-      color: "from-emerald-500 to-teal-500",
-    },
-    {
-      title: "Date Favorevoli",
-      description: "Trova le date migliori per i tuoi obiettivi",
-      icon: Calendar,
-      href: "/dates",
-      color: "from-amber-500 to-orange-500",
-    },
-    {
-      title: "Compatibilità",
-      description: "Confronta la tua mappa con un'altra persona",
-      icon: Users,
-      href: "/compatibility",
-      color: "from-pink-500 to-rose-500",
-    },
-    {
-      title: "Analizzatore Brand",
-      description: "Testa la vibrazione numerologica di un nome",
-      icon: Target,
-      href: "/brand",
-      color: "from-violet-500 to-fuchsia-500",
-    },
-    {
-      title: "WhatsApp",
-      description: "Configura il buongiorno quotidiano",
-      icon: Smartphone,
-      href: "/whatsapp",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      title: "Vibrazione Casa",
-      description: "Analizza l'energia del tuo spazio",
-      icon: Home,
-      href: "/house",
-      color: "from-cyan-500 to-sky-500",
-    },
-    {
-      title: "Community",
-      description: "Condividi il tuo viaggio numerologico",
-      icon: MessageCircle,
-      href: "/community",
-      color: "from-indigo-500 to-purple-500",
-    },
-    {
-      description: "Modifica i tuoi dati personali",
-      icon: User,
-      href: "/profile",
-      color: "from-blue-500 to-cyan-500",
-    },
+    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600", primary: true },
+    { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
+    { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
+    { title: t("dashboard.advancedReport"), description: t("dashboard.advancedReportDesc"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700" },
+    { title: t("dashboard.history"), description: t("dashboard.historyDesc"), icon: FileText, href: "/history", color: "from-emerald-500 to-teal-500" },
+    { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
+    { title: t("dashboard.compatibility"), description: t("dashboard.compatibilityDesc"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500" },
+    { title: t("dashboard.brandAnalyzer"), description: t("dashboard.brandAnalyzerDesc"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500" },
+    { title: t("dashboard.whatsapp"), description: t("dashboard.whatsappDesc"), icon: Smartphone, href: "/whatsapp", color: "from-green-500 to-emerald-500" },
+    { title: t("dashboard.houseVibration"), description: t("dashboard.houseVibrationDesc"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500" },
+    { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
+    { description: t("dashboard.profileDesc"), icon: User, href: "/profile", color: "from-blue-500 to-cyan-500" },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Background */}
       <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
       <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
 
-      {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-xl font-semibold hidden sm:block">
-              Destino Numerologico
-            </span>
+            <span className="font-display text-xl font-semibold hidden sm:block">{t("common.appName")}</span>
           </Link>
-
           <div className="flex items-center gap-4">
             <span className="text-muted-foreground hidden md:block">
-              Ciao, <span className="text-foreground font-medium">{profile?.nome}</span>
+              {t("dashboard.hello")} <span className="text-foreground font-medium">{profile?.nome}</span>
             </span>
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="w-5 h-5" />
@@ -237,46 +134,29 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main content */}
       <main className="relative z-10 container mx-auto px-4 py-8">
-        {/* Welcome section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
+        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-            Benvenuto, <span className="text-gradient-gold">{profile?.nome}</span>
+            {t("dashboard.welcome").split("<1>")[0]}
+            <span className="text-gradient-gold">{profile?.nome}</span>
+            {t("dashboard.welcome").split("</1>")[1] || ""}
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Esplora il tuo destino numerologico
-          </p>
+          <p className="text-muted-foreground text-lg">{t("dashboard.explore")}</p>
         </motion.section>
 
-        {/* Current numbers summary (if map exists) */}
         {latestMap && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-12"
-          >
-            <h2 className="font-display text-xl font-semibold mb-4">I tuoi numeri</h2>
+          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
+            <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.yourNumbers")}</h2>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[
-                { label: "Destino", value: latestMap.life_path },
-                { label: "Io", value: latestMap.destiny_expression },
-                { label: "Anima", value: latestMap.soul },
-                { label: "Personalità", value: latestMap.personality },
-                { label: "Quintessenza", value: (() => { const s = latestMap.destiny_expression + latestMap.life_path; let r = s; while (r > 9 && r !== 11 && r !== 22) { r = r.toString().split('').reduce((a, d) => a + parseInt(d), 0); } return r; })() },
-              ].map((item, index) => (
-                <div
-                  key={item.label}
-                  className="glass-cosmic rounded-xl p-4 text-center"
-                >
-                  <div className="number-circle mx-auto mb-2 w-12 h-12 text-xl">
-                    {item.value}
-                  </div>
+                { label: t("dashboard.destiny"), value: latestMap.life_path },
+                { label: t("dashboard.self"), value: latestMap.destiny_expression },
+                { label: t("dashboard.soul"), value: latestMap.soul },
+                { label: t("dashboard.personality"), value: latestMap.personality },
+                { label: t("dashboard.quintessence"), value: (() => { const s = latestMap.destiny_expression + latestMap.life_path; let r = s; while (r > 9 && r !== 11 && r !== 22) { r = r.toString().split('').reduce((a, d) => a + parseInt(d), 0); } return r; })() },
+              ].map((item) => (
+                <div key={item.label} className="glass-cosmic rounded-xl p-4 text-center">
+                  <div className="number-circle mx-auto mb-2 w-12 h-12 text-xl">{item.value}</div>
                   <p className="text-sm text-muted-foreground">{item.label}</p>
                 </div>
               ))}
@@ -284,52 +164,26 @@ const Dashboard = () => {
           </motion.section>
         )}
 
-        {/* Daily Analysis */}
-        {latestMap && (
-          <DailyAnalysis 
-            personalYear={latestMap.personal_year} 
-            lifePath={latestMap.life_path} 
-          />
-        )}
-
-        {/* Daily Outfits */}
+        {latestMap && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         <DailyOutfits />
 
-        {/* Quick actions */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h2 className="font-display text-xl font-semibold mb-4">Azioni rapide</h2>
+        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action, index) => (
-              <motion.div
-                key={action.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-              >
+              <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
                 <Link to={action.href}>
-                  <div
-                    className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${
-                      action.primary
-                        ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50"
-                        : "bg-card/50 border-border/50 hover:border-primary/30"
-                    }`}
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4`}
-                    >
+                  <div className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4`}>
                       <action.icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="font-display text-lg font-semibold mb-1 flex items-center gap-2">
-                      {action.title}
-                      <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {action.description}
-                    </p>
+                    {action.title && (
+                      <h3 className="font-display text-lg font-semibold mb-1 flex items-center gap-2">
+                        {action.title}
+                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                      </h3>
+                    )}
+                    <p className="text-sm text-muted-foreground">{action.description}</p>
                   </div>
                 </Link>
               </motion.div>
@@ -337,27 +191,17 @@ const Dashboard = () => {
           </div>
         </motion.section>
 
-        {/* Personal year info */}
         {latestMap && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-12"
-          >
+          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-12">
             <div className="glass-cosmic rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
-              <div className="number-circle number-circle-lg">
-                {latestMap.personal_year}
-              </div>
+              <div className="number-circle number-circle-lg">{latestMap.personal_year}</div>
               <div>
                 <h3 className="font-display text-xl font-semibold mb-2">
-                  Anno Personale {new Date().getFullYear()}
+                  {t("dashboard.personalYear", { year: new Date().getFullYear() })}
                 </h3>
-                <p className="text-muted-foreground">
-                  Questo è il tuo anno personale. Scopri cosa ti riserva e come sfruttare al meglio le energie dell'anno.
-                </p>
+                <p className="text-muted-foreground">{t("dashboard.personalYearDesc")}</p>
                 <Button variant="cosmic-outline" size="sm" className="mt-4" asChild>
-                  <Link to="/map">Leggi l'interpretazione completa</Link>
+                  <Link to="/map">{t("dashboard.readInterpretation")}</Link>
                 </Button>
               </div>
             </div>
