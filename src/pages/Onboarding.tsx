@@ -106,11 +106,7 @@ const Onboarding = () => {
 
   const validateStep2 = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.photos.face) {
-      newErrors.face = "Foto viso richiesta";
-    }
-
+    if (!formData.photos.face) newErrors.face = t("onboarding.faceRequired");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
