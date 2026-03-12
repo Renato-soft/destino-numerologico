@@ -23,6 +23,7 @@ import HouseAnalyzer from "./pages/HouseAnalyzer";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
 import PersonalYear from "./pages/PersonalYear";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
