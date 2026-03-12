@@ -1,6 +1,7 @@
 import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
 import NumbersShowcase from "@/components/landing/NumbersShowcase";
+import PricingSection from "@/components/landing/PricingSection";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
 import { useTranslation } from "react-i18next";
@@ -33,6 +34,7 @@ const Index = () => {
       <Hero />
       <Features />
       <NumbersShowcase />
+      <PricingSection />
       <CTA />
       <Footer />
     </div>
