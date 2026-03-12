@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { 
   Sparkles, 
   User, 
@@ -19,8 +20,8 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-const nameSchema = z.string().min(2, "Minimo 2 caratteri").max(50, "Massimo 50 caratteri");
-const dateSchema = z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/, "Formato: gg/mm/aaaa");
+const nameSchema = z.string().min(2).max(50);
+const dateSchema = z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/);
 
 interface FormData {
   nome: string;
@@ -34,13 +35,15 @@ interface FormData {
   };
 }
 
-const steps = [
-  { id: 1, title: "I tuoi dati", icon: User },
-  { id: 2, title: "Le tue foto", icon: Camera },
-  { id: 3, title: "Conferma", icon: Check },
+const getSteps = (t: any) => [
+  { id: 1, title: t("onboarding.step1"), icon: User },
+  { id: 2, title: t("onboarding.step2"), icon: Camera },
+  { id: 3, title: t("onboarding.step3"), icon: Check },
 ];
 
 const Onboarding = () => {
+  const { t, i18n } = useTranslation();
+  const steps = getSteps(t);
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -85,44 +88,26 @@ const Onboarding = () => {
 
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
-
     const nomeResult = nameSchema.safeParse(formData.nome);
-    if (!nomeResult.success) {
-      newErrors.nome = nomeResult.error.errors[0].message;
-    }
-
+    if (!nomeResult.success) newErrors.nome = t("onboarding.minChars");
     const cognomeResult = nameSchema.safeParse(formData.cognome);
-    if (!cognomeResult.success) {
-      newErrors.cognome = cognomeResult.error.errors[0].message;
-    }
-
-    if (!formData.sesso) {
-      newErrors.sesso = "Seleziona il tuo sesso";
-    }
-
+    if (!cognomeResult.success) newErrors.cognome = t("onboarding.minChars");
+    if (!formData.sesso) newErrors.sesso = t("onboarding.selectGender");
     const dateResult = dateSchema.safeParse(formData.birthDate);
     if (!dateResult.success) {
-      newErrors.birthDate = dateResult.error.errors[0].message;
+      newErrors.birthDate = t("onboarding.dateFormat");
     } else {
-      // Validate actual date
       const [day, month, year] = formData.birthDate.split("/").map(Number);
       const date = new Date(year, month - 1, day);
-      if (isNaN(date.getTime()) || date > new Date()) {
-        newErrors.birthDate = "Data non valida";
-      }
+      if (isNaN(date.getTime()) || date > new Date()) newErrors.birthDate = t("onboarding.invalidDate");
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStep2 = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.photos.face) {
-      newErrors.face = "Foto viso richiesta";
-    }
-
+    if (!formData.photos.face) newErrors.face = t("onboarding.faceRequired");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -131,11 +116,7 @@ const Onboarding = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "File troppo grande",
-          description: "La foto deve essere inferiore a 5MB",
-        });
+        toast({ variant: "destructive", title: t("onboarding.fileTooLarge"), description: t("onboarding.fileTooLargeDesc") });
         return;
       }
 
@@ -176,7 +157,7 @@ const Onboarding = () => {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Non autenticato");
+      if (!session) throw new Error(t("onboarding.notAuthenticated"));
 
       const userId = session.user.id;
 
@@ -213,6 +194,7 @@ const Onboarding = () => {
         birth_date: birthDate.toISOString().split("T")[0],
         sesso: formData.sesso,
         onboarding_completed: true,
+        language: i18n.language,
       } as any);
 
       if (profileError) throw profileError;
@@ -230,18 +212,11 @@ const Onboarding = () => {
         if (photosError) throw photosError;
       }
 
-      toast({
-        title: "Profilo completato!",
-        description: "Ora puoi generare la tua mappa numerologica.",
-      });
+      toast({ title: t("onboarding.profileComplete"), description: t("onboarding.profileCompleteDesc") });
 
       navigate("/dashboard");
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Errore",
-        description: error.message || "Si è verificato un errore. Riprova.",
-      });
+      toast({ variant: "destructive", title: t("common.error"), description: error.message || t("auth.genericError") });
     } finally {
       setLoading(false);
     }
@@ -277,7 +252,7 @@ const Onboarding = () => {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
           >
             <LogOut className="w-4 h-4" />
-            Esci
+            {t("common.logout")}
           </button>
         </div>
         {/* Progress steps */}
@@ -326,18 +301,18 @@ const Onboarding = () => {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Raccontaci di te
+                  {t("onboarding.tellUs")}
                 </h2>
                 <p className="text-muted-foreground text-center mb-8">
-                  I tuoi dati sono fondamentali per calcolare la mappa numerologica
+                  {t("onboarding.tellUsDesc")}
                 </p>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="nome">Nome</Label>
+                    <Label htmlFor="nome">{t("onboarding.firstName")}</Label>
                     <Input
                       id="nome"
-                      placeholder="Il tuo nome"
+                      placeholder={t("onboarding.firstNamePlaceholder")}
                       value={formData.nome}
                       onChange={(e) => {
                         setFormData({ ...formData, nome: e.target.value });
@@ -351,10 +326,10 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cognome">Cognome</Label>
+                    <Label htmlFor="cognome">{t("onboarding.lastName")}</Label>
                     <Input
                       id="cognome"
-                      placeholder="Il tuo cognome"
+                      placeholder={t("onboarding.lastNamePlaceholder")}
                       value={formData.cognome}
                       onChange={(e) => {
                         setFormData({ ...formData, cognome: e.target.value });
@@ -368,11 +343,11 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Sesso</Label>
+                    <Label>{t("onboarding.gender")}</Label>
                     <div className="flex gap-3">
                       {[
-                        { value: "M", label: "Uomo" },
-                        { value: "F", label: "Donna" },
+                        { value: "M", label: t("onboarding.male") },
+                        { value: "F", label: t("onboarding.female") },
                       ].map((option) => (
                         <button
                           key={option.value}
@@ -397,12 +372,12 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthDate">Data di nascita</Label>
+                    <Label htmlFor="birthDate">{t("onboarding.birthDate")}</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
                         id="birthDate"
-                        placeholder="gg/mm/aaaa"
+                        placeholder={t("onboarding.birthDatePlaceholder")}
                         value={formData.birthDate}
                         onChange={(e) => {
                           const formatted = formatDateInput(e.target.value);
@@ -430,25 +405,23 @@ const Onboarding = () => {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Le tue foto
+                  {t("onboarding.photosTitle")}
                 </h2>
                 <p className="text-muted-foreground text-center mb-6">
-                  La foto in primo piano è <span className="font-semibold text-foreground">obbligatoria</span> per fornirti ogni giorno consigli di abbigliamento personalizzati, 
-                  basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura.
+                  {t("onboarding.photosDesc").split("<1>")[0]}<span className="font-semibold text-foreground">{t("onboarding.photosDesc").split("<1>")[1]?.split("</1>")[0]}</span>{t("onboarding.photosDesc").split("</1>")[1] || ""}
                 </p>
                 <p className="text-sm text-muted-foreground text-center mb-2">
-                  💡 <span className="font-medium text-foreground">Consiglio:</span> carica anche le foto a figura intera per ottenere suggerimenti di outfit ancora più precisi, 
-                  basati sulla tua corporatura reale.
+                  {t("onboarding.photosTip").split("<1>")[0]}<span className="font-medium text-foreground">{t("onboarding.photosTip").split("<1>")[1]?.split("</1>")[0]}</span>{t("onboarding.photosTip").split("</1>")[1] || ""}
                 </p>
                 <p className="text-xs text-muted-foreground text-center mb-8 italic">
-                  Le foto sono private e visibili solo a te. Verranno utilizzate esclusivamente per generare suggerimenti di outfit su misura.
+                  {t("onboarding.photosPrivacy")}
                 </p>
 
                 <div className="grid gap-4">
                   {[
-                    { key: "face" as const, label: "Viso (obbligatoria)", required: true },
-                    { key: "fullFront" as const, label: "Figura intera frontale (consigliata)", required: false },
-                    { key: "fullSide" as const, label: "Figura intera laterale (consigliata)", required: false },
+                    { key: "face" as const, label: t("onboarding.facePhoto"), required: true },
+                    { key: "fullFront" as const, label: t("onboarding.frontPhoto"), required: false },
+                    { key: "fullSide" as const, label: t("onboarding.sidePhoto"), required: false },
                   ].map((photo) => (
                     <div key={photo.key} className="space-y-2">
                       <Label>{photo.label}</Label>
@@ -472,8 +445,8 @@ const Onboarding = () => {
                           </div>
                         ) : (
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                            <Upload className="w-8 h-8" />
-                            <span className="text-sm">Clicca per caricare</span>
+                          <Upload className="w-8 h-8" />
+                            <span className="text-sm">{t("onboarding.clickToUpload")}</span>
                           </div>
                         )}
                         <input
@@ -494,40 +467,30 @@ const Onboarding = () => {
 
             {/* Step 3: Confirm */}
             {currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Conferma i tuoi dati
-                </h2>
-                <p className="text-muted-foreground text-center mb-8">
-                  Verifica che tutto sia corretto
-                </p>
+              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <h2 className="font-display text-2xl font-bold text-center mb-2">{t("onboarding.confirmTitle")}</h2>
+                <p className="text-muted-foreground text-center mb-8">{t("onboarding.confirmDesc")}</p>
 
                 <div className="space-y-6">
-                  {/* Summary */}
                   <div className="bg-muted/30 rounded-xl p-4 space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Nome</span>
+                      <span className="text-muted-foreground">{t("onboarding.firstName")}</span>
                       <span className="font-medium">{formData.nome}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Cognome</span>
+                      <span className="text-muted-foreground">{t("onboarding.lastName")}</span>
                       <span className="font-medium">{formData.cognome}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Sesso</span>
-                      <span className="font-medium">{formData.sesso === "M" ? "Uomo" : "Donna"}</span>
+                      <span className="text-muted-foreground">{t("onboarding.gender")}</span>
+                      <span className="font-medium">{formData.sesso === "M" ? t("onboarding.male") : t("onboarding.female")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Data di nascita</span>
+                      <span className="text-muted-foreground">{t("onboarding.birthDate")}</span>
                       <span className="font-medium">{formData.birthDate}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Foto caricate</span>
+                      <span className="text-muted-foreground">{t("onboarding.confirmPhotos")}</span>
                       <span className="font-medium">
                         {Object.values(formData.photos).filter(Boolean).length}/3
                       </span>
@@ -555,39 +518,22 @@ const Onboarding = () => {
           {/* Navigation buttons */}
           <div className="flex gap-3 mt-8">
             {currentStep > 1 && (
-              <Button
-                variant="outline"
-                onClick={handlePrev}
-                className="flex-1"
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Indietro
+              <Button variant="outline" onClick={handlePrev} className="flex-1">
+                <ChevronLeft className="w-4 h-4 mr-1" />{t("common.back")}
               </Button>
             )}
             {currentStep < 3 ? (
-              <Button
-                variant="cosmic"
-                onClick={handleNext}
-                className="flex-1"
-              >
-                Avanti
-                <ChevronRight className="w-4 h-4 ml-1" />
+              <Button variant="cosmic" onClick={handleNext} className="flex-1">
+                {t("common.next")}<ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             ) : (
-              <Button
-                variant="cosmic"
-                onClick={handleSubmit}
-                disabled={loading}
-                className="flex-1"
-              >
+              <Button variant="cosmic" onClick={handleSubmit} disabled={loading} className="flex-1">
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Salvataggio...
+                    {t("onboarding.completing")}
                   </span>
-                ) : (
-                  "Completa"
-                )}
+                ) : t("onboarding.completeProfile")}
               </Button>
             )}
           </div>

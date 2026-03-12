@@ -469,6 +469,7 @@ export type Database = {
           cognome: string
           created_at: string
           id: string
+          language: string
           nome: string
           onboarding_completed: boolean | null
           sesso: string | null
@@ -485,6 +486,7 @@ export type Database = {
           cognome: string
           created_at?: string
           id?: string
+          language?: string
           nome: string
           onboarding_completed?: boolean | null
           sesso?: string | null
@@ -501,6 +503,7 @@ export type Database = {
           cognome?: string
           created_at?: string
           id?: string
+          language?: string
           nome?: string
           onboarding_completed?: boolean | null
           sesso?: string | null
