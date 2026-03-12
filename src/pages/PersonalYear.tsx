@@ -86,11 +86,12 @@ const PersonalYear = () => {
               </p>
             </motion.div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 relative">
               {sectorKeys.map((key, index) => {
                 const meta = sectorMeta[key];
                 const sector = sectors[key];
                 const isExpanded = expandedSector === key;
+                const isLocked = !hasFullAccess && index > 0;
 
                 return (
                   <motion.div
@@ -98,11 +99,15 @@ const PersonalYear = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08 }}
-                    className="glass-cosmic rounded-2xl overflow-hidden"
+                    className={`glass-cosmic rounded-2xl overflow-hidden relative ${isLocked ? "select-none" : ""}`}
                   >
+                    {isLocked && (
+                      <div className="absolute inset-0 z-10 backdrop-blur-md bg-background/40 rounded-2xl" />
+                    )}
                     <button
-                      onClick={() => setExpandedSector(isExpanded ? null : key)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/10 transition-colors"
+                      onClick={() => !isLocked && setExpandedSector(isExpanded ? null : key)}
+                      className={`w-full flex items-center justify-between p-5 text-left transition-colors ${isLocked ? "cursor-default" : "hover:bg-muted/10"}`}
+                      disabled={isLocked}
                     >
                       <div className="flex items-center gap-4">
                         <span className="text-2xl">{meta.icon}</span>
@@ -111,13 +116,15 @@ const PersonalYear = () => {
                           <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{sector.summary}</p>
                         </div>
                       </div>
-                      {isExpanded ? (
+                      {isLocked ? (
+                        <Lock className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />
+                      ) : isExpanded ? (
                         <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />
                       ) : (
                         <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />
                       )}
                     </button>
-                    {isExpanded && (
+                    {isExpanded && !isLocked && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -129,6 +136,22 @@ const PersonalYear = () => {
                   </motion.div>
                 );
               })}
+
+              {!hasFullAccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-center py-6"
+                >
+                  <Lock className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <h3 className="font-display text-lg font-bold mb-2">Sblocca tutti i settori</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Scegli un piano per accedere all'analisi completa del tuo Anno Personale.</p>
+                  <Button variant="cosmic" asChild>
+                    <Link to="/pricing">Scegli il tuo Piano</Link>
+                  </Button>
+                </motion.div>
+              )}
             </div>
 
             <motion.div
