@@ -50,7 +50,7 @@ const Pricing = () => {
     {
       id: "base" as PlanTier,
       name: "Base",
-      price: "9.99",
+      price: "4.99",
       priceId: PLANS.base.price_id,
       icon: Zap,
       gradient: "from-blue-500 to-cyan-500",
@@ -72,7 +72,7 @@ const Pricing = () => {
     {
       id: "pro" as PlanTier,
       name: "Pro",
-      price: "19.99",
+      price: "9.99",
       priceId: PLANS.pro.price_id,
       icon: Star,
       gradient: "from-primary to-accent",
@@ -94,7 +94,7 @@ const Pricing = () => {
     {
       id: "gold" as PlanTier,
       name: "Gold",
-      price: "29.99",
+      price: "14.99",
       priceId: PLANS.gold.price_id,
       icon: Crown,
       gradient: "from-amber-500 to-yellow-600",
