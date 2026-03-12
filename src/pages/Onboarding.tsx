@@ -467,40 +467,30 @@ const Onboarding = () => {
 
             {/* Step 3: Confirm */}
             {currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <h2 className="font-display text-2xl font-bold text-center mb-2">
-                  Conferma i tuoi dati
-                </h2>
-                <p className="text-muted-foreground text-center mb-8">
-                  Verifica che tutto sia corretto
-                </p>
+              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <h2 className="font-display text-2xl font-bold text-center mb-2">{t("onboarding.confirmTitle")}</h2>
+                <p className="text-muted-foreground text-center mb-8">{t("onboarding.confirmDesc")}</p>
 
                 <div className="space-y-6">
-                  {/* Summary */}
                   <div className="bg-muted/30 rounded-xl p-4 space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Nome</span>
+                      <span className="text-muted-foreground">{t("onboarding.firstName")}</span>
                       <span className="font-medium">{formData.nome}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Cognome</span>
+                      <span className="text-muted-foreground">{t("onboarding.lastName")}</span>
                       <span className="font-medium">{formData.cognome}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Sesso</span>
-                      <span className="font-medium">{formData.sesso === "M" ? "Uomo" : "Donna"}</span>
+                      <span className="text-muted-foreground">{t("onboarding.gender")}</span>
+                      <span className="font-medium">{formData.sesso === "M" ? t("onboarding.male") : t("onboarding.female")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Data di nascita</span>
+                      <span className="text-muted-foreground">{t("onboarding.birthDate")}</span>
                       <span className="font-medium">{formData.birthDate}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Foto caricate</span>
+                      <span className="text-muted-foreground">{t("onboarding.confirmPhotos")}</span>
                       <span className="font-medium">
                         {Object.values(formData.photos).filter(Boolean).length}/3
                       </span>
