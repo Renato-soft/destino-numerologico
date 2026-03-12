@@ -100,7 +100,6 @@ const Dashboard = () => {
 
   const ROUTE_TIERS: Record<string, PlanTier> = {
     "/map": "base",
-    "/history": "pro",
     "/pillars": "pro",
     "/compatibility": "pro",
     "/dates": "pro",
