@@ -372,12 +372,12 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthDate">Data di nascita</Label>
+                    <Label htmlFor="birthDate">{t("onboarding.birthDate")}</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
                         id="birthDate"
-                        placeholder="gg/mm/aaaa"
+                        placeholder={t("onboarding.birthDatePlaceholder")}
                         value={formData.birthDate}
                         onChange={(e) => {
                           const formatted = formatDateInput(e.target.value);
