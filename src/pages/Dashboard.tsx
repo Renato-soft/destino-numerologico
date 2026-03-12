@@ -7,14 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ChevronDown, ChevronUp
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
 import { useSubscription, PlanTier } from "@/hooks/useSubscription";
 import { calculatePersonalYear } from "@/lib/numerology";
-import { personalYearSectors, sectorMeta, SectorKey } from "@/lib/personalYearSectors";
 
 interface Profile {
   nome: string;
