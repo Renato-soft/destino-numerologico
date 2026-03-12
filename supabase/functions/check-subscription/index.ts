@@ -23,6 +23,20 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
+const unsubscribedResponse = (extra: Record<string, unknown> = {}) =>
+  new Response(
+    JSON.stringify({
+      subscribed: false,
+      product_id: null,
+      subscription_end: null,
+      ...extra,
+    }),
+    {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    }
+  );
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,8 +51,16 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    const stripeKey = (Deno.env.get("STRIPE_SECRET_KEY") ?? "").trim();
+    if (!stripeKey) {
+      logStep("Missing STRIPE_SECRET_KEY");
+      return unsubscribedResponse({ error: "Stripe key is not configured" });
+    }
+
+    if (stripeKey.startsWith("pk_")) {
+      logStep("Invalid Stripe key type configured", { keyPrefix: "pk_" });
+      return unsubscribedResponse({ error: "Stripe secret key is misconfigured" });
+    }
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
@@ -68,10 +90,7 @@ serve(async (req) => {
 
     if (customers.data.length === 0) {
       logStep("No customer found");
-      return new Response(JSON.stringify({ subscribed: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return unsubscribedResponse();
     }
 
     const customerId = customers.data[0].id;
@@ -123,17 +142,16 @@ serve(async (req) => {
     }
 
     logStep("No active subscription or purchase");
-    return new Response(JSON.stringify({
-      subscribed: false,
-      product_id: null,
-      subscription_end: null,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return unsubscribedResponse();
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
+
+    const isStripeKeyTypeError = errorMessage.includes("publishable API key");
+    if (isStripeKeyTypeError) {
+      return unsubscribedResponse({ error: "Stripe secret key is misconfigured" });
+    }
+
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
