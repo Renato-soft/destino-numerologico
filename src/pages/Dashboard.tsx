@@ -115,6 +115,15 @@ const Dashboard = () => {
             <Crown className="w-5 h-5 mr-2" />
             Scegli il tuo Piano
           </Button>
+          <div className="flex items-center justify-center gap-4 pt-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              ← Home
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-1" />
+              Logout
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
