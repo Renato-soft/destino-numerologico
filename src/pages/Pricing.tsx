@@ -94,7 +94,7 @@ const Pricing = () => {
     {
       id: "gold" as PlanTier,
       name: "Gold",
-      price: "29.99",
+      price: "14.99",
       priceId: PLANS.gold.price_id,
       icon: Crown,
       gradient: "from-amber-500 to-yellow-600",

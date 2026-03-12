@@ -3,19 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const PLANS = {
   base: {
-    product_id: "prod_U8QWlKyXiHU7P0",
-    price_id: "price_1TA9f8QVJRFR5c8XKqLMGYn8",
-    price: 9.99,
+    product_id: "prod_U8R6p8NMwA5rMi",
+    price_id: "price_1TAAEcQVJRFR5c8XM7GvoqMH",
+    price: 4.99,
   },
   pro: {
-    product_id: "prod_U8QWaErO7W7TTF",
-    price_id: "price_1TA9fWQVJRFR5c8XYiXQ4cy8",
-    price: 19.99,
+    product_id: "prod_U8RADr9rcx9fsv",
+    price_id: "price_1TAAIdQVJRFR5c8XDEqKCJnY",
+    price: 9.99,
   },
   gold: {
-    product_id: "prod_U8QWoi5vDzotuO",
-    price_id: "price_1TA9ftQVJRFR5c8XdGXUSmHM",
-    price: 29.99,
+    product_id: "prod_U8ReMeQZ3qtLHN",
+    price_id: "price_1TAAl6QVJRFR5c8XIdug0N0I",
+    price: 14.99,
   },
 } as const;
 
