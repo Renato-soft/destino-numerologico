@@ -225,7 +225,7 @@ const Dashboard = () => {
         {latestMap && canAccess("/dates") && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {canAccess("/dates") && <DailyOutfits />}
 
-        <PersonalYearBlock profile={profile} latestMap={latestMap} />
+        {/* Personal Year card is in quickActions below */}
 
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
