@@ -35,10 +35,10 @@ interface FormData {
   };
 }
 
-const steps = [
-  { id: 1, title: "I tuoi dati", icon: User },
-  { id: 2, title: "Le tue foto", icon: Camera },
-  { id: 3, title: "Conferma", icon: Check },
+const getSteps = (t: any) => [
+  { id: 1, title: t("onboarding.step1"), icon: User },
+  { id: 2, title: t("onboarding.step2"), icon: Camera },
+  { id: 3, title: t("onboarding.step3"), icon: Check },
 ];
 
 const Onboarding = () => {
