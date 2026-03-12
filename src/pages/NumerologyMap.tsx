@@ -655,6 +655,9 @@ const NumerologyMap = () => {
               </Button>
             </section>
 
+              </div>
+            </div>
+
             {/* Regenerate button */}
             <div className="text-center py-8">
               <Button
