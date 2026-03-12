@@ -193,6 +193,7 @@ const Onboarding = () => {
         birth_date: birthDate.toISOString().split("T")[0],
         sesso: formData.sesso,
         onboarding_completed: true,
+        language: i18n.language,
       } as any);
 
       if (profileError) throw profileError;
