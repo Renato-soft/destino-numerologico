@@ -242,7 +242,7 @@ const NumerologyMap = () => {
             </div>
           </div>
 
-          {numerologyData && profile && (
+          {numerologyData && profile && hasMapAccess && (
             <Button 
               variant="cosmic-outline" 
               size="sm"
