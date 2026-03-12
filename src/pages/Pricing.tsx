@@ -72,7 +72,7 @@ const Pricing = () => {
     {
       id: "pro" as PlanTier,
       name: "Pro",
-      price: "19.99",
+      price: "9.99",
       priceId: PLANS.pro.price_id,
       icon: Star,
       gradient: "from-primary to-accent",
