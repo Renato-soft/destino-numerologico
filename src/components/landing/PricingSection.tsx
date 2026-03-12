@@ -16,7 +16,7 @@ const PricingSection = () => {
       popular: false,
       features: [
         { label: t("pricing.featureMap"), included: true },
-        { label: t("pricing.featureDailyAnalysis"), included: true },
+        { label: t("pricing.featureDailyAnalysis"), included: false },
         { label: t("pricing.featureHistory"), included: false },
         { label: t("pricing.featurePillars"), included: false },
         { label: t("pricing.featureChat"), included: false },
