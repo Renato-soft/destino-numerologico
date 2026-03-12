@@ -156,7 +156,7 @@ const Onboarding = () => {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Non autenticato");
+      if (!session) throw new Error(t("onboarding.notAuthenticated"));
 
       const userId = session.user.id;
 
