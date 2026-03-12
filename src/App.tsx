@@ -53,6 +53,7 @@ const App = () => (
             <Route path="/advanced-report" element={<ProtectedRoute route="/advanced-report"><AdvancedReport /></ProtectedRoute>} />
             <Route path="/house" element={<ProtectedRoute route="/house"><HouseAnalyzer /></ProtectedRoute>} />
             <Route path="/community" element={<Community />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/profile" element={<ProfilePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
