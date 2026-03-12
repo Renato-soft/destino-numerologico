@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Map, MessageCircle, Smartphone, ScrollText, Calendar, Sparkles, Compass, Users, Target, Home, Shirt } from "lucide-react";
+import { Map, MessageCircle, ScrollText, Calendar, Sparkles, Compass, Users, Target, Home, Shirt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
