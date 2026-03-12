@@ -17,6 +17,8 @@ const PersonalYear = () => {
   const [birthDate, setBirthDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedSector, setExpandedSector] = useState<SectorKey | null>(null);
+  const { canAccess } = useSubscription();
+  const hasFullAccess = canAccess("/map");
 
   useEffect(() => {
     const load = async () => {
