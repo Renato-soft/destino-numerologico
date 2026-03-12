@@ -70,16 +70,20 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     tier: "free",
     subscriptionEnd: null,
     loading: true,
-    freeRequestsUsed: parseInt(localStorage.getItem("free_requests_used") || "0", 10),
+    freeRequestsUsed: 0,
   });
 
   const checkSubscription = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, tier: "free", loading: false }));
+        setState(prev => ({ ...prev, subscribed: false, tier: "free", loading: false, freeRequestsUsed: 0 }));
         return;
       }
+
+      // Load per-user free requests count
+      const userKey = `free_requests_used_${session.user.id}`;
+      const usedCount = parseInt(localStorage.getItem(userKey) || "0", 10);
 
       const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
@@ -91,6 +95,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         tier,
         subscriptionEnd: data.subscription_end,
         loading: false,
+        freeRequestsUsed: usedCount,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
@@ -119,10 +124,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return state.tier === "free" && state.freeRequestsUsed < 2;
   }, [state.tier, state.freeRequestsUsed]);
 
-  const incrementFreeRequests = useCallback(() => {
+  const incrementFreeRequests = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userKey = session?.user?.id ? `free_requests_used_${session.user.id}` : "free_requests_used";
     setState(prev => {
       const newCount = prev.freeRequestsUsed + 1;
-      localStorage.setItem("free_requests_used", newCount.toString());
+      localStorage.setItem(userKey, newCount.toString());
       return { ...prev, freeRequestsUsed: newCount };
     });
   }, []);
