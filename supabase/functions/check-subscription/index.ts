@@ -10,6 +10,14 @@ const corsHeaders = {
 // Base plan product ID (one-time payment)
 const BASE_PRODUCT_ID = "prod_U8ShObzMBDIryb";
 
+// Gold plan product ID
+const GOLD_PRODUCT_ID = "prod_U8ReMeQZ3qtLHN";
+
+// Manual overrides: emails that get Gold access without payment
+const GOLD_OVERRIDES: string[] = [
+  "regnew01@gmail.com",
+];
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
@@ -41,6 +49,19 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
+
+    // Check manual overrides first
+    if (GOLD_OVERRIDES.includes(user.email.toLowerCase())) {
+      logStep("Manual Gold override found", { email: user.email });
+      return new Response(JSON.stringify({
+        subscribed: true,
+        product_id: GOLD_PRODUCT_ID,
+        subscription_end: null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
