@@ -116,7 +116,7 @@
     "loginSuccess": "Welcome back!",
     "loginSuccessDesc": "Successfully signed in.",
     "registerSuccess": "Registration complete!",
-    "registerSuccessDesc": "Check your email to confirm your account.",
+    "registerSuccessDesc": "Welcome! Let's create your profile.",
     "genericError": "An error occurred. Please try again.",
     "photoNotice": "📸 After registration we'll ask for a close-up photo",
     "photoNoticeDesc": "To offer you personalized outfit suggestions based on your physique, we'll need at least a face photo. You can also add full-body photos for even more precise advice!",
