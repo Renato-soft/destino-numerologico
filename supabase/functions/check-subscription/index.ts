@@ -10,6 +10,14 @@ const corsHeaders = {
 // Base plan product ID (one-time payment)
 const BASE_PRODUCT_ID = "prod_U8ShObzMBDIryb";
 
+// Gold plan product ID
+const GOLD_PRODUCT_ID = "prod_U8ReMeQZ3qtLHN";
+
+// Manual overrides: emails that get Gold access without payment
+const GOLD_OVERRIDES: string[] = [
+  "regnew01@gmail.com",
+];
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
