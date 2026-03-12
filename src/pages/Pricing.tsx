@@ -76,6 +76,7 @@ const Pricing = () => {
       name: "Pro",
       price: "9.99",
       priceId: PLANS.pro.price_id,
+      mode: PLANS.pro.mode,
       icon: Star,
       gradient: "from-primary to-accent",
       popular: true,
