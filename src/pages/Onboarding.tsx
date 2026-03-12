@@ -326,10 +326,10 @@ const Onboarding = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cognome">Cognome</Label>
+                    <Label htmlFor="cognome">{t("onboarding.lastName")}</Label>
                     <Input
                       id="cognome"
-                      placeholder="Il tuo cognome"
+                      placeholder={t("onboarding.lastNamePlaceholder")}
                       value={formData.cognome}
                       onChange={(e) => {
                         setFormData({ ...formData, cognome: e.target.value });
