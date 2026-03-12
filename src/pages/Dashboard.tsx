@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface Profile {
   nome: string;
@@ -96,7 +97,8 @@ const Dashboard = () => {
   }
 
   const quickActions = [
-    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600", primary: true },
+    { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
+    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
     { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
     { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
     { title: t("dashboard.advancedReport"), description: t("dashboard.advancedReportDesc"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700" },
