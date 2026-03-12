@@ -87,33 +87,19 @@ const Onboarding = () => {
 
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
-
     const nomeResult = nameSchema.safeParse(formData.nome);
-    if (!nomeResult.success) {
-      newErrors.nome = nomeResult.error.errors[0].message;
-    }
-
+    if (!nomeResult.success) newErrors.nome = t("onboarding.minChars");
     const cognomeResult = nameSchema.safeParse(formData.cognome);
-    if (!cognomeResult.success) {
-      newErrors.cognome = cognomeResult.error.errors[0].message;
-    }
-
-    if (!formData.sesso) {
-      newErrors.sesso = "Seleziona il tuo sesso";
-    }
-
+    if (!cognomeResult.success) newErrors.cognome = t("onboarding.minChars");
+    if (!formData.sesso) newErrors.sesso = t("onboarding.selectGender");
     const dateResult = dateSchema.safeParse(formData.birthDate);
     if (!dateResult.success) {
-      newErrors.birthDate = dateResult.error.errors[0].message;
+      newErrors.birthDate = t("onboarding.dateFormat");
     } else {
-      // Validate actual date
       const [day, month, year] = formData.birthDate.split("/").map(Number);
       const date = new Date(year, month - 1, day);
-      if (isNaN(date.getTime()) || date > new Date()) {
-        newErrors.birthDate = "Data non valida";
-      }
+      if (isNaN(date.getTime()) || date > new Date()) newErrors.birthDate = t("onboarding.invalidDate");
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
