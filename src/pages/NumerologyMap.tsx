@@ -334,6 +334,7 @@ const NumerologyMap = () => {
               quintessenza={numerologyData.quintessenza}
             />
 
+            {/* Destino section - always visible */}
             {/* Destino (was Life Path) section */}
             <section className="glass-cosmic rounded-2xl p-8">
               <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
