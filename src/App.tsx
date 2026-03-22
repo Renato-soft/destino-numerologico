@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/chat" element={<ProtectedRoute route="/chat"><Chat /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute route="/history"><History /></ProtectedRoute>} />
             <Route path="/dates" element={<ProtectedRoute route="/dates"><FavorableDates /></ProtectedRoute>} />
-            <Route path="/whatsapp" element={<WhatsApp />} />
+            
             <Route path="/compatibility" element={<ProtectedRoute route="/compatibility"><Compatibility /></ProtectedRoute>} />
             <Route path="/brand" element={<ProtectedRoute route="/brand"><BrandAnalyzer /></ProtectedRoute>} />
             <Route path="/pillars" element={<ProtectedRoute route="/pillars"><Pillars /></ProtectedRoute>} />
