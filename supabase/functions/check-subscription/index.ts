@@ -4,7 +4,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 // Base plan product ID (one-time payment)
@@ -14,12 +15,10 @@ const BASE_PRODUCT_ID = "prod_U8ShObzMBDIryb";
 const GOLD_PRODUCT_ID = "prod_U8ReMeQZ3qtLHN";
 
 // Manual overrides: emails that get Gold access without payment
-const GOLD_OVERRIDES: string[] = [
-  "regnew01@gmail.com",
-];
+const GOLD_OVERRIDES: string[] = ["regnew01@gmail.com", "maria732008@live.it"];
 
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
@@ -34,7 +33,7 @@ const unsubscribedResponse = (extra: Record<string, unknown> = {}) =>
     {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
-    }
+    },
   );
 
 serve(async (req) => {
@@ -45,7 +44,7 @@ serve(async (req) => {
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
+    { auth: { persistSession: false } },
   );
 
   try {
@@ -75,14 +74,17 @@ serve(async (req) => {
     // Check manual overrides first
     if (GOLD_OVERRIDES.includes(user.email.toLowerCase())) {
       logStep("Manual Gold override found", { email: user.email });
-      return new Response(JSON.stringify({
-        subscribed: true,
-        product_id: GOLD_PRODUCT_ID,
-        subscription_end: null,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          subscribed: true,
+          product_id: GOLD_PRODUCT_ID,
+          subscription_end: null,
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
@@ -109,14 +111,17 @@ serve(async (req) => {
       const productId = subscription.items.data[0].price.product;
       logStep("Active subscription found", { productId, subscriptionEnd });
 
-      return new Response(JSON.stringify({
-        subscribed: true,
-        product_id: productId,
-        subscription_end: subscriptionEnd,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          subscribed: true,
+          product_id: productId,
+          subscription_end: subscriptionEnd,
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     // Check one-time purchases (Base plan)
@@ -131,14 +136,17 @@ serve(async (req) => {
 
     if (hasBasePurchase) {
       logStep("One-time Base purchase found");
-      return new Response(JSON.stringify({
-        subscribed: true,
-        product_id: BASE_PRODUCT_ID,
-        subscription_end: null,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({
+          subscribed: true,
+          product_id: BASE_PRODUCT_ID,
+          subscription_end: null,
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     logStep("No active subscription or purchase");
