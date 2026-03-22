@@ -39,13 +39,21 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
+    const successUrl = checkoutMode === "payment"
+      ? `${req.headers.get("origin")}/dashboard?purchase=success&price_id=${priceId}`
+      : `${req.headers.get("origin")}/dashboard?subscription=success`;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: checkoutMode,
-      success_url: `${req.headers.get("origin")}/dashboard?subscription=success`,
+      success_url: successUrl,
       cancel_url: `${req.headers.get("origin")}/pricing`,
+      metadata: {
+        user_id: user.id,
+        price_id: priceId,
+      },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
