@@ -13,7 +13,7 @@ import NumerologyMap from "./pages/NumerologyMap";
 import Chat from "./pages/Chat";
 import History from "./pages/History";
 import FavorableDates from "./pages/FavorableDates";
-import WhatsApp from "./pages/WhatsApp";
+
 import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
