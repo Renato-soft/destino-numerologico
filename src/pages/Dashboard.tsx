@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Sparkles, Map, MessageCircle, FileText, Calendar, Smartphone,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock
+  Sparkles, Map, MessageCircle, FileText, Calendar,
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
-import { useSubscription, PlanTier } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
 import { calculatePersonalYear } from "@/lib/numerology";
 
 interface Profile {
@@ -38,7 +38,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { canAccess, tier, canUseFreeRequest, loading: subLoading } = useSubscription();
+  const { canAccess, subscribed, isPayPerUse, hasPayPerUsePurchase, canUseFreeRequest, loading: subLoading } = useSubscription();
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
@@ -54,7 +54,6 @@ const Dashboard = () => {
       if (profileError) console.error("Error loading profile:", profileError);
       if (!profileData || !profileData.nome) { navigate("/onboarding"); return; }
 
-      // Apply user language
       if (profileData.language && profileData.language !== i18n.language) {
         i18n.changeLanguage(profileData.language);
       }
@@ -100,7 +99,7 @@ const Dashboard = () => {
   }
 
   // Free users who have exhausted free requests must pay
-  if (tier === "free" && !canUseFreeRequest()) {
+  if (!subscribed && !canUseFreeRequest()) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
@@ -110,11 +109,11 @@ const Dashboard = () => {
           </div>
           <h2 className="font-display text-2xl font-bold">{t("pricing.upgradeRequired")}</h2>
           <p className="text-muted-foreground">
-            Hai esaurito le prove gratuite. Scegli un piano per continuare ad accedere alla tua area riservata e a tutti i servizi.
+            Hai esaurito le prove gratuite. Abbonati per continuare ad accedere a tutti i servizi.
           </p>
           <Button variant="cosmic" size="lg" onClick={() => navigate("/pricing")}>
             <Crown className="w-5 h-5 mr-2" />
-            Scegli il tuo Piano
+            Abbonati ora — €4,99/mese
           </Button>
           <div className="flex items-center justify-center gap-4 pt-2">
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
@@ -130,41 +129,23 @@ const Dashboard = () => {
     );
   }
 
-  const ROUTE_TIERS: Record<string, PlanTier> = {
-    "/map": "base",
-    "/pillars": "pro",
-    "/compatibility": "pro",
-    "/dates": "pro",
-    "/chat": "gold",
-    "/advanced-report": "gold",
-    "/brand": "gold",
-    "/house": "gold",
-  };
-
-  const TIER_COLORS: Record<PlanTier, string> = {
-    free: "",
-    base: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    pro: "bg-primary/20 text-primary border-primary/30",
-    gold: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  };
+  const PAY_PER_USE_ROUTES = ["/brand", "/house", "/compatibility", "/advanced-report"];
 
   const quickActions = [
     // Pricing
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
-    // BASE
+    // Subscription services
     { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
     { title: t("dashboard.personalYear", { year: new Date().getFullYear() }), description: t("dashboard.personalYearDesc"), icon: Calendar, href: "/personal-year", color: "from-orange-500 to-amber-500" },
-    // PRO
     { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
-    { title: t("dashboard.compatibility"), description: t("dashboard.compatibilityDesc"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500" },
     { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
-    // GOLD
     { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
-    { title: t("dashboard.advancedReport"), description: t("dashboard.advancedReportDesc"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700" },
-    { title: t("dashboard.brandAnalyzer"), description: t("dashboard.brandAnalyzerDesc"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500" },
-    { title: t("dashboard.houseVibration"), description: t("dashboard.houseVibrationDesc"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500" },
+    // Pay-per-use
+    { title: t("dashboard.advancedReport"), description: "€2,00 " + t("pricing.perUse"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700", payPerUse: true },
+    { title: t("dashboard.brandAnalyzer"), description: "€2,00 " + t("pricing.perUse"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500", payPerUse: true },
+    { title: t("dashboard.houseVibration"), description: "€2,00 " + t("pricing.perUse"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500", payPerUse: true },
+    { title: t("dashboard.compatibility"), description: "€2,00 " + t("pricing.perUse"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500", payPerUse: true },
     // Other
-    { title: t("dashboard.whatsapp"), description: t("dashboard.whatsappDesc"), icon: Smartphone, href: "/whatsapp", color: "from-green-500 to-emerald-500" },
     { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
     { description: t("dashboard.profileDesc"), icon: User, href: "/profile", color: "from-blue-500 to-cyan-500" },
   ];
@@ -223,10 +204,8 @@ const Dashboard = () => {
           </motion.section>
         )}
 
-        {latestMap && canAccess("/dates") && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
-        {canAccess("/dates") && <DailyOutfits />}
-
-        {/* Personal Year card is in quickActions below */}
+        {latestMap && subscribed && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
+        {subscribed && <DailyOutfits />}
 
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
@@ -235,18 +214,19 @@ const Dashboard = () => {
               <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
                 <Link to={action.href}>
                   <div className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
-                    {ROUTE_TIERS[action.href] && !canAccess(action.href) && (
+                    {action.payPerUse && (
                       <div className="absolute top-3 right-3">
-                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5 gap-1`}>
-                          <Lock className="w-3 h-3" />
-                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
+                          <ShoppingCart className="w-3 h-3" />
+                          €2
                         </Badge>
                       </div>
                     )}
-                    {ROUTE_TIERS[action.href] && canAccess(action.href) && (
+                    {!action.payPerUse && !action.primary && !subscribed && (
                       <div className="absolute top-3 right-3">
-                        <Badge className={`${TIER_COLORS[ROUTE_TIERS[action.href]]} border text-[10px] px-2 py-0.5`}>
-                          {ROUTE_TIERS[action.href].toUpperCase()}
+                        <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
+                          <Lock className="w-3 h-3" />
+                          PRO
                         </Badge>
                       </div>
                     )}
