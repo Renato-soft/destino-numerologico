@@ -75,6 +75,36 @@ const Dashboard = () => {
 
     checkAuthAndLoadData();
 
+    // Handle returning from purchase/subscription
+    const purchaseSuccess = searchParams.get("purchase");
+    const subscriptionSuccess = searchParams.get("subscription");
+    if (purchaseSuccess === "success" || subscriptionSuccess === "success") {
+      const priceId = searchParams.get("price_id");
+      const handlePurchaseReturn = async () => {
+        if (purchaseSuccess === "success" && priceId) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            // Record pay-per-use purchase - find product_id from price_id
+            const { PAY_PER_USE } = await import("@/hooks/useSubscription");
+            const feature = Object.values(PAY_PER_USE).find(f => f.price_id === priceId);
+            if (feature) {
+              await supabase.from("pay_per_use_purchases").insert({
+                user_id: session.user.id,
+                product_id: feature.product_id,
+              });
+              await refreshPayPerUsePurchases();
+            }
+          }
+        }
+        if (subscriptionSuccess === "success") {
+          await checkSubscription();
+        }
+        setSearchParams({}, { replace: true });
+        toast({ title: "Acquisto completato!", description: "Grazie per il tuo acquisto." });
+      };
+      handlePurchaseReturn();
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") navigate("/auth");
     });
