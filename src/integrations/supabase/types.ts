@@ -382,6 +382,30 @@ export type Database = {
         }
         Relationships: []
       }
+      pay_per_use_purchases: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       photos: {
         Row: {
           created_at: string

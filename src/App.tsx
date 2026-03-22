@@ -13,7 +13,7 @@ import NumerologyMap from "./pages/NumerologyMap";
 import Chat from "./pages/Chat";
 import History from "./pages/History";
 import FavorableDates from "./pages/FavorableDates";
-import WhatsApp from "./pages/WhatsApp";
+
 import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/chat" element={<ProtectedRoute route="/chat"><Chat /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute route="/history"><History /></ProtectedRoute>} />
             <Route path="/dates" element={<ProtectedRoute route="/dates"><FavorableDates /></ProtectedRoute>} />
-            <Route path="/whatsapp" element={<WhatsApp />} />
+            
             <Route path="/compatibility" element={<ProtectedRoute route="/compatibility"><Compatibility /></ProtectedRoute>} />
             <Route path="/brand" element={<ProtectedRoute route="/brand"><BrandAnalyzer /></ProtectedRoute>} />
             <Route path="/pillars" element={<ProtectedRoute route="/pillars"><Pillars /></ProtectedRoute>} />

@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import { useSubscription, PLANS, PlanTier } from "@/hooks/useSubscription";
+import { useSubscription, PLAN, PAY_PER_USE } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Check, X, Sparkles, ArrowLeft, Crown, Star, Zap,
+  Check, Sparkles, ArrowLeft, Crown, Star,
   Map, Calendar, Users, Target, MessageCircle, ScrollText,
-  Home, Compass, Shirt, BarChart3, Settings
+  Home, Compass, Shirt, BarChart3, Settings, ShoppingCart
 } from "lucide-react";
 
 const Pricing = () => {
   const { t } = useTranslation();
-  const { tier: currentTier, subscribed, checkSubscription } = useSubscription();
+  const { subscribed, checkSubscription, hasPayPerUsePurchase } = useSubscription();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -44,76 +44,20 @@ const Pricing = () => {
     }
   };
 
-  const outfitImageUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/user-photos/fullFront_1770544341609.png`;
+  const subscriptionFeatures = [
+    { icon: Map, label: t("pricing.featureMap") },
+    { icon: BarChart3, label: t("pricing.featurePersonalYear") },
+    { icon: Compass, label: t("pricing.featurePillars") },
+    { icon: Calendar, label: t("pricing.featureDates") },
+    { icon: MessageCircle, label: t("pricing.featureChat") },
+    { icon: Shirt, label: t("pricing.featureOutfit") },
+  ];
 
-  const plans = [
-    {
-      id: "base" as PlanTier,
-      name: "Base",
-      price: "4.99",
-      priceId: PLANS.base.price_id,
-      mode: PLANS.base.mode,
-      icon: Zap,
-      gradient: "from-blue-500 to-cyan-500",
-      popular: false,
-      oneTime: true,
-      features: [
-        { icon: Map, label: t("pricing.featureMap"), included: true },
-        { icon: BarChart3, label: t("pricing.featurePersonalYear"), included: true },
-        { icon: Compass, label: t("pricing.featurePillars"), included: false },
-        { icon: Users, label: t("pricing.featureCompatibility"), included: false },
-        { icon: Calendar, label: t("pricing.featureDates"), included: false },
-        { icon: Shirt, label: t("pricing.featureOutfit"), included: false },
-        { icon: ScrollText, label: t("pricing.featureAdvancedReport"), included: false },
-        { icon: MessageCircle, label: t("pricing.featureChat"), included: false },
-        { icon: Target, label: t("pricing.featureBrand"), included: false },
-        { icon: Home, label: t("pricing.featureHouse"), included: false },
-      ],
-    },
-    {
-      id: "pro" as PlanTier,
-      name: "Pro",
-      price: "9.99",
-      priceId: PLANS.pro.price_id,
-      mode: PLANS.pro.mode,
-      icon: Star,
-      gradient: "from-primary to-accent",
-      popular: true,
-      features: [
-        { icon: Map, label: t("pricing.featureMap"), included: true },
-        { icon: BarChart3, label: t("pricing.featureDailyAnalysis"), included: true },
-        { icon: Compass, label: t("pricing.featurePillars"), included: true },
-        { icon: Users, label: t("pricing.featureCompatibility"), included: true },
-        { icon: Calendar, label: t("pricing.featureDates"), included: true },
-        { icon: Shirt, label: t("pricing.featureOutfit"), included: true },
-        { icon: ScrollText, label: t("pricing.featureAdvancedReport"), included: false },
-        { icon: MessageCircle, label: t("pricing.featureChat"), included: false },
-        { icon: Target, label: t("pricing.featureBrand"), included: false },
-        { icon: Home, label: t("pricing.featureHouse"), included: false },
-      ],
-    },
-    {
-      id: "gold" as PlanTier,
-      name: "Gold",
-      price: "14.99",
-      priceId: PLANS.gold.price_id,
-      mode: PLANS.gold.mode,
-      icon: Crown,
-      gradient: "from-amber-500 to-yellow-600",
-      popular: false,
-      features: [
-        { icon: Map, label: t("pricing.featureMap"), included: true },
-        { icon: BarChart3, label: t("pricing.featureDailyAnalysis"), included: true },
-        { icon: Compass, label: t("pricing.featurePillars"), included: true },
-        { icon: Users, label: t("pricing.featureCompatibility"), included: true },
-        { icon: Calendar, label: t("pricing.featureDates"), included: true },
-        { icon: Shirt, label: t("pricing.featureOutfit"), included: true },
-        { icon: ScrollText, label: t("pricing.featureAdvancedReport"), included: true },
-        { icon: MessageCircle, label: t("pricing.featureChat"), included: true },
-        { icon: Target, label: t("pricing.featureBrand"), included: true },
-        { icon: Home, label: t("pricing.featureHouse"), included: true },
-      ],
-    },
+  const payPerUseFeatures = [
+    { key: "brand" as const, icon: Target, label: t("pricing.featureBrand") },
+    { key: "house" as const, icon: Home, label: t("pricing.featureHouse") },
+    { key: "compatibility" as const, icon: Users, label: t("pricing.featureCompatibility") },
+    { key: "advancedReport" as const, icon: ScrollText, label: t("pricing.featureAdvancedReport") },
   ];
 
   return (
@@ -151,85 +95,99 @@ const Pricing = () => {
           </motion.div>
         )}
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {plans.map((plan, index) => {
-            const isCurrentPlan = currentTier === plan.id;
-            return (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative rounded-2xl border p-6 flex flex-col ${
-                  plan.popular
-                    ? "border-primary/50 bg-gradient-to-b from-primary/10 to-transparent shadow-cosmic scale-105"
-                    : "border-border/50 bg-card/50"
-                } ${isCurrentPlan ? "ring-2 ring-primary" : ""}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs font-semibold">
-                    {t("pricing.mostPopular")}
-                  </div>
-                )}
-                {isCurrentPlan && (
-                  <div className="absolute -top-3 right-4 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold">
-                    {t("pricing.currentPlan")}
-                  </div>
-                )}
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Monthly Subscription */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`relative rounded-2xl border p-8 border-primary/50 bg-gradient-to-b from-primary/10 to-transparent shadow-cosmic ${subscribed ? "ring-2 ring-green-500" : ""}`}
+          >
+            {subscribed && (
+              <div className="absolute -top-3 right-4 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold">
+                {t("pricing.currentPlan")}
+              </div>
+            )}
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center`}>
-                    <plan.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold">{plan.name}</h3>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold">€{plan.price}</span>
-                      <span className="text-muted-foreground text-sm">
-                        {plan.oneTime ? ` ${t("pricing.oneTime")}` : `/${t("pricing.month")}`}
-                      </span>
-                    </div>
-                  </div>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Star className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold">{t("pricing.subscriptionTitle")}</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold">€4,99</span>
+                  <span className="text-muted-foreground">/{t("pricing.month")}</span>
                 </div>
+              </div>
+            </div>
 
-                <div className="flex-1 space-y-3 mb-6">
-                  {plan.features.map((feature, i) => (
-                    <div key={i} className={`flex items-center gap-3 text-sm ${!feature.included ? "opacity-40" : ""}`}>
-                      {feature.included ? (
-                        <Check className="w-4 h-4 text-green-500 shrink-0" />
-                      ) : (
-                        <X className="w-4 h-4 text-muted-foreground shrink-0" />
-                      )}
-                      <feature.icon className="w-4 h-4 shrink-0" />
-                      <span>{feature.label}</span>
-                    </div>
-                  ))}
+            <div className="grid sm:grid-cols-2 gap-3 mb-6">
+              {subscriptionFeatures.map((feature) => (
+                <div key={feature.label} className="flex items-center gap-3 text-sm">
+                  <Check className="w-4 h-4 text-green-500 shrink-0" />
+                  <feature.icon className="w-4 h-4 shrink-0" />
+                  <span>{feature.label}</span>
                 </div>
+              ))}
+            </div>
 
-                {/* Outfit preview for Pro plan */}
-                {plan.id === "pro" && (
-                  <div className="mb-4 rounded-xl overflow-hidden border border-border/30 bg-gradient-to-br from-primary/10 to-accent/10 p-4 text-center">
-                    <Shirt className="w-10 h-10 mx-auto text-primary mb-2" />
-                    <p className="text-sm font-medium">{t("pricing.featureOutfit")}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{t("pricing.outfitExample")}</p>
+            <Button
+              variant="cosmic"
+              className="w-full sm:w-auto"
+              disabled={subscribed || !!loadingPlan}
+              onClick={() => handleSubscribe(PLAN.price_id, "subscription")}
+            >
+              {loadingPlan === PLAN.price_id
+                ? t("common.loading")
+                : subscribed
+                ? t("pricing.currentPlan")
+                : t("pricing.subscribe")}
+            </Button>
+          </motion.div>
+
+          {/* Pay-per-use section */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <h2 className="font-display text-xl font-semibold mb-4 flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5 text-amber-500" />
+              {t("pricing.payPerUseSection")}
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {payPerUseFeatures.map((feature) => {
+                const info = PAY_PER_USE[feature.key];
+                const purchased = hasPayPerUsePurchase(feature.key);
+                return (
+                  <div
+                    key={feature.key}
+                    className={`rounded-xl border p-5 bg-card/50 border-border/50 flex flex-col ${purchased ? "ring-1 ring-green-500/50" : ""}`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
+                        <feature.icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm">{feature.label}</h4>
+                        <span className="text-lg font-bold">€2,00</span>
+                        <span className="text-muted-foreground text-xs ml-1">{t("pricing.perUse")}</span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-auto"
+                      disabled={purchased || !!loadingPlan}
+                      onClick={() => handleSubscribe(info.price_id, "payment")}
+                    >
+                      {loadingPlan === info.price_id
+                        ? t("common.loading")
+                        : purchased
+                        ? t("pricing.purchased")
+                        : t("pricing.buyNow")}
+                    </Button>
                   </div>
-                )}
-
-                <Button
-                  variant={plan.popular ? "cosmic" : "outline"}
-                  className="w-full"
-                  disabled={isCurrentPlan || !!loadingPlan}
-                  onClick={() => handleSubscribe(plan.priceId, plan.mode || "subscription")}
-                >
-                  {loadingPlan === plan.priceId
-                    ? t("common.loading")
-                    : isCurrentPlan
-                    ? t("pricing.currentPlan")
-                    : t("pricing.subscribe")}
-                </Button>
-              </motion.div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
       </main>
     </div>
