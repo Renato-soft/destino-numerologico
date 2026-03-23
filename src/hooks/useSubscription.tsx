@@ -52,6 +52,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
 
 interface SubscriptionState {
   subscribed: boolean;
+  fullAccess: boolean; // manual override – bypasses all checks
   subscriptionEnd: string | null;
   loading: boolean;
   freeRequestsUsed: number;
