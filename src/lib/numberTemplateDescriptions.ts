@@ -34,6 +34,7 @@ const typeSynthesis: Record<NumberType, string> = {
   anima: "Svela i desideri più profondi della tua anima e ciò che realmente ti motiva.",
   personalita: "Mostra la maschera che presenti al mondo e come gli altri ti percepiscono.",
   quintessenza: "Rappresenta la sintesi più elevata del tuo potenziale, dove talenti e missione si incontrano.",
+  ciclo: "Rappresenta l'energia dominante di una fase specifica della tua vita.",
 };
 
 export function getTypeSynthesis(type: NumberType): string {
