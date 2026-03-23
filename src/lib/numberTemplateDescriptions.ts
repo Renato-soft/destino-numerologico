@@ -42,7 +42,7 @@ export function getTypeSynthesis(type: NumberType): string {
 }
 
 // Template descriptions per number (1-9 + 11, 22, 33)
-const templateDescriptions: Record<number, Record<NumberType, NumberTemplateDesc>> = {
+const templateDescriptions: Record<number, Partial<Record<NumberType, NumberTemplateDesc>>> = {
   1: {
     destino: {
       synthesis: "Il numero dell'indipendenza, del coraggio e della leadership naturale.",
