@@ -137,7 +137,18 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     checkSubscription();
     const interval = setInterval(checkSubscription, 60000);
-    return () => clearInterval(interval);
+
+    // Re-check when auth state changes (login/logout)
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
+        checkSubscription();
+      }
+    });
+
+    return () => {
+      clearInterval(interval);
+      authSub.unsubscribe();
+    };
   }, [checkSubscription]);
 
   const canAccess = useCallback((route: string): boolean => {
