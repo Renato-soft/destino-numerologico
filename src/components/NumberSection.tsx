@@ -1,14 +1,15 @@
 import { getNumberTemplate, getTypeSynthesis, getCalculationMethod } from "@/lib/numberTemplateDescriptions";
 
-type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza';
+type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza' | 'ciclo';
 
 interface NumberSectionProps {
   num: number;
   type: NumberType;
   title: string;
+  subtitle?: string;
 }
 
-const NumberSection = ({ num, type, title }: NumberSectionProps) => {
+const NumberSection = ({ num, type, title, subtitle }: NumberSectionProps) => {
   const template = getNumberTemplate(num, type);
   const synthesis = getTypeSynthesis(type);
   const calculation = getCalculationMethod(type);
@@ -24,7 +25,11 @@ const NumberSection = ({ num, type, title }: NumberSectionProps) => {
           {title}
         </h2>
         <p className="text-primary/70 italic text-sm mb-1">{synthesis}</p>
-        <p className="text-muted-foreground text-xs">{calculation}</p>
+        {subtitle ? (
+          <p className="text-muted-foreground text-xs">{subtitle}</p>
+        ) : (
+          <p className="text-muted-foreground text-xs">{calculation}</p>
+        )}
       </div>
 
       {/* Synthesis / Main description */}

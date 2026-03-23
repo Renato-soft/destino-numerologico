@@ -14,7 +14,6 @@ import {
   calculatePersonalMonth,
   calculateLifeCycles,
   calculateQuintessenza,
-  numberMeanings,
   personalYearMeanings,
 } from "@/lib/numerology";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
@@ -355,45 +354,41 @@ const NumerologyMap = () => {
             <NumberSection num={numerologyData.quintessenza} type="quintessenza" title={`Quintessenza ${numerologyData.quintessenza}`} />
 
             {/* Life Cycles section */}
-            <section className="glass-cosmic rounded-2xl p-8">
-              <h2 className="font-display text-xl font-bold mb-6">Cicli della Vita</h2>
-              <div className="space-y-6">
-                {[
-                  {
-                    title: "Primo Ciclo della Vita",
-                    cycle: numerologyData.cycles.firstCycle,
-                    period: `dalla nascita (${numerologyData.cycles.firstCycle.startYear}) fino al passaggio tra ${numerologyData.cycles.firstCycle.endYear - 2} e ${numerologyData.cycles.firstCycle.endYear}`,
-                  },
-                  {
-                    title: "Secondo Ciclo della Vita",
-                    cycle: numerologyData.cycles.secondCycle,
-                    period: `dal passaggio (${numerologyData.cycles.secondCycle.startYear}-${numerologyData.cycles.secondCycle.startYear + 2}) fino a ${numerologyData.cycles.secondCycle.endYear}`,
-                  },
-                  {
-                    title: "Terzo Ciclo della Vita",
-                    cycle: numerologyData.cycles.thirdCycle,
-                    period: `dal passaggio (${numerologyData.cycles.thirdCycle.startYear}) in poi`,
-                  },
-                ].map((item, index) => {
-                  const meaning = numberMeanings[item.cycle.number > 9 ? (item.cycle.number === 11 ? 2 : item.cycle.number === 22 ? 4 : 6) : item.cycle.number];
-                  return (
-                    <div key={index} className="border-l-2 border-primary/30 pl-6">
-                      <h3 className="font-display font-semibold text-lg mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Periodo: {item.period} • Numero del ciclo: {item.cycle.number}
-                      </p>
-                      <p className="text-foreground/90">
-                        Questo ciclo, governato dal numero {item.cycle.number}, porta con sé l'energia di
-                        {meaning?.keywords.join(', ')}. Durante questo periodo, sei chiamato a sviluppare
-                        {meaning?.talents.join(' e ')}, imparando progressivamente a {meaning?.evolution}.
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+            <div className="space-y-2">
+              <h2 className="font-display text-2xl font-bold mb-2">Cicli della Vita</h2>
+              <p className="text-muted-foreground text-sm mb-6">
+                I tre Cicli della Vita rappresentano le grandi fasi evolutive della tua esistenza, ciascuna governata da un numero diverso.
+              </p>
+            </div>
+
+            {[
+              {
+                cycle: numerologyData.cycles.firstCycle,
+                label: "Primo Ciclo",
+                period: `Dalla nascita (${numerologyData.cycles.firstCycle.startYear}) fino al passaggio tra ${numerologyData.cycles.firstCycle.endYear - 2} e ${numerologyData.cycles.firstCycle.endYear}`,
+                calcDetail: "Derivato dal mese di nascita.",
+              },
+              {
+                cycle: numerologyData.cycles.secondCycle,
+                label: "Secondo Ciclo",
+                period: `Dal passaggio (${numerologyData.cycles.secondCycle.startYear}–${numerologyData.cycles.secondCycle.startYear + 2}) fino a ${numerologyData.cycles.secondCycle.endYear}`,
+                calcDetail: "Derivato dal giorno di nascita.",
+              },
+              {
+                cycle: numerologyData.cycles.thirdCycle,
+                label: "Terzo Ciclo",
+                period: `Dal passaggio (${numerologyData.cycles.thirdCycle.startYear}) in poi`,
+                calcDetail: "Derivato dall'anno di nascita ridotto.",
+              },
+            ].map((item) => (
+              <NumberSection
+                key={item.label}
+                num={item.cycle.number}
+                type="ciclo"
+                title={`${item.label} — Numero ${item.cycle.number}`}
+                subtitle={`Periodo: ${item.period} · ${item.calcDetail}`}
+              />
+            ))}
 
             {/* Personal Year section */}
             <section className="glass-cosmic rounded-2xl p-8">

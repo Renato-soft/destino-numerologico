@@ -12,7 +12,7 @@ export interface NumberTemplateDesc {
 // Descriptions per number type per number value
 // Types: destino, io, anima, personalita, quintessenza
 
-type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza';
+type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza' | 'ciclo';
 
 const calculationMethods: Record<NumberType, string> = {
   destino: "Si calcola dalla data di nascita (giorno + mese + anno, ridotti ciascuno a cifra singola, poi sommati e ridotti).",
@@ -20,6 +20,7 @@ const calculationMethods: Record<NumberType, string> = {
   anima: "Si calcola sommando il valore numerico delle sole vocali del nome completo.",
   personalita: "Si calcola sommando il valore numerico delle sole consonanti del nome completo.",
   quintessenza: "Si calcola sommando il numero dell'Io e il numero del Destino, riducendo il risultato a cifra singola (eccetto 11 e 22).",
+  ciclo: "I Cicli della Vita derivano dalla data di nascita: il primo dal mese, il secondo dal giorno, il terzo dall'anno ridotto.",
 };
 
 export function getCalculationMethod(type: NumberType): string {
@@ -33,6 +34,7 @@ const typeSynthesis: Record<NumberType, string> = {
   anima: "Svela i desideri più profondi della tua anima e ciò che realmente ti motiva.",
   personalita: "Mostra la maschera che presenti al mondo e come gli altri ti percepiscono.",
   quintessenza: "Rappresenta la sintesi più elevata del tuo potenziale, dove talenti e missione si incontrano.",
+  ciclo: "Rappresenta l'energia dominante di una fase specifica della tua vita.",
 };
 
 export function getTypeSynthesis(type: NumberType): string {
@@ -40,7 +42,7 @@ export function getTypeSynthesis(type: NumberType): string {
 }
 
 // Template descriptions per number (1-9 + 11, 22, 33)
-const templateDescriptions: Record<number, Record<NumberType, NumberTemplateDesc>> = {
+const templateDescriptions: Record<number, Partial<Record<NumberType, NumberTemplateDesc>>> = {
   1: {
     destino: {
       synthesis: "Il numero dell'indipendenza, del coraggio e della leadership naturale.",
@@ -490,8 +492,98 @@ templateDescriptions[33] = {
     advice: "Sei una luce nel mondo. Ma anche la luce ha bisogno di essere alimentata. Prenditi cura della tua fiamma.",
   },
 };
+// Cycle-specific descriptions per number
+const cycleDescriptions: Record<number, NumberTemplateDesc> = {
+  1: {
+    synthesis: "Un ciclo di nuovi inizi, indipendenza e affermazione del sé.",
+    gifts: "Coraggio di iniziare, autonomia, capacità di prendere decisioni importanti, spirito pionieristico.",
+    challenge: "Rischi di isolarti o di imporre la tua volontà. L'egocentrismo può allontanare le persone che ami.",
+    example: "Il periodo in cui decidi di cambiare lavoro, trasferirti o iniziare un progetto completamente nuovo. Il momento in cui smetti di aspettare il permesso degli altri.",
+    advice: "Questo ciclo ti chiede di osare. Non temere di stare solo: è nella solitudine costruttiva che trovi la tua vera forza.",
+  },
+  2: {
+    synthesis: "Un ciclo di collaborazione, pazienza e sviluppo delle relazioni.",
+    gifts: "Sensibilità emotiva, capacità di mediazione, empatia, talento nel creare legami profondi e duraturi.",
+    challenge: "Potresti diventare dipendente dagli altri o evitare i conflitti a ogni costo, perdendo te stesso nel processo.",
+    example: "Il periodo in cui le relazioni diventano centrali: matrimoni, partnership, amicizie profonde che cambiano la vita.",
+    advice: "Questo ciclo ti insegna che la vera forza è nella collaborazione. Impara ad ascoltare, ma non dimenticare la tua voce.",
+  },
+  3: {
+    synthesis: "Un ciclo di espressione creativa, comunicazione e gioia di vivere.",
+    gifts: "Creatività fiorente, capacità comunicative potenziate, socialità, entusiasmo contagioso.",
+    challenge: "La dispersione e la superficialità possono impedirti di portare a termine i tuoi progetti. Troppi stimoli, poca disciplina.",
+    example: "Il periodo in cui scopri un talento artistico, inizi a scrivere, dipingere, o ti dedichi a una forma di espressione che ti rappresenta.",
+    advice: "Esprimi ciò che senti senza paura del giudizio. Ma ricorda: la creatività senza disciplina resta un sogno incompiuto.",
+  },
+  4: {
+    synthesis: "Un ciclo di costruzione, disciplina e consolidamento delle basi.",
+    gifts: "Costanza, capacità organizzativa, senso pratico, determinazione nel costruire qualcosa di duraturo.",
+    challenge: "La rigidità e la paura del cambiamento possono bloccarti. Potresti sentirti intrappolato nella routine.",
+    example: "Il periodo in cui costruisci le fondamenta della tua vita: compri casa, stabilisci la carriera, crei strutture familiari solide.",
+    advice: "Questo ciclo richiede pazienza e lavoro costante. Non cercare scorciatoie: ciò che costruisci ora durerà per sempre.",
+  },
+  5: {
+    synthesis: "Un ciclo di cambiamento, libertà e nuove esperienze.",
+    gifts: "Adattabilità, coraggio di cambiare, apertura al nuovo, capacità di reinventarsi, energia vitale.",
+    challenge: "L'instabilità e l'irrequietezza possono portarti a fuggire dalle responsabilità. Gli eccessi sono un rischio concreto.",
+    example: "Il periodo dei viaggi, dei cambiamenti di carriera, delle relazioni inaspettate. Tutto si muove e nulla resta uguale.",
+    advice: "Abbraccia il cambiamento ma mantieni un centro. La libertà vera non è fuggire, è scegliere consapevolmente.",
+  },
+  6: {
+    synthesis: "Un ciclo di responsabilità affettiva, famiglia e ricerca di armonia.",
+    gifts: "Capacità di cura, senso estetico, dedizione alla famiglia, talento nel creare ambienti armoniosi.",
+    challenge: "Il sacrificio eccessivo e il bisogno di controllare gli altri possono esaurirti. Potresti dimenticare te stesso.",
+    example: "Il periodo in cui ti dedichi alla famiglia, ai figli, alla casa. Le relazioni affettive diventano il centro della tua vita.",
+    advice: "Ama senza perdere te stesso. La cura più importante è quella che riservi a te: solo da lì nasce un amore sostenibile.",
+  },
+  7: {
+    synthesis: "Un ciclo di introspezione, studio e crescita interiore.",
+    gifts: "Profondità di pensiero, intuizione, capacità di ricerca, saggezza che nasce dalla riflessione.",
+    challenge: "L'isolamento e la diffidenza possono tagliarti fuori dal mondo. Potresti intellettualizzare le emozioni invece di viverle.",
+    example: "Il periodo in cui ti ritiri per studiare, meditare, fare terapia o intraprendere un percorso spirituale profondo.",
+    advice: "Questo ciclo ti chiede di rallentare e guardare dentro. Le risposte che cerchi non sono fuori, sono nel silenzio.",
+  },
+  8: {
+    synthesis: "Un ciclo di realizzazione materiale, potere personale e raccolta dei frutti.",
+    gifts: "Capacità di gestione, senso degli affari, leadership, determinazione nel raggiungere obiettivi concreti.",
+    challenge: "Il materialismo e la durezza possono allontanarti dalle persone. Il potere senza etica è distruttivo.",
+    example: "Il periodo delle promozioni, del successo economico, del riconoscimento professionale. È il momento di raccogliere ciò che hai seminato.",
+    advice: "Usa il potere che questo ciclo ti offre con saggezza. Il vero successo è quello che eleva anche chi ti circonda.",
+  },
+  9: {
+    synthesis: "Un ciclo di chiusura, trasformazione e preparazione a un nuovo inizio.",
+    gifts: "Compassione, visione ampia, capacità di lasciar andare, saggezza maturata dall'esperienza.",
+    challenge: "Aggrapparsi al passato può impedirti di evolvere. Il vittimismo e la nostalgia possono bloccarti.",
+    example: "Il periodo in cui chiudi relazioni, lavori o fasi della vita che hanno esaurito il loro scopo. Fai bilanci e ti prepari al nuovo.",
+    advice: "Lascia andare con gratitudine. Ogni fine è un nuovo inizio mascherato. Ciò che è veramente tuo tornerà sempre.",
+  },
+  11: {
+    synthesis: "Un ciclo di risveglio spirituale, visione elevata e ispirazione profonda.",
+    gifts: "Intuizione straordinaria, sensibilità elevata, capacità di ispirare, connessione con dimensioni superiori.",
+    challenge: "L'ipersensibilità e la tensione nervosa possono renderti fragile. Il peso della visione può sembrare insopportabile.",
+    example: "Il periodo delle rivelazioni interiori, delle sincronicità frequenti, dei sogni profetici. Senti che qualcosa di più grande ti guida.",
+    advice: "Non resistere al risveglio: è il tuo dono. Radicati nella pratica quotidiana per sostenere l'intensità di questo ciclo.",
+  },
+  22: {
+    synthesis: "Un ciclo di costruzione su larga scala e realizzazione di grandi visioni.",
+    gifts: "Capacità di manifestare l'impossibile, leadership visionaria, combinazione unica di idealismo e pragmatismo.",
+    challenge: "La pressione delle aspettative può schiacciarti. Potresti limitarti per paura della tua stessa grandezza.",
+    example: "Il periodo in cui un progetto di vita prende forma concreta e ha un impatto che va ben oltre la tua sfera personale.",
+    advice: "Sei chiamato a costruire qualcosa di grande. Non farti spaventare dalle dimensioni: procedi un passo alla volta.",
+  },
+  33: {
+    synthesis: "Un ciclo di servizio compassionevole e guida spirituale per gli altri.",
+    gifts: "Amore incondizionato, capacità di guarigione, leadership compassionevole, ispirazione spirituale.",
+    challenge: "Il martirio e l'annullamento di sé sono rischi concreti. Potresti sacrificare tutto senza riservarti nulla.",
+    example: "Il periodo in cui diventi un punto di riferimento per la comunità, un maestro, un guaritore. Gli altri cercano la tua luce.",
+    advice: "Servi con amore, ma non dimenticare di servire anche te stesso. La tua luce ha bisogno di carburante.",
+  },
+};
 
 export function getNumberTemplate(num: number, type: NumberType): NumberTemplateDesc | null {
   const baseNum = num > 9 && ![11, 22, 33].includes(num) ? num % 9 || 9 : num;
+  if (type === 'ciclo') {
+    return cycleDescriptions[baseNum] || null;
+  }
   return templateDescriptions[baseNum]?.[type] || null;
 }
