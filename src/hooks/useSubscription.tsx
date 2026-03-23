@@ -75,6 +75,7 @@ const SubscriptionContext = createContext<SubscriptionContextType | null>(null);
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
+    fullAccess: false,
     subscriptionEnd: null,
     loading: true,
     freeRequestsUsed: 0,
