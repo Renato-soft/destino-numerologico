@@ -55,9 +55,9 @@ serve(async (req) => {
 
     // Manual overrides
     if (OVERRIDES.includes(user.email.toLowerCase())) {
-      logStep("Manual override found");
+      logStep("Manual override found – full access");
       return new Response(
-        JSON.stringify({ subscribed: true, subscription_end: null }),
+        JSON.stringify({ subscribed: true, subscription_end: null, full_access: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
       );
     }
