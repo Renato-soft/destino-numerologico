@@ -20,6 +20,7 @@ const calculationMethods: Record<NumberType, string> = {
   anima: "Si calcola sommando il valore numerico delle sole vocali del nome completo.",
   personalita: "Si calcola sommando il valore numerico delle sole consonanti del nome completo.",
   quintessenza: "Si calcola sommando il numero dell'Io e il numero del Destino, riducendo il risultato a cifra singola (eccetto 11 e 22).",
+  ciclo: "I Cicli della Vita derivano dalla data di nascita: il primo dal mese, il secondo dal giorno, il terzo dall'anno ridotto.",
 };
 
 export function getCalculationMethod(type: NumberType): string {
