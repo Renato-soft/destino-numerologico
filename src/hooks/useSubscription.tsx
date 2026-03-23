@@ -100,7 +100,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, loading: false, freeRequestsUsed: 0, payPerUsePurchases: [] }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, freeRequestsUsed: 0, payPerUsePurchases: [] }));
         return;
       }
 
