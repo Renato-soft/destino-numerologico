@@ -12,7 +12,7 @@ export interface NumberTemplateDesc {
 // Descriptions per number type per number value
 // Types: destino, io, anima, personalita, quintessenza
 
-type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza';
+type NumberType = 'destino' | 'io' | 'anima' | 'personalita' | 'quintessenza' | 'ciclo';
 
 const calculationMethods: Record<NumberType, string> = {
   destino: "Si calcola dalla data di nascita (giorno + mese + anno, ridotti ciascuno a cifra singola, poi sommati e ridotti).",
