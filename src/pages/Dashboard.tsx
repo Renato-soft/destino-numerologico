@@ -215,6 +215,9 @@ const Dashboard = () => {
           <p className="text-muted-foreground text-lg">{t("dashboard.explore")}</p>
         </motion.section>
 
+        {latestMap && subscribed && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
+        {subscribed && <DailyOutfits />}
+
         {latestMap && (
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
             <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.yourNumbers")}</h2>
