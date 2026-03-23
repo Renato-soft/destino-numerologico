@@ -15,11 +15,8 @@ import {
   calculateLifeCycles,
   calculateQuintessenza,
   numberMeanings,
-  masterMeanings,
   personalYearMeanings,
-  destinyArchetypes,
 } from "@/lib/numerology";
-import { soulDescriptions } from "@/lib/soulDescriptions";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
 import NumberSection from "@/components/NumberSection";
