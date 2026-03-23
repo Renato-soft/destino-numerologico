@@ -14,7 +14,7 @@ import {
   calculatePersonalMonth,
   calculateLifeCycles,
   calculateQuintessenza,
-  numberMeanings,
+  personalYearMeanings,
   personalYearMeanings,
 } from "@/lib/numerology";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
