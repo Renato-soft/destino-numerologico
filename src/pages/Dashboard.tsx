@@ -235,9 +235,6 @@ const Dashboard = () => {
           </motion.section>
         )}
 
-        {latestMap && subscribed && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
-        {subscribed && <DailyOutfits />}
-
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
