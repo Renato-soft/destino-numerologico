@@ -113,6 +113,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       setState(prev => ({
         ...prev,
         subscribed: data.subscribed,
+        fullAccess: !!data.full_access,
         subscriptionEnd: data.subscription_end,
         loading: false,
         freeRequestsUsed: usedCount,
