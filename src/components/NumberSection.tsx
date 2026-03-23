@@ -25,7 +25,11 @@ const NumberSection = ({ num, type, title, subtitle }: NumberSectionProps) => {
           {title}
         </h2>
         <p className="text-primary/70 italic text-sm mb-1">{synthesis}</p>
-        <p className="text-muted-foreground text-xs">{calculation}</p>
+        {subtitle ? (
+          <p className="text-muted-foreground text-xs">{subtitle}</p>
+        ) : (
+          <p className="text-muted-foreground text-xs">{calculation}</p>
+        )}
       </div>
 
       {/* Synthesis / Main description */}
