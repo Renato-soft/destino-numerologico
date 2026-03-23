@@ -15,7 +15,6 @@ import {
   calculateLifeCycles,
   calculateQuintessenza,
   personalYearMeanings,
-  personalYearMeanings,
 } from "@/lib/numerology";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
