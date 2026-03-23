@@ -198,19 +198,6 @@ const NumerologyMap = () => {
     }
   };
 
-  const getNumberDescription = (num: number, type: 'lifePath' | 'expression' | 'soul' | 'personality') => {
-    const baseNum = num > 9 ? (num === 11 ? 2 : num === 22 ? 4 : num === 33 ? 6 : num) : num;
-    const meaning = numberMeanings[baseNum];
-    const master = masterMeanings[num];
-    const archetype = destinyArchetypes[baseNum];
-
-    return { meaning, master, archetype };
-  };
-
-  const getSoulDesc = (num: number) => {
-    return soulDescriptions[num] || soulDescriptions[num > 9 ? (num === 11 ? 11 : num === 22 ? 22 : num % 9 || 9) : num];
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
