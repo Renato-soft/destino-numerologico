@@ -390,78 +390,7 @@ const NumerologyMap = () => {
               />
             ))}
 
-            {/* Personal Year section */}
-            <section className="glass-cosmic rounded-2xl p-8">
-              <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
-                <span className="number-circle">{numerologyData.personalYear}</span>
-                Anno Personale {new Date().getFullYear()}
-              </h2>
-              <div className="prose prose-invert max-w-none">
-                <p className="text-foreground/90 font-medium mb-4">
-                  {personalYearMeanings[numerologyData.personalYear]}
-                </p>
-
-                <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  {(Object.keys(sectorMeta) as SectorKey[]).map((sectorKey) => {
-                    const meta = sectorMeta[sectorKey];
-                    const sectors = getPersonalYearSectors(numerologyData.personalYear);
-                    const sector = sectors[sectorKey];
-                    return (
-                      <Collapsible key={sectorKey}>
-                        <div className="p-4 rounded-lg bg-background/50">
-                          <h4 className="font-semibold mb-2">{meta.icon} {meta.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {sector.summary}
-                          </p>
-                          <CollapsibleTrigger className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors font-medium">
-                            <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
-                            Approfondisci
-                          </CollapsibleTrigger>
-                          <CollapsibleContent className="mt-3 pt-3 border-t border-border/30">
-                            <p className="text-sm text-foreground/80 leading-relaxed">
-                              {sector.detail}
-                            </p>
-                          </CollapsibleContent>
-                        </div>
-                      </Collapsible>
-                    );
-                  })}
-                </div>
               </div>
-            </section>
-
-            {/* Closing */}
-            <section className="glass-cosmic rounded-2xl p-8">
-              <h2 className="font-display text-xl font-bold mb-4">Approfondimenti disponibili</h2>
-              <ul className="space-y-2 text-foreground/90">
-                <li>– Proiezione mese per mese basata sull'Anno Personale</li>
-                <li>– Analisi della giornata (oggi, domani o data specifica)</li>
-                <li>– Date favorevoli per obiettivi concreti (colloqui, firmare contratti, relazioni sentimentali, etc...)</li>
-                <li>– Spiegami il mio Destino in modo pratico</li>
-                <li>– Quali sono i miei talenti nascosti</li>
-                <li>– Quale lavoro è in linea con la mia mappa</li>
-              </ul>
-              <p className="mt-4 text-muted-foreground">
-                Scrivimi quale approfondimento desideri e il periodo di riferimento. Oppure fammi una domanda
-              </p>
-              <Button variant="cosmic" className="mt-6" asChild>
-                <Link to="/chat">Parla con l'Esperto AI</Link>
-              </Button>
-            </section>
-
-              </div>
-            </div>
-
-            {/* Regenerate button */}
-            <div className="text-center py-8">
-              <Button
-                variant="outline"
-                onClick={generateMap}
-                disabled={generating}
-              >
-                <RefreshCw className={`w-4 h-4 mr-2 ${generating ? 'animate-spin' : ''}`} />
-                Rigenera Mappa
-              </Button>
             </div>
           </motion.div>
         )}
