@@ -141,18 +141,20 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [checkSubscription]);
 
   const canAccess = useCallback((route: string): boolean => {
+    // Full access override – all features unlocked
+    if (state.fullAccess) return true;
     // Subscription routes require active sub
     if (SUBSCRIPTION_ROUTES.includes(route) || route === "/map") {
       return state.subscribed;
     }
-    // Pay-per-use routes require either sub + purchase, or just purchase
+    // Pay-per-use routes require purchase
     const ppuFeature = PAY_PER_USE_ROUTES[route];
     if (ppuFeature) {
       const productId = PAY_PER_USE[ppuFeature].product_id;
       return state.payPerUsePurchases.includes(productId);
     }
     return true;
-  }, [state.subscribed, state.payPerUsePurchases]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
