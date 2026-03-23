@@ -198,6 +198,14 @@ const Dashboard = () => {
             <span className="text-muted-foreground hidden md:block">
               {t("dashboard.hello")} <span className="text-foreground font-medium">{profile?.nome}</span>
             </span>
+            {latestMap && (
+              <Button variant="cosmic-outline" size="sm" asChild>
+                <Link to="/map">
+                  <Map className="w-4 h-4 mr-2" />
+                  La tua Mappa
+                </Link>
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="w-5 h-5" />
             </Button>
