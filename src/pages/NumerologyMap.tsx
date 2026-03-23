@@ -22,6 +22,7 @@ import {
 import { soulDescriptions } from "@/lib/soulDescriptions";
 import { generateNumerologyPdf } from "@/lib/generatePdf";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
+import NumberSection from "@/components/NumberSection";
 import {
   Sparkles,
   ArrowLeft,
