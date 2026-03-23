@@ -166,7 +166,7 @@ const Dashboard = () => {
     // Pricing
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
     // Subscription services
-    { title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" },
+    ...(latestMap ? [] : [{ title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" }]),
     { title: t("dashboard.personalYear", { year: new Date().getFullYear() }), description: t("dashboard.personalYearDesc"), icon: Calendar, href: "/personal-year", color: "from-orange-500 to-amber-500" },
     { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
     { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
