@@ -52,6 +52,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
 
 interface SubscriptionState {
   subscribed: boolean;
+  fullAccess: boolean; // manual override – bypasses all checks
   subscriptionEnd: string | null;
   loading: boolean;
   freeRequestsUsed: number;
@@ -74,6 +75,7 @@ const SubscriptionContext = createContext<SubscriptionContextType | null>(null);
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
+    fullAccess: false,
     subscriptionEnd: null,
     loading: true,
     freeRequestsUsed: 0,
@@ -98,7 +100,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, loading: false, freeRequestsUsed: 0, payPerUsePurchases: [] }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, freeRequestsUsed: 0, payPerUsePurchases: [] }));
         return;
       }
 
@@ -111,6 +113,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       setState(prev => ({
         ...prev,
         subscribed: data.subscribed,
+        fullAccess: !!data.full_access,
         subscriptionEnd: data.subscription_end,
         loading: false,
         freeRequestsUsed: usedCount,
@@ -138,18 +141,20 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [checkSubscription]);
 
   const canAccess = useCallback((route: string): boolean => {
+    // Full access override – all features unlocked
+    if (state.fullAccess) return true;
     // Subscription routes require active sub
     if (SUBSCRIPTION_ROUTES.includes(route) || route === "/map") {
       return state.subscribed;
     }
-    // Pay-per-use routes require either sub + purchase, or just purchase
+    // Pay-per-use routes require purchase
     const ppuFeature = PAY_PER_USE_ROUTES[route];
     if (ppuFeature) {
       const productId = PAY_PER_USE[ppuFeature].product_id;
       return state.payPerUsePurchases.includes(productId);
     }
     return true;
-  }, [state.subscribed, state.payPerUsePurchases]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
