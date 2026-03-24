@@ -70,7 +70,7 @@ const PricingConversion = () => {
                   <Sparkles className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold">Sblocchi Singoli</h3>
+                  <h3 className="font-display text-xl font-bold">Vuoi solo un'analisi specifica?</h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-lg font-bold text-primary">€1,99</span>
                     <span className="text-sm text-muted-foreground">per analisi</span>
