@@ -39,7 +39,7 @@ const Benefits = () => {
             Perché funziona
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Cosa scoprirai <span className="text-gradient-gold">su di te</span>
+            Questa non è <span className="text-gradient-gold">una semplice lettura</span>
           </h2>
         </motion.div>
 
