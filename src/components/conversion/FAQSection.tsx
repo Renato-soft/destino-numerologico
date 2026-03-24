@@ -23,6 +23,18 @@ const faqs = [
     question: "I miei dati sono sicuri?",
     answer: "Assolutamente sì. Utilizziamo crittografia avanzata e non condividiamo mai i tuoi dati con terze parti. I tuoi dati personali sono protetti secondo le normative GDPR europee.",
   },
+  {
+    question: "In cosa si differenzia dagli oroscopi?",
+    answer: "Gli oroscopi sono generici e basati solo sul mese di nascita. La numerologia pitagorica utilizza la tua data di nascita esatta e il tuo nome completo per calcolare numeri unici e personali. Il risultato è un'analisi su misura, non una previsione generica valida per milioni di persone.",
+  },
+  {
+    question: "Quanto tempo ci vuole per ricevere l'analisi?",
+    answer: "L'analisi è istantanea. Inserisci la tua data di nascita e in pochi secondi ricevi la tua mappa numerologica completa. Ogni giorno puoi consultare l'analisi giornaliera aggiornata con suggerimenti pratici per la tua giornata.",
+  },
+  {
+    question: "Posso cancellare il mio account in qualsiasi momento?",
+    answer: "Certo. Non ci sono vincoli né obblighi. Puoi cancellare il tuo account e tutti i tuoi dati in qualsiasi momento direttamente dalle impostazioni del profilo. Nessuna domanda, nessuna complicazione.",
+  },
 ];
 
 const FAQSection = () => {
