@@ -7,7 +7,7 @@ const AboutSection = () => {
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/10 to-background" />
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -26,11 +26,11 @@ const AboutSection = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-8 items-center"
+            className="grid md:grid-cols-[2fr_3fr] gap-8 items-start"
           >
-            {/* Photo placeholder */}
-            <div className="aspect-[4/5] rounded-2xl border border-border/50 overflow-hidden">
-              <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-full object-cover" />
+            {/* Photo */}
+            <div className="rounded-2xl border border-border/50 overflow-hidden">
+              <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-auto object-cover" />
             </div>
 
             <div className="space-y-6">
