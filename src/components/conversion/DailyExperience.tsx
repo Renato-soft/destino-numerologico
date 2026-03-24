@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp } from "lucide-react";
+import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download } from "lucide-react";
 import outfit0 from "@/assets/outfits/outfit0.jpg";
 import outfit1 from "@/assets/outfits/outfit1.jpg";
 import outfit2 from "@/assets/outfits/outfit2.jpg";
