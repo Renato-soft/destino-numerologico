@@ -342,8 +342,10 @@ const ProfilePage = () => {
               <span className="text-xs text-muted-foreground">{photos.length}/{MAX_PHOTOS}</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Carica altre foto per migliorare la personalizzazione degli outfit. 
-              Più espressioni, angolazioni e luci diverse aiutano l'AI a conoscerti meglio.
+              Carica foto in contesti diversi per outfit più precisi: scatti estivi e invernali, 
+              primi piani che mostrino il colore degli occhi, foto di profilo e di tre quarti, 
+              e anche in costume da bagno per evidenziare le forme del corpo. 
+              Più varietà carichi, più l'AI saprà consigliarti il look perfetto.
             </p>
 
             {extraPhotos.length > 0 && (
