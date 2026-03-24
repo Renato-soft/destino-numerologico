@@ -32,23 +32,62 @@ const DailyExperience = () => {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
-          {dailyFeatures.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="text-center p-6 rounded-2xl border border-border/30 bg-card/30"
-            >
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h4 className="font-display text-lg font-bold mb-2">{feature.title}</h4>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
-            </motion.div>
-          ))}
+        <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto mb-12 items-center">
+          {/* Left: feature descriptions in 2x2 grid */}
+          <div className="grid sm:grid-cols-2 gap-5">
+            {dailyFeatures.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="text-center p-5 rounded-2xl border border-border/30 bg-card/30"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="font-display text-lg font-bold mb-2">{feature.title}</h4>
+                <p className="text-sm text-muted-foreground">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Right: outfit examples */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 gap-3"
+          >
+            {[
+              { label: "Look Mattina", img: "c6391514-2714-4b7c-a663-06570df3043f/c118fda6-a347-40d7-8696-53aab4da8c6f.png" },
+              { label: "Look Pomeriggio", img: "c6391514-2714-4b7c-a663-06570df3043f/d9242b23-b031-4952-8b11-05a8b79866ab.png" },
+              { label: "Look Sera", img: "c6391514-2714-4b7c-a663-06570df3043f/4815403f-9c1f-4c81-9ce8-a56abf70aec3.png" },
+              { label: "Look Speciale", img: "c6391514-2714-4b7c-a663-06570df3043f/3982d63e-2ab2-443e-8178-30d3a1cf24b5.png" },
+            ].map((outfit, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 + i * 0.1 }}
+                className="rounded-2xl overflow-hidden border border-border/30 bg-card/30 group"
+              >
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src={`https://oxkurjhomofoibihhmoq.supabase.co/storage/v1/object/public/generated-images/${outfit.img}`}
+                    alt={outfit.label}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-2 text-center">
+                  <p className="text-xs font-medium text-muted-foreground">{outfit.label}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
 
         <motion.div
