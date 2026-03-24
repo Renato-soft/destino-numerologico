@@ -31,7 +31,8 @@ const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+                className="w-full sm:flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all [color-scheme:dark]"
+                aria-label="Data di nascita"
               />
               <Button
                 variant="cosmic"
