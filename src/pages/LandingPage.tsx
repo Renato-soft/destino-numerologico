@@ -1,7 +1,6 @@
 import { useState } from "react";
 import HeroConversion from "@/components/conversion/HeroConversion";
-import Benefits from "@/components/conversion/Benefits";
-import ResultPreview from "@/components/conversion/ResultPreview";
+import BenefitsAndPreview from "@/components/conversion/BenefitsAndPreview";
 import EvolutionPath from "@/components/conversion/EvolutionPath";
 import PricingConversion from "@/components/conversion/PricingConversion";
 import DailyExperience from "@/components/conversion/DailyExperience";
@@ -17,8 +16,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroConversion birthDate={birthDate} setBirthDate={setBirthDate} />
-      <Benefits />
-      <ResultPreview />
+      <BenefitsAndPreview />
       <EvolutionPath />
       <PricingConversion />
       <DailyExperience />
