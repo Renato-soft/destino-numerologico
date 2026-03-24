@@ -169,7 +169,7 @@ const DailyOutfits = () => {
                     <a
                       href={url}
                       download={`outfit-${index + 1}.png`}
-                      className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background text-foreground"
+                      className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background text-foreground transition-colors"
                       onClick={(e) => e.stopPropagation()}
                       title={t("common.downloadImage")}
                     >
