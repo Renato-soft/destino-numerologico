@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { PLAN } from "@/hooks/useSubscription";
 import { toast } from "sonner";
 import outfit0 from "@/assets/outfits/outfit0.jpg";
-import outfit1 from "@/assets/outfits/outfit1.avif";
-import outfit2 from "@/assets/outfits/outfit2.jpg";
+import outfit1 from "@/assets/outfits/outfit1.png";
+import outfit2 from "@/assets/outfits/outfit2.png";
 import outfit3 from "@/assets/outfits/outfit3.jpg";
 
 const dailyFeatures = [
