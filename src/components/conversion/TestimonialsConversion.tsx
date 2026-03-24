@@ -43,7 +43,7 @@ const TestimonialsConversion = () => {
             Storie Reali
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Cosa dicono <span className="text-gradient-gold">di noi</span>
+            Cosa dicono <span className="text-gradient-gold">gli utenti</span>
           </h2>
         </motion.div>
 
