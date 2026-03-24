@@ -1,0 +1,228 @@
+import { createClient } from "jsr:@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+const ADMIN_EMAIL = "regnew01@gmail.com";
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Non autorizzato" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !user || user.email !== ADMIN_EMAIL) {
+      return new Response(JSON.stringify({ error: "Accesso negato" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const url = new URL(req.url);
+    const action = url.searchParams.get("action") || "overview";
+
+    if (action === "overview") {
+      // Get all users from auth
+      const { data: authUsers } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+      const users = authUsers?.users || [];
+
+      const now = new Date();
+      const todayStr = now.toISOString().split("T")[0];
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      const totalUsers = users.length;
+      const newToday = users.filter(u => u.created_at?.startsWith(todayStr)).length;
+      const newLast3Days = users.filter(u => {
+        if (!u.created_at) return false;
+        return new Date(u.created_at) >= threeDaysAgo;
+      }).length;
+
+      // Stripe data
+      const stripeKey = (Deno.env.get("STRIPE_SECRET_KEY") ?? "").trim();
+      let stripeData: any = { totalRevenue: 0, revenueByProduct: {}, churned: [] };
+
+      if (stripeKey && !stripeKey.startsWith("pk_")) {
+        const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+
+        // Get all charges (revenue)
+        let totalRevenue = 0;
+        const revenueByProduct: Record<string, number> = {};
+        
+        const charges = await stripe.charges.list({ limit: 100 });
+        for (const charge of charges.data) {
+          if (charge.status === "succeeded" && !charge.refunded) {
+            totalRevenue += charge.amount;
+          }
+        }
+
+        // Get subscriptions info
+        const activeSubs = await stripe.subscriptions.list({ status: "active", limit: 100 });
+        const canceledSubs = await stripe.subscriptions.list({ status: "canceled", limit: 100 });
+
+        // Get invoices for revenue by product
+        const invoices = await stripe.invoices.list({ limit: 100, status: "paid" });
+        for (const inv of invoices.data) {
+          for (const line of (inv.lines?.data || [])) {
+            const prodName = line.description || "Abbonamento";
+            revenueByProduct[prodName] = (revenueByProduct[prodName] || 0) + (line.amount || 0);
+          }
+        }
+
+        // One-time payments
+        const sessions = await stripe.checkout.sessions.list({ limit: 100 });
+        for (const sess of sessions.data) {
+          if (sess.payment_status === "paid" && sess.mode === "payment") {
+            const key = "Acquisti singoli";
+            revenueByProduct[key] = (revenueByProduct[key] || 0) + (sess.amount_total || 0);
+          }
+        }
+
+        const churnedEmails = canceledSubs.data.map(s => s.customer).filter(Boolean);
+        const churnedCustomers: string[] = [];
+        for (const custId of churnedEmails) {
+          try {
+            const cust = await stripe.customers.retrieve(custId as string);
+            if (cust && !cust.deleted && cust.email) {
+              churnedCustomers.push(cust.email);
+            }
+          } catch { /* skip */ }
+        }
+
+        stripeData = {
+          totalRevenue: totalRevenue / 100,
+          revenueByProduct: Object.fromEntries(
+            Object.entries(revenueByProduct).map(([k, v]) => [k, (v as number) / 100])
+          ),
+          activeSubscriptions: activeSubs.data.length,
+          canceledSubscriptions: canceledSubs.data.length,
+          churned: churnedCustomers,
+        };
+      }
+
+      // Get profiles for user list
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, nome, cognome, birth_date, sesso, created_at");
+
+      const userList = (profiles || []).map(p => {
+        const authUser = users.find(u => u.id === p.user_id);
+        return {
+          user_id: p.user_id,
+          nome: p.nome,
+          cognome: p.cognome,
+          email: authUser?.email || "N/A",
+          created_at: p.created_at,
+          sesso: p.sesso,
+        };
+      });
+
+      return new Response(JSON.stringify({
+        totalUsers,
+        newToday,
+        newLast3Days,
+        stripe: stripeData,
+        users: userList,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+
+    } else if (action === "user-detail") {
+      const targetUserId = url.searchParams.get("user_id");
+      if (!targetUserId) {
+        return new Response(JSON.stringify({ error: "user_id richiesto" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Get profile photos
+      const { data: photos } = await supabase
+        .from("photos")
+        .select("type, storage_path")
+        .eq("user_id", targetUserId);
+
+      const photoUrls: { type: string; url: string }[] = [];
+      if (photos) {
+        for (const photo of photos) {
+          const { data } = await supabase.storage
+            .from("user-photos")
+            .createSignedUrl(photo.storage_path, 3600);
+          if (data?.signedUrl) {
+            photoUrls.push({ type: photo.type, url: data.signedUrl });
+          }
+        }
+      }
+
+      // Get outfits from last 3 days
+      const { data: outfitFiles } = await supabase.storage
+        .from("user-photos")
+        .list(`${targetUserId}/outfits`);
+
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      const cutoffDate = threeDaysAgo.toISOString().split("T")[0];
+
+      const recentOutfits: { date: string; label: string; url: string }[] = [];
+      if (outfitFiles) {
+        const recentFiles = outfitFiles.filter(f => {
+          const dateMatch = f.name.match(/^(\d{4}-\d{2}-\d{2})_/);
+          return dateMatch && dateMatch[1] >= cutoffDate;
+        });
+
+        for (const file of recentFiles) {
+          const { data } = await supabase.storage
+            .from("user-photos")
+            .createSignedUrl(`${targetUserId}/outfits/${file.name}`, 3600);
+          if (data?.signedUrl) {
+            const dateMatch = file.name.match(/^(\d{4}-\d{2}-\d{2})_v\d+_(.+)\.png$/);
+            recentOutfits.push({
+              date: dateMatch?.[1] || "",
+              label: dateMatch?.[2] || file.name,
+              url: data.signedUrl,
+            });
+          }
+        }
+      }
+
+      // Sort by date desc
+      recentOutfits.sort((a, b) => b.date.localeCompare(a.date));
+
+      return new Response(JSON.stringify({
+        photos: photoUrls,
+        outfits: recentOutfits,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ error: "Azione non valida" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (e) {
+    console.error("admin-dashboard error:", e);
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Errore" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
