@@ -176,6 +176,13 @@ Deno.serve(async (req) => {
       });
 
     } else if (action === "user-detail") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       const targetUserId = url.searchParams.get("user_id");
       if (!targetUserId) {
         return new Response(JSON.stringify({ error: "user_id richiesto" }), {
