@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
