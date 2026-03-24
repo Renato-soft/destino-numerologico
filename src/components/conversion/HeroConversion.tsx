@@ -58,18 +58,16 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
 
           {/* Title */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1]">
-            <span className="text-foreground">Perché ti succedono sempre le stesse cose?</span>
+            <span className="text-foreground">La tua vita ha uno schema</span>
             <br />
-            <span className="text-foreground">del Destino e perché la tua vita</span>
-            <br />
-            <span className="text-gradient-gold">segue uno schema preciso</span>
+            <span className="text-gradient-gold">Scoprilo in 60 secondi</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Una lettura numerologica personalizzata basata sulla tua data di nascita.
-            <br className="hidden sm:block" />
-            Scopri chi sei davvero, cosa ti blocca e cosa ti aspetta.
+            Perché ti succedono sempre le stesse cose?
+            <br />
+            La risposta è nei tuoi numeri.
           </p>
 
           {/* Birth date input + CTA */}
