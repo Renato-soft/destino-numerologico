@@ -17,7 +17,7 @@ const AboutSection = () => {
               Chi siamo
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
-              Una passione <span className="text-gradient-gold">autentica</span>
+              Chi <span className="text-gradient-gold">sono</span>
             </h2>
           </motion.div>
 
