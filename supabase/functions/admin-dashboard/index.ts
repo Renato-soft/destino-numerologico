@@ -160,17 +160,16 @@ Deno.serve(async (req) => {
         .select("type, storage_path")
         .eq("user_id", targetUserId);
 
-      const photoUrls: { type: string; url: string }[] = [];
-      if (photos) {
-        for (const photo of photos) {
-          const { data } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(photo.storage_path, 3600);
-          if (data?.signedUrl) {
-            photoUrls.push({ type: photo.type, url: data.signedUrl });
-          }
-        }
-      }
+      const photoUrls = photos
+        ? (await Promise.all(
+            photos.map(async (photo) => {
+              const { data } = await supabase.storage
+                .from("user-photos")
+                .createSignedUrl(photo.storage_path, 3600);
+              return data?.signedUrl ? { type: photo.type, url: data.signedUrl } : null;
+            })
+          )).filter(Boolean) as { type: string; url: string }[]
+        : [];
 
       // Get outfits from last 3 days
       const { data: outfitFiles } = await supabase.storage
@@ -181,26 +180,27 @@ Deno.serve(async (req) => {
       threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
       const cutoffDate = threeDaysAgo.toISOString().split("T")[0];
 
-      const recentOutfits: { date: string; label: string; url: string }[] = [];
+      let recentOutfits: { date: string; label: string; url: string }[] = [];
       if (outfitFiles) {
         const recentFiles = outfitFiles.filter(f => {
           const dateMatch = f.name.match(/^(\d{4}-\d{2}-\d{2})_/);
           return dateMatch && dateMatch[1] >= cutoffDate;
         });
 
-        for (const file of recentFiles) {
-          const { data } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(`${targetUserId}/outfits/${file.name}`, 3600);
-          if (data?.signedUrl) {
+        recentOutfits = (await Promise.all(
+          recentFiles.map(async (file) => {
+            const { data } = await supabase.storage
+              .from("user-photos")
+              .createSignedUrl(`${targetUserId}/outfits/${file.name}`, 3600);
+            if (!data?.signedUrl) return null;
             const dateMatch = file.name.match(/^(\d{4}-\d{2}-\d{2})_v\d+_(.+)\.png$/);
-            recentOutfits.push({
+            return {
               date: dateMatch?.[1] || "",
               label: dateMatch?.[2] || file.name,
               url: data.signedUrl,
-            });
-          }
-        }
+            };
+          })
+        )).filter(Boolean) as { date: string; label: string; url: string }[];
       }
 
       // Sort by date desc
