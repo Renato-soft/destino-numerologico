@@ -688,5 +688,16 @@
     "fortunePath": "Path of fortune",
     "skillsCharacter": "Skills and character",
     "missionDoing": "Mission / doing"
+  },
+  "photoAnalysis": {
+    "title": "Your Visual Essence",
+    "noPhotos": "Upload at least one photo in your profile to receive an empathic reading of your image.",
+    "cta": "Discover what your image conveys through a warm and respectful empathic reading.",
+    "analyze": "Analyze my image",
+    "analyzing": "Observing your essence...",
+    "regenerate": "Regenerate",
+    "error": "Could not analyze the photos. Please try again.",
+    "retry": "Retry",
+    "disclaimer": "This is an empathic reading based on photos, not a judgment. Every person is unique and their essence goes far beyond what an image can capture."
   }
 }

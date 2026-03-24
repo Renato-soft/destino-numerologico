@@ -688,5 +688,16 @@
     "fortunePath": "Sentiero della fortuna",
     "skillsCharacter": "Capacità e carattere",
     "missionDoing": "Mission / fare"
+  },
+  "photoAnalysis": {
+    "title": "La Tua Essenza Visiva",
+    "noPhotos": "Carica almeno una foto nel tuo profilo per ricevere una lettura empatica della tua immagine.",
+    "cta": "Scopri cosa trasmette la tua immagine attraverso una lettura empatica e rispettosa.",
+    "analyze": "Analizza la mia immagine",
+    "analyzing": "Sto osservando la tua essenza...",
+    "regenerate": "Rigenera",
+    "error": "Non è stato possibile analizzare le foto. Riprova.",
+    "retry": "Riprova",
+    "disclaimer": "Questa è una lettura empatica basata sulle foto, non un giudizio. Ogni persona è unica e la sua essenza va ben oltre ciò che un'immagine può catturare."
   }
 }
