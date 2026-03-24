@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download } from "lucide-react";
+import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { PLAN } from "@/hooks/useSubscription";
+import { toast } from "sonner";
 import outfit0 from "@/assets/outfits/outfit0.jpg";
 import outfit1 from "@/assets/outfits/outfit1.jpg";
 import outfit2 from "@/assets/outfits/outfit2.jpg";
@@ -48,6 +52,7 @@ const DailyExperience = () => {
     }
   };
 
+  return (
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
       <div className="container mx-auto px-4 relative z-10">
