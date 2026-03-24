@@ -79,7 +79,6 @@ const Dashboard = () => {
 
     checkAuthAndLoadData();
 
-    // Handle returning from purchase/subscription
     const purchaseSuccess = searchParams.get("purchase");
     const subscriptionSuccess = searchParams.get("subscription");
     if (purchaseSuccess === "success" || subscriptionSuccess === "success") {
@@ -103,7 +102,7 @@ const Dashboard = () => {
           await checkSubscription();
         }
         setSearchParams({}, { replace: true });
-        toast({ title: "Acquisto completato!", description: "Grazie per il tuo acquisto." });
+        toast({ title: t("dashboard.purchaseComplete"), description: t("dashboard.purchaseCompleteDesc") });
       };
       handlePurchaseReturn();
     }
@@ -121,6 +120,11 @@ const Dashboard = () => {
     navigate("/");
   };
 
+  const getDaySuffix = (days: number) => {
+    if (i18n.language?.startsWith("en")) return days === 1 ? "" : "s";
+    return days === 1 ? "o" : "i";
+  };
+
   if (loading || subLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -132,7 +136,6 @@ const Dashboard = () => {
     );
   }
 
-  // Free users who have exhausted free requests must pay
   if (!subscribed && !canUseFreeRequest()) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -142,20 +145,18 @@ const Dashboard = () => {
             <Crown className="w-10 h-10 text-primary" />
           </div>
           <h2 className="font-display text-2xl font-bold">{t("pricing.upgradeRequired")}</h2>
-          <p className="text-muted-foreground">
-            Hai esaurito le prove gratuite. Abbonati per continuare ad accedere a tutti i servizi.
-          </p>
+          <p className="text-muted-foreground">{t("dashboard.freeTrialExpired")}</p>
           <Button variant="cosmic" size="lg" onClick={() => navigate("/pricing")}>
             <Crown className="w-5 h-5 mr-2" />
-            Abbonati ora — €4,99/mese
+            {t("dashboard.subscribeNow")}
           </Button>
           <div className="flex items-center justify-center gap-4 pt-2">
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-              ← Home
+              ← {t("common.home")}
             </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-1" />
-              Logout
+              {t("common.logout")}
             </Button>
           </div>
         </motion.div>
@@ -163,7 +164,6 @@ const Dashboard = () => {
     );
   }
 
-  // Feature-to-route mapping for schedule checks in dashboard
   const FEATURE_KEY_MAP: Record<string, string> = {
     "/personal-year": "personal_year",
     "/pillars": "pillars",
@@ -189,7 +189,6 @@ const Dashboard = () => {
     { title: t("dashboard.houseVibration"), description: "€2,00 " + t("pricing.perUse"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500", payPerUse: true },
     { title: t("dashboard.compatibility"), description: "€2,00 " + t("pricing.perUse"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500", payPerUse: true },
     { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
-    
   ];
 
   const dailyAnalysisUnlocked = isFeatureUnlocked("daily_analysis");
@@ -216,15 +215,15 @@ const Dashboard = () => {
               <Button variant="cosmic-outline" size="sm" asChild>
                 <Link to="/map">
                   <Map className="w-4 h-4 mr-2" />
-                  La tua Mappa
+                  {t("dashboard.yourMap")}
                 </Link>
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title="Profilo">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title={t("dashboard.profile")}>
               <User className="w-5 h-5" />
             </Button>
             {(userEmail === "regnew01@gmail.com" || userEmail === "realerenato@gmail.com" || userEmail === "maria732008@live.it") && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title="Pannello di Controllo">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title={t("dashboard.controlPanel")}>
                 <Shield className="w-5 h-5" />
               </Button>
             )}
@@ -247,12 +246,12 @@ const Dashboard = () => {
 
         {latestMap && subscribed && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {!dailyAnalysisUnlocked && subscribed && (
-          <ScheduleCountdown label="Analisi Giornaliera" daysLeft={getDaysRemaining("daily_analysis")} />
+          <ScheduleCountdown label={t("dashboard.dailyAnalysis")} daysLeft={getDaysRemaining("daily_analysis")} t={t} daySuffix={getDaySuffix} />
         )}
 
         {subscribed && outfitsUnlocked && <DailyOutfits />}
         {subscribed && !outfitsUnlocked && (
-          <ScheduleCountdown label="Outfit del Giorno" daysLeft={getDaysRemaining("outfits")} />
+          <ScheduleCountdown label={t("dashboard.outfitOfDay")} daysLeft={getDaysRemaining("outfits")} t={t} daySuffix={getDaySuffix} />
         )}
 
         {latestMap && (
@@ -287,16 +286,14 @@ const Dashboard = () => {
                 <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
                   <Link to={isScheduleLocked ? "#" : action.href} onClick={(e) => { if (isScheduleLocked) e.preventDefault(); }}>
                     <div className={`group relative p-6 rounded-2xl border transition-all duration-300 ${isScheduleLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-cosmic"} ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
-                      {/* Schedule lock badge */}
                       {isScheduleLocked && (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-muted text-muted-foreground border-border border text-[10px] px-2 py-0.5 gap-1">
                             <Clock className="w-3 h-3" />
-                            {daysLeft}g
+                            {daysLeft}{i18n.language?.startsWith("en") ? "d" : "g"}
                           </Badge>
                         </div>
                       )}
-                      {/* Pay-per-use badge */}
                       {!isScheduleLocked && action.payPerUse && (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
@@ -323,7 +320,7 @@ const Dashboard = () => {
                         </h3>
                       )}
                       <p className="text-sm text-muted-foreground">
-                        {isScheduleLocked ? `Disponibile tra ${daysLeft} giorn${daysLeft === 1 ? "o" : "i"}` : action.description}
+                        {isScheduleLocked ? t("dashboard.availableIn", { days: daysLeft, suffix: getDaySuffix(daysLeft) }) : action.description}
                       </p>
                     </div>
                   </Link>
@@ -337,8 +334,7 @@ const Dashboard = () => {
   );
 };
 
-// Countdown banner component for dashboard sections
-const ScheduleCountdown = ({ label, daysLeft }: { label: string; daysLeft: number }) => (
+const ScheduleCountdown = ({ label, daysLeft, t, daySuffix }: { label: string; daysLeft: number; t: any; daySuffix: (d: number) => string }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -350,7 +346,7 @@ const ScheduleCountdown = ({ label, daysLeft }: { label: string; daysLeft: numbe
     <div>
       <h3 className="font-display font-semibold text-foreground">{label}</h3>
       <p className="text-sm text-muted-foreground">
-        Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}
+        {t("dashboard.availableIn", { days: daysLeft, suffix: daySuffix(daysLeft) })}
       </p>
     </div>
   </motion.div>

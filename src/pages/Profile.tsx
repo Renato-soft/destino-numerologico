@@ -181,16 +181,14 @@ const ProfilePage = () => {
     } finally { setUploadingPhoto(null); }
   };
 
-  // Extra photos are those not in base types
   const extraPhotos = photos.filter(p => !basePhotoTypes.some(b => b.key === p.type));
   const canAddMore = photos.length < MAX_PHOTOS;
 
   const handleExtraPhotoUpload = async (file: File) => {
     if (photos.length >= MAX_PHOTOS) {
-      toast({ title: "Limite raggiunto", description: `Puoi caricare massimo ${MAX_PHOTOS} foto`, variant: "destructive" });
+      toast({ title: t("profile.limitReached"), description: t("profile.limitReachedDesc", { max: MAX_PHOTOS }), variant: "destructive" });
       return;
     }
-    const extraIndex = extraPhotos.length + 1;
     const type = `extra_${Date.now()}`;
     await handlePhotoUpload(type, file);
   };
@@ -227,7 +225,6 @@ const ProfilePage = () => {
 
       <main className="relative z-10 container mx-auto px-4 py-8 max-w-lg">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          {/* Profile form */}
           <div className="glass-cosmic rounded-2xl p-6 space-y-6">
             <div className="text-center pb-4 border-b border-border/50">
               <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-3xl font-display font-bold text-primary-foreground mb-4">
@@ -272,7 +269,6 @@ const ProfilePage = () => {
             </Button>
           </div>
 
-          {/* Language */}
           <div className="glass-cosmic rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-3 mb-2">
               <Globe className="w-5 h-5 text-primary" />
@@ -289,7 +285,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Photos - Base */}
           <div className="glass-cosmic rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-3 mb-2">
               <Camera className="w-5 h-5 text-primary" />
@@ -332,38 +327,30 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Extra Photos */}
           <div className="glass-cosmic rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <ImagePlus className="w-5 h-5 text-primary" />
-                <h3 className="font-display font-semibold">Foto aggiuntive</h3>
+                <h3 className="font-display font-semibold">{t("profile.extraPhotos")}</h3>
               </div>
               <span className="text-xs text-muted-foreground">{photos.length}/{MAX_PHOTOS}</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              {t('profile.extraPhotosDesc')}
-            </p>
-            <p className="text-sm text-muted-foreground mt-2 italic">
-              {t('profile.photosPrivacyNote')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('profile.extraPhotosDesc')}</p>
+            <p className="text-sm text-muted-foreground mt-2 italic">{t('profile.photosPrivacyNote')}</p>
 
             {extraPhotos.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
                 {extraPhotos.map((photo) => (
                   <div key={photo.id} className="relative aspect-square rounded-xl overflow-hidden border border-border/50">
                     {photo.signedUrl ? (
-                      <img src={photo.signedUrl} alt="Foto extra" className="w-full h-full object-cover" />
+                      <img src={photo.signedUrl} alt={t("profile.extraPhoto")} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-muted/20 flex items-center justify-center">
                         <Loader2 className="w-4 h-4 animate-spin" />
                       </div>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => handlePhotoDelete(photo)}
-                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors"
-                    >
+                    <button type="button" onClick={() => handlePhotoDelete(photo)}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors">
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
@@ -378,7 +365,7 @@ const ProfilePage = () => {
                 ) : (
                   <div className="flex flex-col items-center gap-1 text-muted-foreground">
                     <Plus className="w-6 h-6" />
-                    <span className="text-xs">Aggiungi foto ({MAX_PHOTOS - photos.length} rimaste)</span>
+                    <span className="text-xs">{t("profile.addPhoto", { remaining: MAX_PHOTOS - photos.length })}</span>
                   </div>
                 )}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleExtraPhotoUpload(file); }} />
@@ -386,7 +373,6 @@ const ProfilePage = () => {
             )}
           </div>
 
-          {/* Regenerate map */}
           <div className="glass-cosmic rounded-xl p-6">
             <h3 className="font-display font-semibold mb-2">{t("profile.regenerateMap")}</h3>
             <p className="text-sm text-muted-foreground mb-4">{t("profile.regenerateMapDesc")}</p>
@@ -399,7 +385,6 @@ const ProfilePage = () => {
             <p>{t("profile.timezone", { tz: profile?.timezone || "Europe/Rome" })}</p>
           </div>
 
-          {/* Disable account */}
           <div className="glass-cosmic rounded-xl p-6">
             <h3 className="font-display font-semibold mb-2 text-destructive">{t("profile.disableAccount")}</h3>
             <p className="text-sm text-muted-foreground mb-4">{t("profile.disableAccountDesc")}</p>

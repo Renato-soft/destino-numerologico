@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shirt, Sun, Moon, Loader2, RefreshCw, X, Camera, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const DailyOutfits = () => {
+  const { t } = useTranslation();
   const [outfits, setOutfits] = useState<(string | null)[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,6 @@ const DailyOutfits = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Check photo count
       const { count } = await supabase
         .from("photos")
         .select("id", { count: "exact", head: true })
@@ -35,7 +36,7 @@ const DailyOutfits = () => {
 
       if (fnError) {
         console.error("Edge function error:", fnError);
-        setError("Impossibile generare gli outfit. Riprova più tardi.");
+        setError(t("outfits.errorGenerate"));
         setLoading(false);
         return;
       }
@@ -47,7 +48,7 @@ const DailyOutfits = () => {
       }
     } catch (e) {
       console.error("Fetch outfits error:", e);
-      setError("Errore di connessione. Riprova più tardi.");
+      setError(t("outfits.errorConnection"));
     }
 
     setLoading(false);
@@ -58,10 +59,10 @@ const DailyOutfits = () => {
   }, []);
 
   const labels = [
-    { title: "Look Giorno 1", icon: Sun, subtitle: "Casual-smart per il lavoro" },
-    { title: "Look Giorno 2", icon: Sun, subtitle: "Alternativa diurna" },
-    { title: "Look Sera 1", icon: Moon, subtitle: "Elegante per uscire" },
-    { title: "Look Sera 2", icon: Moon, subtitle: "Alternativa serale" },
+    { title: t("outfits.look1"), icon: Sun, subtitle: t("outfits.look1Sub") },
+    { title: t("outfits.look2"), icon: Sun, subtitle: t("outfits.look2Sub") },
+    { title: t("outfits.look3"), icon: Moon, subtitle: t("outfits.look3Sub") },
+    { title: t("outfits.look4"), icon: Moon, subtitle: t("outfits.look4Sub") },
   ];
 
   return (
@@ -77,50 +78,28 @@ const DailyOutfits = () => {
             <Shirt className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="font-display text-xl font-semibold">
-              Outfit del Giorno
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Abbigliamento consigliato in base alla tua vibrazione
-            </p>
+            <h2 className="font-display text-xl font-semibold">{t("outfits.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("outfits.subtitle")}</p>
           </div>
         </div>
         {!loading && (
-          <Button
-            variant="ghost"
-            size="icon"
-             onClick={() => fetchOutfits(true)}
-            title="Rigenera outfit"
-          >
+          <Button variant="ghost" size="icon" onClick={() => fetchOutfits(true)} title={t("outfits.regenerate")}>
             <RefreshCw className="w-4 h-4" />
           </Button>
         )}
       </div>
 
-      {/* Photo prompt banner */}
       {!loading && photoCount < 5 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3"
-        >
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">
-              Migliora i tuoi outfit con più foto!
-            </p>
+            <p className="text-sm font-medium text-foreground">{t("outfits.improveWithPhotos")}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Caricando più foto del tuo viso e del tuo corpo, l'AI potrà analizzare meglio espressioni, 
-              colorito e corporatura per consigli ancora più personalizzati. Attualmente hai {photoCount} foto su 10.
+              {t("outfits.photoPrompt", { count: photoCount, max: 10 })}
             </p>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-2 text-amber-500 hover:text-amber-400 p-0 h-auto"
-              onClick={() => navigate("/profile")}
-            >
+            <Button variant="ghost" size="sm" className="mt-2 text-amber-500 hover:text-amber-400 p-0 h-auto" onClick={() => navigate("/profile")}>
               <Camera className="w-4 h-4 mr-1" />
-              Carica più foto →
+              {t("outfits.uploadMore")}
             </Button>
           </div>
         </motion.div>
@@ -130,10 +109,8 @@ const DailyOutfits = () => {
         <div className="glass-cosmic rounded-2xl p-12 flex flex-col items-center justify-center gap-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
           <div className="text-center">
-            <p className="text-foreground font-medium">Generazione outfit in corso...</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              L'AI sta creando 4 look personalizzati per te
-            </p>
+            <p className="text-foreground font-medium">{t("outfits.generating")}</p>
+            <p className="text-sm text-muted-foreground mt-1">{t("outfits.generatingDesc")}</p>
           </div>
         </div>
       ) : error ? (
@@ -141,7 +118,7 @@ const DailyOutfits = () => {
           <p className="text-muted-foreground mb-4">{error}</p>
           <Button variant="cosmic-outline" size="sm" onClick={() => fetchOutfits(true)}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Riprova
+            {t("common.retry")}
           </Button>
         </div>
       ) : (
@@ -150,13 +127,7 @@ const DailyOutfits = () => {
             const label = labels[index];
             const Icon = label?.icon || Sun;
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.08 }}
-                className="glass-cosmic rounded-2xl overflow-hidden group"
-              >
+              <motion.div key={index} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + index * 0.08 }} className="glass-cosmic rounded-2xl overflow-hidden group">
                 <div className="p-3 flex items-center gap-2 border-b border-border/30">
                   <Icon className="w-4 h-4 text-primary" />
                   <div>
@@ -165,21 +136,13 @@ const DailyOutfits = () => {
                   </div>
                 </div>
                 {url ? (
-                  <div
-                    className="aspect-[3/4] cursor-pointer relative overflow-hidden"
-                    onClick={() => setLightboxUrl(url)}
-                  >
-                    <img
-                      src={url}
-                      alt={label?.title || "Outfit"}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
+                  <div className="aspect-[3/4] cursor-pointer relative overflow-hidden" onClick={() => setLightboxUrl(url)}>
+                    <img src={url} alt={label?.title || "Outfit"} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 ) : (
                   <div className="aspect-[3/4] flex items-center justify-center bg-muted/20">
-                    <p className="text-sm text-muted-foreground">Non disponibile</p>
+                    <p className="text-sm text-muted-foreground">{t("common.notAvailable")}</p>
                   </div>
                 )}
               </motion.div>
@@ -188,31 +151,14 @@ const DailyOutfits = () => {
         </div>
       )}
 
-      {/* Lightbox */}
       {lightboxUrl && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setLightboxUrl(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white/80 hover:text-white"
-            onClick={() => setLightboxUrl(null)}
-          >
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setLightboxUrl(null)}>
+          <button className="absolute top-4 right-4 text-white/80 hover:text-white" onClick={() => setLightboxUrl(null)}>
             <X className="w-8 h-8" />
           </button>
-          <img
-            src={lightboxUrl}
-            alt="Outfit"
-            className="max-w-full max-h-[90vh] object-contain rounded-xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <a
-            href={lightboxUrl}
-            download="outfit.png"
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Scarica immagine
+          <img src={lightboxUrl} alt="Outfit" className="max-w-full max-h-[90vh] object-contain rounded-xl" onClick={(e) => e.stopPropagation()} />
+          <a href={lightboxUrl} download="outfit.png" className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity" onClick={(e) => e.stopPropagation()}>
+            {t("common.downloadImage")}
           </a>
         </div>
       )}
