@@ -97,61 +97,6 @@ const PricingConversion = () => {
             </motion.div>
           </div>
 
-          {/* MAIN OFFER: €9,99 */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="relative rounded-2xl border-2 border-primary/50 p-8 bg-gradient-to-b from-primary/10 via-card to-card shadow-glow-gold"
-          >
-            {/* Badge */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-bold shadow-glow-gold">
-              <Crown className="w-4 h-4" />
-              ⭐ PIÙ SCELTO — Miglior Valore
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mt-2">
-              <div className="flex-1">
-                <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
-                  Sblocca tutto subito
-                </h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-4xl font-bold text-primary">€9,99</span>
-                  <span className="text-muted-foreground">oggi</span>
-                </div>
-                 <p className="text-muted-foreground text-sm mb-4">
-                   Accedi immediatamente a tutte le analisi senza aspettare giorni.
-                 </p>
-                <ul className="space-y-2 mb-4">
-                  {[
-                    "Tutti i contenuti sbloccati subito",
-                    "Accesso completo al percorso evolutivo",
-                    "Tutte le funzionalità premium incluse",
-                  ].map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-primary shrink-0" />
-                      <span className="font-medium">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-muted-foreground border-t border-border/30 pt-3">
-                  Poi solo €4,99/mese per continuare ad accedere ai contenuti giornalieri.
-                  <br />
-                  Cancella quando vuoi.
-                </p>
-              </div>
-
-              <div className="md:w-auto">
-                <Button asChild variant="cosmic" size="xl" className="w-full md:w-auto group text-base">
-                  <Link to="/auth">
-                    Sblocca tutto ora
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </motion.div>
 
           {/* SUBSCRIPTION €4,99/mese */}
           <motion.div
