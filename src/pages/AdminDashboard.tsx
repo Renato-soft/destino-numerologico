@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 
 interface OverviewData {
   role: "superadmin" | "admin";
+  totalUsers: number;
   newToday: number;
   newLast3Days: number;
   stripe: {
