@@ -189,7 +189,7 @@ const Dashboard = () => {
     { title: t("dashboard.houseVibration"), description: "€2,00 " + t("pricing.perUse"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500", payPerUse: true },
     { title: t("dashboard.compatibility"), description: "€2,00 " + t("pricing.perUse"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500", payPerUse: true },
     { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
-    { description: t("dashboard.profileDesc"), icon: User, href: "/profile", color: "from-blue-500 to-cyan-500" },
+    
   ];
 
   const dailyAnalysisUnlocked = isFeatureUnlocked("daily_analysis");
