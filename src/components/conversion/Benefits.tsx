@@ -14,7 +14,7 @@ const benefits = [
   },
   {
     icon: Heart,
-    title: "Ottieni chiarezza su amore e lavoro",
+    title: "Ottieni chiarezza su amore, lavoro e decisioni",
     description: "Capisci le dinamiche relazionali e professionali scritte nei tuoi numeri.",
   },
   {
