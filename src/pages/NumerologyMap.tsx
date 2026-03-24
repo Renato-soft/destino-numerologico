@@ -18,6 +18,7 @@ import {
 } from "@/lib/numerology";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
 import NumberSection from "@/components/NumberSection";
+import PhotoPersonalitySection from "@/components/PhotoPersonalitySection";
 import {
   Sparkles,
   ArrowLeft,
