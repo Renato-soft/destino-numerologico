@@ -10,6 +10,7 @@ import FAQSection from "@/components/conversion/FAQSection";
 import FinalCTA from "@/components/conversion/FinalCTA";
 import FooterConversion from "@/components/conversion/FooterConversion";
 
+// Landing page component
 const LandingPage = () => {
   const [birthDate, setBirthDate] = useState("");
 
