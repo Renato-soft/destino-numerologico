@@ -141,8 +141,8 @@ const BenefitsAndPreview = () => {
                         <Star className="w-7 h-7 text-primary mx-auto mb-2" />
                         <p className="text-sm font-medium mb-3">Sblocca la tua analisi completa</p>
                         <Button asChild variant="cosmic" size="lg" className="group">
-                          <Link to="/auth">
-                            Vedi la tua analisi completa
+                          <Link to="/auth?mode=signup">
+                            Registrati gratis
                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                           </Link>
                         </Button>
