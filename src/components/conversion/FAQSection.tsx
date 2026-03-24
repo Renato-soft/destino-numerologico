@@ -20,10 +20,6 @@ const faqs = [
     answer: "Sì, puoi iniziare gratuitamente senza inserire dati di pagamento. La prima analisi è completamente gratuita. Se decidi di sbloccare contenuti premium, i pagamenti sono gestiti in modo sicuro. Puoi cancellare in qualsiasi momento.",
   },
   {
-    question: "Cosa include il report completo?",
-    answer: "Con €9,99 sblocchi immediatamente tutte le analisi del percorso evolutivo senza dover aspettare. Include: mappa completa, anno personale, lezioni karmiche, compatibilità, cicli della vita e molto altro. Poi solo €4,99/mese per i contenuti giornalieri.",
-  },
-  {
     question: "I miei dati sono sicuri?",
     answer: "Assolutamente sì. Utilizziamo crittografia avanzata e non condividiamo mai i tuoi dati con terze parti. I tuoi dati personali sono protetti secondo le normative GDPR europee.",
   },
