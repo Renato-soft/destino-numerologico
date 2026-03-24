@@ -192,7 +192,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
             <Button asChild variant="cosmic" size="lg" className="w-full group">
               <Link to={birthDate ? `/auth?date=${birthDate}&mode=signup` : "/auth?mode=signup"}>
-                Registrati gratis per la mappa completa
+                Registrati gratis
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
