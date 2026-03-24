@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface OverviewData {
-  role: "superadmin" | "admin";
+  role: "superadmin" | "admin" | "viewer";
   totalUsers: number;
   newToday: number;
   newLast3Days: number;
@@ -221,7 +221,7 @@ const AdminDashboard = () => {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{u.nome} {u.cognome}</p>
-                    <p className="text-xs text-muted-foreground">{u.email}</p>
+                    {u.email && <p className="text-xs text-muted-foreground">{u.email}</p>}
                     <div className="flex gap-3 mt-1">
                       <span className="text-xs text-muted-foreground">
                         Ultimo accesso: {u.last_sign_in_at

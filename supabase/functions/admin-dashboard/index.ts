@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ADMIN_EMAILS = ["regnew01@gmail.com", "realerenato@gmail.com"];
+const ADMIN_EMAILS = ["regnew01@gmail.com", "realerenato@gmail.com", "maria732008@live.it"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : "admin";
+    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : user.email === "realerenato@gmail.com" ? "admin" : "viewer";
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action") || "overview";
@@ -149,16 +149,19 @@ Deno.serve(async (req) => {
 
       const userList = (profiles || []).map(p => {
         const authUser = users.find(u => u.id === p.user_id);
-        return {
+        const entry: any = {
           user_id: p.user_id,
           nome: p.nome,
-          cognome: p.cognome,
-          email: authUser?.email || "N/A",
+          cognome: userRole === "viewer" ? (p.cognome ? p.cognome.charAt(0) + "." : "") : p.cognome,
           created_at: p.created_at,
           sesso: p.sesso,
           last_sign_in_at: authUser?.last_sign_in_at || null,
           login_count: loginCounts[p.user_id] || 0,
         };
+        if (userRole !== "viewer") {
+          entry.email = authUser?.email || "N/A";
+        }
+        return entry;
       });
 
       return new Response(JSON.stringify({
