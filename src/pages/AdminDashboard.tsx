@@ -205,7 +205,12 @@ const AdminDashboard = () => {
           <div className="glass-cosmic rounded-xl p-6">
             <h2 className="font-display text-lg font-semibold mb-4">Tutti gli utenti ({overview.users.length})</h2>
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
-              {overview.users.map(u => (
+              {[...overview.users].sort((a, b) => {
+                if (!a.last_sign_in_at && !b.last_sign_in_at) return 0;
+                if (!a.last_sign_in_at) return 1;
+                if (!b.last_sign_in_at) return -1;
+                return new Date(b.last_sign_in_at).getTime() - new Date(a.last_sign_in_at).getTime();
+              }).map(u => (
                 <div
                   key={u.user_id}
                   onClick={() => fetchUserDetail(u.user_id)}
