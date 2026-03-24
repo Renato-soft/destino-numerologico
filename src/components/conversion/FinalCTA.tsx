@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Shield, Zap, Users } from "lucide-react";
 
 interface FinalCTAProps {
   birthDate: string;
   setBirthDate: (date: string) => void;
+  onPreview: () => void;
 }
 
-const FinalCTA = ({ birthDate, setBirthDate }: FinalCTAProps) => {
+const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-cosmic" />
@@ -56,11 +56,15 @@ const FinalCTA = ({ birthDate, setBirthDate }: FinalCTAProps) => {
                 onChange={(e) => setBirthDate(e.target.value)}
                 className="flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
               />
-              <Button asChild variant="cosmic" size="xl" className="group whitespace-nowrap">
-                <Link to={birthDate ? `/auth?date=${birthDate}` : "/auth"}>
-                  Ottieni la tua lettura gratuita
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Link>
+              <Button
+                variant="cosmic"
+                size="xl"
+                className="group whitespace-nowrap"
+                onClick={onPreview}
+                disabled={!birthDate}
+              >
+                Ottieni una preview
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           </div>
