@@ -239,77 +239,78 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* User detail */}
-          <div className="glass-cosmic rounded-xl p-6">
-            {!selectedUser ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                <p>Seleziona un utente per vedere i dettagli</p>
-              </div>
-            ) : detailLoading ? (
-              <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              </div>
-            ) : userDetail ? (
-              <div>
-                <h2 className="font-display text-lg font-semibold mb-4">
-                  {selectedUserData?.nome} {selectedUserData?.cognome}
-                </h2>
+          {/* User detail - only for superadmin */}
+          {overview.role === "superadmin" && (
+            <div className="glass-cosmic rounded-xl p-6">
+              {!selectedUser ? (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <p>Seleziona un utente per vedere i dettagli</p>
+                </div>
+              ) : detailLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                </div>
+              ) : userDetail ? (
+                <div>
+                  <h2 className="font-display text-lg font-semibold mb-4">
+                    {selectedUserData?.nome} {selectedUserData?.cognome}
+                  </h2>
 
-                {/* Profile photos */}
-                {userDetail.photos.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Foto profilo</h3>
-                    <div className="flex gap-3 overflow-x-auto pb-2">
-                      {userDetail.photos.map((p, i) => (
-                        <div key={i} className="flex-shrink-0 cursor-pointer" onClick={() => setLightboxUrl(p.url)}>
-                          <img
-                            src={p.url}
-                            alt={p.type}
-                            className="w-20 h-20 object-cover rounded-lg border border-border/30"
-                          />
-                          <p className="text-xs text-muted-foreground text-center mt-1">{p.type}</p>
+                  {/* Profile photos */}
+                  {userDetail.photos.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Foto profilo</h3>
+                      <div className="flex gap-3 overflow-x-auto pb-2">
+                        {userDetail.photos.map((p, i) => (
+                          <div key={i} className="flex-shrink-0 cursor-pointer" onClick={() => setLightboxUrl(p.url)}>
+                            <img
+                              src={p.url}
+                              alt={p.type}
+                              className="w-20 h-20 object-cover rounded-lg border border-border/30"
+                            />
+                            <p className="text-xs text-muted-foreground text-center mt-1">{p.type}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Outfits */}
+                  {userDetail.outfits.length > 0 ? (
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Outfit ultimi 3 giorni</h3>
+                      {Object.entries(
+                        userDetail.outfits.reduce<Record<string, typeof userDetail.outfits>>((acc, o) => {
+                          (acc[o.date] = acc[o.date] || []).push(o);
+                          return acc;
+                        }, {})
+                      ).map(([date, outfits]) => (
+                        <div key={date} className="mb-4">
+                          <p className="text-xs font-semibold text-primary mb-2">{date}</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {outfits.map((o, i) => (
+                              <div key={i} className="cursor-pointer" onClick={() => setLightboxUrl(o.url)}>
+                                <img
+                                  src={o.url}
+                                  alt={o.label}
+                                  className="w-full aspect-[3/4] object-cover rounded-lg border border-border/30"
+                                />
+                                <p className="text-xs text-muted-foreground text-center mt-1">
+                                  {labelMap[o.label] || o.label}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {/* Outfits */}
-                {userDetail.outfits.length > 0 ? (
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Outfit ultimi 3 giorni</h3>
-                    {/* Group by date */}
-                    {Object.entries(
-                      userDetail.outfits.reduce<Record<string, typeof userDetail.outfits>>((acc, o) => {
-                        (acc[o.date] = acc[o.date] || []).push(o);
-                        return acc;
-                      }, {})
-                    ).map(([date, outfits]) => (
-                      <div key={date} className="mb-4">
-                        <p className="text-xs font-semibold text-primary mb-2">{date}</p>
-                        <div className="grid grid-cols-4 gap-2">
-                          {outfits.map((o, i) => (
-                            <div key={i} className="cursor-pointer" onClick={() => setLightboxUrl(o.url)}>
-                              <img
-                                src={o.url}
-                                alt={o.label}
-                                className="w-full aspect-[3/4] object-cover rounded-lg border border-border/30"
-                              />
-                              <p className="text-xs text-muted-foreground text-center mt-1">
-                                {labelMap[o.label] || o.label}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Nessun outfit disponibile</p>
-                )}
-              </div>
-            ) : null}
-          </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Nessun outfit disponibile</p>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
 
