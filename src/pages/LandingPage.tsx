@@ -2,7 +2,7 @@ import { useState } from "react";
 import HeroConversion from "@/components/conversion/HeroConversion";
 import BenefitsAndPreview from "@/components/conversion/BenefitsAndPreview";
 import EvolutionPath from "@/components/conversion/EvolutionPath";
-import PricingConversion from "@/components/conversion/PricingConversion";
+
 import DailyExperience from "@/components/conversion/DailyExperience";
 import TestimonialsConversion from "@/components/conversion/TestimonialsConversion";
 import AboutSection from "@/components/conversion/AboutSection";
@@ -19,7 +19,7 @@ const LandingPage = () => {
       <BenefitsAndPreview />
       <DailyExperience />
       <EvolutionPath />
-      <PricingConversion />
+      
       <TestimonialsConversion />
       <AboutSection />
       <FAQSection />
