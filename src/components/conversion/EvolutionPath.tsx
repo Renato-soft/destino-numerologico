@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, Unlock } from "lucide-react";
 
 const milestones = [
-  { day: "Giorno 1", title: "Numero del Destino", description: "Scopri chi sei veramente", unlocked: true },
+  { day: "Giorno 1", title: "Chi sei davvero", description: "Scopri il tuo numero del destino", unlocked: true },
   { day: "Giorno 3", title: "Anima e Personalità", description: "Il tuo io interiore ed esteriore", unlocked: true },
   { day: "Giorno 7", title: "Anno Personale", description: "Le energie del tuo anno", unlocked: false },
-  { day: "Giorno 10", title: "Energia Personale", description: "Come vibrare al massimo", unlocked: false },
+  { day: "Giorno 10", title: "La tua energia nascosta", description: "Come vibrare al massimo", unlocked: false },
   { day: "Giorno 15", title: "Lezioni Karmiche", description: "Cosa devi ancora imparare", unlocked: false },
-  { day: "Giorno 20", title: "Compatibilità", description: "Le tue affinità numerologiche", unlocked: false },
+  { day: "Giorno 20", title: "Le tue relazioni", description: "Le tue affinità numerologiche", unlocked: false },
   { day: "Giorno 25", title: "Cicli della Vita", description: "Le fasi del tuo percorso", unlocked: false },
-  { day: "Giorno 30", title: "Scopo di Vita", description: "La tua missione profonda", unlocked: false },
+  { day: "Giorno 30", title: "Il tuo vero scopo", description: "La tua missione profonda", unlocked: false },
 ];
 
 const EvolutionPath = () => {
