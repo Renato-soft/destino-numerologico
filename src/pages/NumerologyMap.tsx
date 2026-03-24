@@ -18,6 +18,7 @@ import {
 } from "@/lib/numerology";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
 import NumberSection from "@/components/NumberSection";
+import PhotoPersonalitySection from "@/components/PhotoPersonalitySection";
 import {
   Sparkles,
   ArrowLeft,
@@ -325,6 +326,9 @@ const NumerologyMap = () => {
               persona={numerologyData.personality}
               quintessenza={numerologyData.quintessenza}
             />
+
+            {/* Photo personality analysis - before numbers */}
+            <PhotoPersonalitySection userName={profile?.nome || ""} />
 
             {/* Destino section - always visible */}
             <NumberSection num={numerologyData.lifePath} type="destino" title={`${t("map.destiny")} ${numerologyData.lifePath}`} />
