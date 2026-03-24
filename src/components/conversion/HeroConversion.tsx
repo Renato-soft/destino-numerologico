@@ -58,7 +58,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
 
           {/* Title */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1]">
-            <span className="text-foreground">Scopri il tuo Numero</span>
+            <span className="text-foreground">Perché ti succedono sempre le stesse cose?</span>
             <br />
             <span className="text-foreground">del Destino e perché la tua vita</span>
             <br />
