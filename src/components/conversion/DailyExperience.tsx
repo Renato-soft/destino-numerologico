@@ -96,6 +96,24 @@ const DailyExperience = () => {
           </motion.div>
         </div>
 
+        {/* Download info box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mx-auto mb-12 rounded-2xl border border-primary/20 bg-primary/5 p-6 flex items-start gap-4"
+        >
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+            <Download className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-display text-base font-bold mb-1">Scarica e condividi i tuoi outfit</h4>
+            <p className="text-sm text-muted-foreground">
+              Ogni foto outfit che ti piace può essere scaricata e utilizzata liberamente per uso personale, anche per i tuoi social.
+            </p>
+          </div>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
