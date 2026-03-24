@@ -39,11 +39,8 @@ const HowItWorks = () => {
             Semplicissimo
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Come funziona
+            Scopri tutto in meno di <span className="text-gradient-gold">60 secondi</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Tre semplici passaggi per scoprire chi sei davvero
-          </p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
