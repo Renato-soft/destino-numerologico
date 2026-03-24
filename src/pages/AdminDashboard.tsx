@@ -14,6 +14,8 @@ interface OverviewData {
   totalUsers: number;
   newToday: number;
   newLast3Days: number;
+  loginsToday: number;
+  loginsLast3Days: number;
   stripe: {
     totalRevenue: number;
     revenueByProduct: Record<string, number>;
