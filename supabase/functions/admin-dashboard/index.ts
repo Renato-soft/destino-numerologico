@@ -160,17 +160,16 @@ Deno.serve(async (req) => {
         .select("type, storage_path")
         .eq("user_id", targetUserId);
 
-      const photoUrls: { type: string; url: string }[] = [];
-      if (photos) {
-        for (const photo of photos) {
-          const { data } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(photo.storage_path, 3600);
-          if (data?.signedUrl) {
-            photoUrls.push({ type: photo.type, url: data.signedUrl });
-          }
-        }
-      }
+      const photoUrls = photos
+        ? (await Promise.all(
+            photos.map(async (photo) => {
+              const { data } = await supabase.storage
+                .from("user-photos")
+                .createSignedUrl(photo.storage_path, 3600);
+              return data?.signedUrl ? { type: photo.type, url: data.signedUrl } : null;
+            })
+          )).filter(Boolean) as { type: string; url: string }[]
+        : [];
 
       // Get outfits from last 3 days
       const { data: outfitFiles } = await supabase.storage
