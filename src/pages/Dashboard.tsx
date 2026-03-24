@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [latestMap, setLatestMap] = useState<NumerologyMap | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { canAccess, subscribed, isPayPerUse, hasPayPerUsePurchase, canUseFreeRequest, loading: subLoading, refreshPayPerUsePurchases, checkSubscription } = useSubscription();
