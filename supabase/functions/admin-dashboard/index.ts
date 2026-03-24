@@ -38,8 +38,47 @@ Deno.serve(async (req) => {
 
     const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : user.email === "realerenato@gmail.com" ? "admin" : "viewer";
 
+    // Determine action from query string or body
     const url = new URL(req.url);
-    const action = url.searchParams.get("action") || "overview";
+    let action = url.searchParams.get("action") || "overview";
+
+    // Check if body has action (for POST requests)
+    let body: any = null;
+    if (req.method === "POST") {
+      try {
+        body = await req.json();
+        if (body?.action) action = body.action;
+      } catch { /* no body */ }
+    }
+
+    // ===== UPDATE SCHEDULE =====
+    if (action === "update-schedule") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const schedules = body?.schedules as Record<string, number>;
+      if (!schedules) {
+        return new Response(JSON.stringify({ error: "Dati mancanti" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      for (const [featureKey, days] of Object.entries(schedules)) {
+        await supabase
+          .from("feature_schedule")
+          .update({ unlock_after_days: days, updated_at: new Date().toISOString() })
+          .eq("feature_key", featureKey);
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (action === "overview") {
       // Get all users from auth
@@ -65,7 +104,6 @@ Deno.serve(async (req) => {
       if (stripeKey && !stripeKey.startsWith("pk_")) {
         const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-        // Get all charges (revenue)
         let totalRevenue = 0;
         const revenueByProduct: Record<string, number> = {};
         
@@ -76,11 +114,9 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Get subscriptions info
         const activeSubs = await stripe.subscriptions.list({ status: "active", limit: 100 });
         const canceledSubs = await stripe.subscriptions.list({ status: "canceled", limit: 100 });
 
-        // Get invoices for revenue by product
         const invoices = await stripe.invoices.list({ limit: 100, status: "paid" });
         for (const inv of invoices.data) {
           for (const line of (inv.lines?.data || [])) {
@@ -89,7 +125,6 @@ Deno.serve(async (req) => {
           }
         }
 
-        // One-time payments
         const sessions = await stripe.checkout.sessions.list({ limit: 100 });
         for (const sess of sessions.data) {
           if (sess.payment_status === "paid" && sess.mode === "payment") {
@@ -120,12 +155,10 @@ Deno.serve(async (req) => {
         };
       }
 
-      // Get profiles for user list
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, nome, cognome, birth_date, sesso, created_at");
 
-      // Count logins per user from audit log
       const loginCounts: Record<string, number> = {};
       try {
         const { data: auditRows } = await supabase
@@ -191,7 +224,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Get profile photos
       const { data: photos } = await supabase
         .from("photos")
         .select("type, storage_path")
@@ -208,7 +240,6 @@ Deno.serve(async (req) => {
           )).filter(Boolean) as { type: string; url: string }[]
         : [];
 
-      // Get outfits from last 3 days
       const { data: outfitFiles } = await supabase.storage
         .from("user-photos")
         .list(`${targetUserId}/outfits`);
@@ -240,7 +271,6 @@ Deno.serve(async (req) => {
         )).filter(Boolean) as { date: string; label: string; url: string }[];
       }
 
-      // Sort by date desc
       recentOutfits.sort((a, b) => b.date.localeCompare(a.date));
 
       return new Response(JSON.stringify({
