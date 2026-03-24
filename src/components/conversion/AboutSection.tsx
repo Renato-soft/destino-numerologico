@@ -35,13 +35,16 @@ const AboutSection = () => {
 
             <div className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Studio numerologia da anni. Ho creato questo sistema per aiutarti a capire
-                davvero te stesso e prendere decisioni migliori ogni giorno.
+                Mi chiamo Renato R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Non è un oroscopo generico. Ogni analisi è calcolata sulla tua data di
-                nascita e il tuo nome completo, secondo la tradizione pitagorica autentica.
-                I risultati sono personali, precisi e pratici.
+                Negli anni ho sviluppato questo sistema per rendere la numerologia più chiara, accessibile e concreta: non teoria astratta, ma indicazioni pratiche che puoi usare ogni giorno.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                A differenza degli oroscopi generici, ogni analisi è calcolata sulla tua data di nascita e sul tuo nome completo, seguendo i principi della tradizione pitagorica. Questo permette di ottenere risultati personalizzati, coerenti e basati su schemi numerici precisi.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Il risultato? Una lettura che non si limita a descriverti, ma ti aiuta a capire come agire, scegliere e interpretare ciò che stai vivendo.
               </p>
 
               <div className="grid grid-cols-3 gap-4 pt-4">
