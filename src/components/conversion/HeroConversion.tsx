@@ -175,7 +175,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
               Il tuo Numero del Destino è il {lifePathNumber}
             </DialogTitle>
             <DialogDescription className="text-base text-muted-foreground mt-2">
-              Il Numero del Destino è come una bussola nascosta nella tua data di nascita. Ti dice chi sei, quali sono i tuoi superpoteri e dove sta andando la tua vita.
+              Ecco cosa dicono i tuoi numeri su di te:
             </DialogDescription>
           </DialogHeader>
 
