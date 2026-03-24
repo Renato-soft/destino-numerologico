@@ -306,16 +306,20 @@ Deno.serve(async (req) => {
         .from("user-photos")
         .list(`${user.id}/outfits`, { search: cachePrefix });
 
-      if (existingFiles && existingFiles.length >= 4) {
+      if (existingFiles && existingFiles.length >= 1) {
+        // Return cached outfits, mapping to the 4 expected slots
+        const slotLabels = ["day1", "day2", "eve1", "eve2"];
         const urls = await Promise.all(
-          existingFiles.slice(0, 4).map(async (file) => {
+          slotLabels.map(async (label) => {
+            const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
+            if (!file) return null;
             const { data } = await supabase.storage
               .from("user-photos")
               .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
-            return data?.signedUrl;
+            return data?.signedUrl || null;
           }),
         );
-        return new Response(JSON.stringify({ outfits: urls.filter(Boolean) }), {
+        return new Response(JSON.stringify({ outfits: urls }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
