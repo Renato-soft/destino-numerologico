@@ -22,7 +22,32 @@ const outfitExamples = [
 ];
 
 const DailyExperience = () => {
-  return (
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth?mode=signup");
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: PLAN.price_id, mode: "subscription" },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Errore durante l'avvio del pagamento. Riprova.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
       <div className="container mx-auto px-4 relative z-10">
