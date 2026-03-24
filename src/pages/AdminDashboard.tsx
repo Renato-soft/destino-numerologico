@@ -26,6 +26,8 @@ interface OverviewData {
     email: string;
     created_at: string;
     sesso: string;
+    last_sign_in_at: string | null;
+    login_count: number;
   }[];
 }
 
