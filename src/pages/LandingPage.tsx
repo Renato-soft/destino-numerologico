@@ -1,18 +1,20 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import HeroConversion from "@/components/conversion/HeroConversion";
-import BenefitsAndPreview from "@/components/conversion/BenefitsAndPreview";
-import EvolutionPath from "@/components/conversion/EvolutionPath";
-import DailyExperience from "@/components/conversion/DailyExperience";
-import TestimonialsConversion from "@/components/conversion/TestimonialsConversion";
-import AboutSection from "@/components/conversion/AboutSection";
-import FAQSection from "@/components/conversion/FAQSection";
-import FinalCTA from "@/components/conversion/FinalCTA";
-import FooterConversion from "@/components/conversion/FooterConversion";
 import { calculateLifePath } from "@/lib/numerology";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star } from "lucide-react";
+
+// Lazy load below-fold sections
+const BenefitsAndPreview = lazy(() => import("@/components/conversion/BenefitsAndPreview"));
+const DailyExperience = lazy(() => import("@/components/conversion/DailyExperience"));
+const EvolutionPath = lazy(() => import("@/components/conversion/EvolutionPath"));
+const TestimonialsConversion = lazy(() => import("@/components/conversion/TestimonialsConversion"));
+const AboutSection = lazy(() => import("@/components/conversion/AboutSection"));
+const FAQSection = lazy(() => import("@/components/conversion/FAQSection"));
+const FinalCTA = lazy(() => import("@/components/conversion/FinalCTA"));
+const FooterConversion = lazy(() => import("@/components/conversion/FooterConversion"));
 
 const lifePathDescriptions: Record<number, string> = {
   1: "Sei una persona nata per fare strada da sola. Hai un'energia forte, ti piace prendere decisioni e guidare gli altri. A volte puoi sembrare un po' testardo, ma è perché sai cosa vuoi. La tua sfida? Imparare a lavorare anche in squadra.",
@@ -28,6 +30,12 @@ const lifePathDescriptions: Record<number, string> = {
   22: "Sei qui per costruire qualcosa di grande. Hai la capacità di trasformare le idee in realtà concrete che aiutano gli altri. A volte la pressione può sembrarti tanta. La tua sfida? Fidarti del tuo percorso e andare avanti un passo alla volta.",
   33: "Hai un amore enorme dentro di te. Sei qui per comunicare, ispirare e portare luce nella vita delle persone. A volte senti di portare il peso del mondo sulle spalle. La tua sfida? Dare amore senza dimenticare di darlo anche a te stesso.",
 };
+
+const SectionFallback = () => (
+  <div className="py-24 flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
 
 const LandingPage = () => {
   const [birthDate, setBirthDate] = useState("");
@@ -47,14 +55,30 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroConversion birthDate={birthDate} setBirthDate={setBirthDate} onPreview={handlePreview} />
-      <BenefitsAndPreview />
-      <DailyExperience />
-      <EvolutionPath />
-      <TestimonialsConversion />
-      <AboutSection />
-      <FAQSection />
-      <FinalCTA birthDate={birthDate} setBirthDate={setBirthDate} onPreview={handlePreview} />
-      <FooterConversion />
+      <Suspense fallback={<SectionFallback />}>
+        <BenefitsAndPreview />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <DailyExperience />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <EvolutionPath />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <TestimonialsConversion />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <AboutSection />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <FAQSection />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <FinalCTA birthDate={birthDate} setBirthDate={setBirthDate} onPreview={handlePreview} />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <FooterConversion />
+      </Suspense>
 
       {/* Shared Preview Modal */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>

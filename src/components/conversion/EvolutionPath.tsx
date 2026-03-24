@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, Unlock, Zap } from "lucide-react";
@@ -19,12 +18,7 @@ const EvolutionPath = () => {
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" />
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/15 text-secondary-foreground text-sm font-medium mb-4">
             Percorso Progressivo
           </span>
@@ -36,24 +30,16 @@ const EvolutionPath = () => {
             <br />
             Nuovi insight si sbloccano progressivamente per guidarti nel tuo percorso.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Two-column layout: Timeline + Instant Unlock */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto items-start">
           {/* Timeline */}
           <div>
             <div className="relative">
               <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/30 to-border/30" />
               <div className="space-y-6">
-                {milestones.map((milestone, index) => (
-                  <motion.div
-                    key={milestone.day}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.08 }}
-                    className="flex items-start gap-4 pl-0"
-                  >
+                {milestones.map((milestone) => (
+                  <div key={milestone.day} className="flex items-start gap-4 pl-0">
                     <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
                       milestone.unlocked
                         ? "bg-gradient-to-br from-primary to-accent shadow-glow-gold"
@@ -70,19 +56,14 @@ const EvolutionPath = () => {
                       <h4 className="font-display text-lg font-bold">{milestone.title}</h4>
                       <p className="text-sm text-muted-foreground">{milestone.description}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
           {/* Instant Unlock - sticky sidebar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="lg:sticky lg:top-24"
-          >
+          <div className="lg:sticky lg:top-24">
             <div className="text-center rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 via-card to-card p-8 md:p-10 shadow-glow-gold">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 text-primary text-sm font-bold mb-6">
                 <Zap className="w-4 h-4" />
@@ -108,7 +89,7 @@ const EvolutionPath = () => {
                 </Link>
               </Button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Shield, Zap, Users } from "lucide-react";
+import { ArrowRight, Shield, Zap, Users } from "lucide-react";
 
 interface FinalCTAProps {
   birthDate: string;
@@ -14,29 +13,8 @@ const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
       <div className="absolute inset-0 bg-gradient-cosmic" />
       <div className="absolute inset-0 numerology-pattern" />
 
-      {/* Rotating stars */}
-      <motion.div
-        className="absolute top-10 left-10 text-primary/10"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        <Star className="w-32 h-32" />
-      </motion.div>
-      <motion.div
-        className="absolute bottom-10 right-10 text-primary/10"
-        animate={{ rotate: -360 }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-      >
-        <Star className="w-24 h-24" />
-      </motion.div>
-
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto text-center"
-        >
+        <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Il tuo destino è già scritto.
             <br />
@@ -47,7 +25,6 @@ const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
             La tua lettura gratuita ti aspetta.
           </p>
 
-          {/* Inline form */}
           <div className="max-w-md mx-auto mb-8">
             <div className="flex flex-col sm:flex-row gap-3">
               <input
@@ -69,7 +46,6 @@ const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
             </div>
           </div>
 
-          {/* Trust signals */}
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-primary/70" />
@@ -84,7 +60,7 @@ const FinalCTA = ({ birthDate, setBirthDate, onPreview }: FinalCTAProps) => {
               <span>100% gratuito</span>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

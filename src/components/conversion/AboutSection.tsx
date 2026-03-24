@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { BookOpen, Award, Users } from "lucide-react";
 import founderPhoto from "@/assets/founder-photo.jpg";
 
@@ -8,26 +7,15 @@ const AboutSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/10 to-background" />
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
               Chi <span className="text-gradient-gold">sono</span>
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid md:grid-cols-[2fr_3fr] gap-8 items-start"
-          >
-            {/* Photo */}
+          <div className="grid md:grid-cols-[2fr_3fr] gap-8 items-start">
             <div className="rounded-2xl border border-border/50 overflow-hidden">
-              <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-auto object-cover" />
+              <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-auto object-cover" loading="lazy" decoding="async" />
             </div>
 
             <div className="space-y-6">
@@ -58,7 +46,7 @@ const AboutSection = () => {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
