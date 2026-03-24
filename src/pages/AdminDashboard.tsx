@@ -174,7 +174,7 @@ const AdminDashboard = () => {
     { label: "Login oggi", value: overview.loginsToday, icon: LogIn, color: "text-violet-500" },
     { label: "Login ultimi 3gg", value: overview.loginsLast3Days, icon: LogIn, color: "text-indigo-500" },
     { label: "Abbonamenti attivi", value: overview.stripe.activeSubscriptions, icon: CreditCard, color: "text-emerald-500" },
-    { label: "Non rinnovati", value: overview.stripe.canceledSubscriptions, icon: UserX, color: "text-red-500" },
+    { label: "Abbandono", value: overview.stripe.canceledSubscriptions, icon: UserX, color: "text-red-500" },
     { label: "Incasso totale", value: `€${overview.stripe.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-amber-500" },
   ];
 
