@@ -1,29 +1,12 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Brain, Eye, Heart, Flame } from "lucide-react";
 
 const benefits = [
-  {
-    icon: Brain,
-    title: "Capisci perché ti succedono sempre le stesse cose",
-    description: "Ti mostriamo cosa si ripete nella tua vita e perché, così puoi cambiarlo.",
-  },
-  {
-    icon: Eye,
-    title: "Scopri i tuoi punti di forza nascosti",
-    description: "Hai dei talenti che ancora non conosci. Noi ti aiutiamo a trovarli.",
-  },
-  {
-    icon: Heart,
-    title: "Ottieni chiarezza su amore, lavoro e decisioni",
-    description: "I tuoi numeri ti dicono cosa funziona meglio per te in amore e nel lavoro.",
-  },
-  {
-    icon: Flame,
-    title: "Impara a usare la tua energia a tuo vantaggio",
-    description: "Ogni giorno è diverso. Sapere qual è il momento giusto ti fa fare scelte migliori.",
-  },
+  { icon: Brain, title: "Capisci perché ti succedono sempre le stesse cose", description: "Ti mostriamo cosa si ripete nella tua vita e perché, così puoi cambiarlo." },
+  { icon: Eye, title: "Scopri i tuoi punti di forza nascosti", description: "Hai dei talenti che ancora non conosci. Noi ti aiutiamo a trovarli." },
+  { icon: Heart, title: "Ottieni chiarezza su amore, lavoro e decisioni", description: "I tuoi numeri ti dicono cosa funziona meglio per te in amore e nel lavoro." },
+  { icon: Flame, title: "Impara a usare la tua energia a tuo vantaggio", description: "Ogni giorno è diverso. Sapere qual è il momento giusto ti fa fare scelte migliori." },
 ];
 
 const BenefitsAndPreview = () => {
@@ -34,64 +17,44 @@ const BenefitsAndPreview = () => {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto items-stretch">
           {/* Left: Benefits */}
           <div className="flex flex-col">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-8"
-            >
+            <div className="text-center mb-8">
               <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/15 text-secondary-foreground text-sm font-medium mb-4">
                 Perché funziona
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
                 Questa non è <span className="text-gradient-gold">una semplice lettura</span>
               </h2>
-            </motion.div>
+            </div>
 
             <div className="grid sm:grid-cols-2 gap-4 flex-1">
-              {benefits.map((benefit, index) => (
-                <motion.div
+              {benefits.map((benefit) => (
+                <div
                   key={benefit.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
                   className="group p-6 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/80 transition-all duration-300 flex flex-col"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-4 group-hover:shadow-glow-gold transition-shadow duration-300">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center mb-4">
                     <benefit.icon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="font-display text-lg font-bold mb-2">{benefit.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{benefit.description}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
 
           {/* Right: Result Preview */}
           <div className="flex flex-col">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-8"
-            >
+            <div className="text-center mb-8">
               <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                 Anteprima
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
                 Ecco cosa <span className="text-gradient-gold">scoprirai</span>
               </h2>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex-1"
-            >
+            <div className="flex-1">
               <div className="rounded-2xl border border-primary/20 bg-card/80 overflow-hidden shadow-cosmic h-full flex flex-col">
-                {/* Header */}
                 <div className="bg-gradient-to-r from-primary/15 to-accent/10 p-5 border-b border-border/50">
                   <div className="flex items-center gap-4">
                     <div className="number-circle-lg">7</div>
@@ -102,7 +65,6 @@ const BenefitsAndPreview = () => {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-5 space-y-5 flex-1 flex flex-col">
                   <div>
                     <h4 className="font-display text-base font-semibold text-primary mb-2">La tua essenza</h4>
@@ -127,7 +89,6 @@ const BenefitsAndPreview = () => {
                     ))}
                   </div>
 
-                  {/* Blurred preview */}
                   <div className="relative flex-1">
                     <div className="blur-sm select-none pointer-events-none space-y-2">
                       <h4 className="font-display text-base font-semibold text-primary">Lezioni karmiche</h4>
@@ -151,7 +112,7 @@ const BenefitsAndPreview = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
