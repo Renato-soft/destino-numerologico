@@ -169,11 +169,12 @@ const DailyOutfits = () => {
                     <a
                       href={url}
                       download={`outfit-${index + 1}.png`}
-                      className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background text-foreground transition-colors"
+                      className="absolute bottom-2 left-2 right-2 h-9 rounded-md bg-background/85 backdrop-blur-sm flex items-center justify-center gap-1 text-xs font-medium text-foreground hover:bg-background transition-colors"
                       onClick={(e) => e.stopPropagation()}
                       title={t("common.downloadImage")}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                      <span>{t("common.downloadImage")}</span>
                     </a>
                   </div>
                 ) : (
@@ -193,7 +194,7 @@ const DailyOutfits = () => {
             <X className="w-8 h-8" />
           </button>
           <img src={lightboxUrl} alt="Outfit" className="max-w-full max-h-[90vh] object-contain rounded-xl" onClick={(e) => e.stopPropagation()} />
-          <a href={lightboxUrl} download="outfit.png" className="absolute bottom-6 left-1/2 -translate-x-1/2 px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity" onClick={(e) => e.stopPropagation()}>
+          <a href={lightboxUrl} download="outfit.png" className="absolute top-4 left-4 z-10 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity" onClick={(e) => e.stopPropagation()}>
             {t("common.downloadImage")}
           </a>
         </div>
