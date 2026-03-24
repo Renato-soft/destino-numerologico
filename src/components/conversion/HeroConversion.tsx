@@ -176,23 +176,8 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
 
           {desc && (
             <div className="space-y-4 py-4">
-              <div className="rounded-lg bg-primary/5 border border-primary/10 p-4 space-y-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Parole chiave</p>
-                  <p className="text-sm text-foreground">{desc.keywords}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">I tuoi talenti</p>
-                  <p className="text-sm text-foreground">{desc.talents}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">La tua sfida</p>
-                  <p className="text-sm text-foreground">{desc.shadow}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Direzione evolutiva</p>
-                  <p className="text-sm text-foreground">{desc.evolution}</p>
-                </div>
+              <div className="rounded-lg bg-primary/5 border border-primary/10 p-4">
+                <p className="text-sm text-foreground leading-relaxed">{desc}</p>
               </div>
 
               <div className="flex items-start gap-2 rounded-lg bg-muted/50 border border-border p-3">
