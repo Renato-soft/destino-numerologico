@@ -168,7 +168,7 @@ const PricingConversion = () => {
                     <Star className="w-5 h-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-display text-xl font-bold">Accesso Giornaliero Completo</h3>
+                    <h3 className="font-display text-xl font-bold">Accesso completo ogni giorno</h3>
                     <div className="flex items-baseline gap-1">
                       <span className="text-2xl font-bold text-primary">€4,99</span>
                       <span className="text-sm text-muted-foreground">/mese</span>

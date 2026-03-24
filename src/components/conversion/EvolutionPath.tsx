@@ -29,12 +29,12 @@ const EvolutionPath = () => {
             Percorso Progressivo
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Il tuo percorso <span className="text-gradient-gold">numerologico personale</span>
+            Il tuo viaggio <span className="text-gradient-gold">numerologico personale</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Le tue analisi si evolvono nel tempo, guidandoti passo dopo passo.
+            La tua crescita non è istantanea. Ogni fase della tua vita si sblocca passo dopo passo.
             <br />
-            Nuovi insight si sbloccano progressivamente.
+            Nuovi insight si sbloccano progressivamente per guidarti nel tuo percorso.
           </p>
         </motion.div>
 

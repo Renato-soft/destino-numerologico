@@ -113,7 +113,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-primary/70" />
-              <span>Già usato da migliaia di utenti</span>
+              <span>Già usato da oltre 1.000 persone</span>
             </div>
           </motion.div>
         </motion.div>

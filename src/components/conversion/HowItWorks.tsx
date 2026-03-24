@@ -19,8 +19,8 @@ const steps = [
   {
     icon: FileText,
     number: "3",
-    title: "Ricevi la tua analisi",
-    description: "Una lettura personalizzata, chiara e immediatamente utile.",
+    title: "Ricevi una lettura personalizzata",
+    description: "Chiara, pratica e immediatamente utile.",
   },
 ];
 

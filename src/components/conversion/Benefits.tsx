@@ -19,8 +19,8 @@ const benefits = [
   },
   {
     icon: Flame,
-    title: "Usa la tua energia a tuo vantaggio",
-    description: "Ogni giorno ha una vibrazione diversa. Impara a cavalcarla.",
+    title: "Impara a usare la tua energia a tuo vantaggio",
+    description: "Ogni giorno ha una vibrazione diversa. Sapere come sfruttarla cambia tutto.",
   },
 ];
 

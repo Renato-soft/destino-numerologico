@@ -8,28 +8,24 @@ import {
 
 const faqs = [
   {
-    question: "Quanto è accurata la numerologia?",
+    question: "È davvero accurato?",
     answer: "La numerologia pitagorica è un sistema millenario di autoconoscenza. Non è una scienza esatta, ma uno strumento di riflessione potentissimo. I nostri utenti restano costantemente sorpresi dalla precisione delle analisi. Ti invitiamo a provare gratuitamente e giudicare tu stesso.",
   },
   {
-    question: "Come funziona il pagamento?",
-    answer: "Puoi iniziare gratuitamente senza inserire dati di pagamento. Se decidi di sbloccare contenuti premium, i pagamenti sono gestiti in modo sicuro tramite Stripe. Puoi cancellare l'abbonamento in qualsiasi momento.",
-  },
-  {
-    question: "Come vengono calcolati i numeri?",
+    question: "Come funziona il calcolo?",
     answer: "Utilizziamo la numerologia pitagorica classica, il metodo più antico e consolidato. I tuoi numeri sono calcolati dalla tua data di nascita e dal tuo nome completo alla nascita, seguendo regole precise e verificate.",
   },
   {
-    question: "I miei dati sono al sicuro?",
-    answer: "Assolutamente sì. Utilizziamo crittografia avanzata e non condividiamo mai i tuoi dati con terze parti. I tuoi dati personali sono protetti secondo le normative GDPR europee.",
+    question: "È gratuito?",
+    answer: "Sì, puoi iniziare gratuitamente senza inserire dati di pagamento. La prima analisi è completamente gratuita. Se decidi di sbloccare contenuti premium, i pagamenti sono gestiti in modo sicuro. Puoi cancellare in qualsiasi momento.",
   },
   {
-    question: "Posso cancellare l'abbonamento quando voglio?",
-    answer: "Sì, puoi cancellare l'abbonamento in qualsiasi momento con un click. Non ci sono vincoli o penali. Continuerai ad avere accesso fino alla fine del periodo già pagato.",
-  },
-  {
-    question: "Cosa include l'offerta da €9,99?",
+    question: "Cosa include il report completo?",
     answer: "Con €9,99 sblocchi immediatamente tutte le analisi del percorso evolutivo senza dover aspettare. Include: mappa completa, anno personale, lezioni karmiche, compatibilità, cicli della vita e molto altro. Poi solo €4,99/mese per i contenuti giornalieri.",
+  },
+  {
+    question: "I miei dati sono sicuri?",
+    answer: "Assolutamente sì. Utilizziamo crittografia avanzata e non condividiamo mai i tuoi dati con terze parti. I tuoi dati personali sono protetti secondo le normative GDPR europee.",
   },
 ];
 

@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp } from "lucide-react";
 
 const dailyFeatures = [
-  { icon: Sun, title: "Energia del giorno", description: "Scopri la vibrazione della giornata e come sfruttarla" },
-  { icon: Shirt, title: "Outfit consigliato", description: "Vestiti in sintonia con la tua energia numerologica" },
-  { icon: TrendingUp, title: "Consigli mirati", description: "Indicazioni pratiche per amore, lavoro e salute" },
-  { icon: MessageCircle, title: "Chat con l'esperto AI", description: "Domande e risposte sulla tua numerologia personale" },
+  { icon: Sun, title: "Scopri quando agire e quando aspettare", description: "Ogni giorno ha un'energia specifica. Impara a leggerla." },
+  { icon: Shirt, title: "Ricevi consigli pratici ogni giorno", description: "Outfit, decisioni e azioni allineati alla tua vibrazione." },
+  { icon: TrendingUp, title: "Allinea le tue scelte alla tua energia", description: "Indicazioni concrete su amore, lavoro e benessere." },
+  { icon: MessageCircle, title: "Chat con consulente AI", description: "Domande e risposte sulla tua numerologia personale." },
 ];
 
 const DailyExperience = () => {
