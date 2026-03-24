@@ -116,7 +116,7 @@ const DailyExperience = () => {
               <div>
                 <h4 className="font-display text-base font-bold mb-1">Scarica e condividi i tuoi outfit</h4>
                 <p className="text-sm text-muted-foreground">
-                  Ogni foto outfit che ti piace può essere scaricata e utilizzata liberamente per uso personale, anche per i tuoi social.
+                  Ogni foto outfit che ti piace potrà essere scaricata e utilizzata liberamente per uso personale, anche per i tuoi social.
                 </p>
               </div>
             </motion.div>
