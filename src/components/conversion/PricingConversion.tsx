@@ -37,8 +37,8 @@ const PricingConversion = () => {
                   <Gift className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold">Gratuito</h3>
-                  <p className="text-sm text-muted-foreground">Per iniziare il tuo viaggio</p>
+                   <h3 className="font-display text-xl font-bold">Inizia gratuitamente</h3>
+                   <p className="text-sm text-muted-foreground">Ottieni la tua prima analisi e scopri il tuo numero</p>
                 </div>
               </div>
               <ul className="space-y-3 mb-6">
@@ -70,16 +70,16 @@ const PricingConversion = () => {
                   <Sparkles className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold">Sblocchi Singoli</h3>
+                  <h3 className="font-display text-xl font-bold">Vuoi solo un'analisi specifica?</h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-lg font-bold text-primary">€1,99</span>
                     <span className="text-sm text-muted-foreground">per analisi</span>
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Sblocca subito ciò che ti serve, senza aspettare.
-              </p>
+                 <p className="text-sm text-muted-foreground mb-4">
+                   Sblocca singoli contenuti senza abbonamento.
+                 </p>
               <ul className="space-y-3 mb-6">
                 {["Accesso immediato alla singola analisi", "Nessun vincolo o abbonamento", "Paga solo quello che ti interessa"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">
@@ -108,7 +108,7 @@ const PricingConversion = () => {
             {/* Badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-bold shadow-glow-gold">
               <Crown className="w-4 h-4" />
-              Offerta Consigliata — Miglior Valore
+              ⭐ PIÙ SCELTO — Miglior Valore
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mt-2">
@@ -120,9 +120,9 @@ const PricingConversion = () => {
                   <span className="text-4xl font-bold text-primary">€9,99</span>
                   <span className="text-muted-foreground">oggi</span>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4">
-                  Ottieni accesso immediato a tutte le analisi senza aspettare.
-                </p>
+                 <p className="text-muted-foreground text-sm mb-4">
+                   Accedi immediatamente a tutte le analisi senza aspettare giorni.
+                 </p>
                 <ul className="space-y-2 mb-4">
                   {[
                     "Tutti i contenuti sbloccati subito",
@@ -168,7 +168,7 @@ const PricingConversion = () => {
                     <Star className="w-5 h-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-display text-xl font-bold">Accesso Giornaliero Completo</h3>
+                    <h3 className="font-display text-xl font-bold">Accesso completo ogni giorno</h3>
                     <div className="flex items-baseline gap-1">
                       <span className="text-2xl font-bold text-primary">€4,99</span>
                       <span className="text-sm text-muted-foreground">/mese</span>

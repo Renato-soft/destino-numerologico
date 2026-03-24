@@ -18,11 +18,8 @@ const ResultPreview = () => {
             Anteprima
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Ecco cosa <span className="text-gradient-gold">riceverai</span>
+            Ecco cosa <span className="text-gradient-gold">scoprirai</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Un esempio reale di lettura numerologica
-          </p>
         </motion.div>
 
         <motion.div
@@ -49,9 +46,9 @@ const ResultPreview = () => {
               <div>
                 <h4 className="font-display text-lg font-semibold text-primary mb-2">La tua essenza</h4>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Sei una persona profonda, analitica e intuitiva. La tua mente è sempre alla ricerca
-                  di risposte e significati nascosti. Hai un forte bisogno di comprendere la realtà
-                  al di là delle apparenze. La solitudine non ti spaventa: è il tuo spazio di crescita.
+                  Sei intuitivo, analitico e profondamente introspettivo. Hai una forte connessione
+                  con il tuo mondo interiore. La tua mente è sempre alla ricerca di risposte e
+                  significati nascosti. La solitudine non ti spaventa: è il tuo spazio di crescita.
                 </p>
               </div>
 

@@ -17,7 +17,7 @@ const AboutSection = () => {
               Chi siamo
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
-              Una passione <span className="text-gradient-gold">autentica</span>
+              Chi <span className="text-gradient-gold">sono</span>
             </h2>
           </motion.div>
 
@@ -39,11 +39,11 @@ const AboutSection = () => {
 
             <div className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Destino Numerologico nasce da anni di studio della numerologia pitagorica
-                e dalla volontà di rendere questa conoscenza millenaria accessibile a tutti.
+                Studio numerologia da anni. Ho creato questo sistema per aiutarti a capire
+                davvero te stesso e prendere decisioni migliori ogni giorno.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Non siamo un oroscopo generico. Ogni analisi è calcolata sulla tua data di
+                Non è un oroscopo generico. Ogni analisi è calcolata sulla tua data di
                 nascita e il tuo nome completo, secondo la tradizione pitagorica autentica.
                 I risultati sono personali, precisi e pratici.
               </p>

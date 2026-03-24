@@ -60,16 +60,16 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1]">
             <span className="text-foreground">Scopri il tuo Numero</span>
             <br />
-            <span className="text-foreground">del Destino e cosa ti riserva</span>
+            <span className="text-foreground">del Destino e perché la tua vita</span>
             <br />
-            <span className="text-gradient-gold">davvero la vita</span>
+            <span className="text-gradient-gold">segue uno schema preciso</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Una lettura numerologica personalizzata basata sulla tua data di nascita.
             <br className="hidden sm:block" />
-            Chiara, pratica e sorprendentemente accurata.
+            Scopri chi sei davvero, cosa ti blocca e cosa ti aspetta.
           </p>
 
           {/* Birth date input + CTA */}
@@ -113,7 +113,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-primary/70" />
-              <span>Già usato da migliaia di utenti</span>
+              <span>Già usato da oltre 1.000 persone</span>
             </div>
           </motion.div>
         </motion.div>

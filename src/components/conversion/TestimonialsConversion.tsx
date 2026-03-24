@@ -3,27 +3,21 @@ import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Giulia M.",
+    name: "Giulia R.",
     role: "Imprenditrice",
-    text: "Non credevo nella numerologia finché non ho letto la mia mappa. Ha descritto la mia situazione con una precisione inquietante. Mi ha aiutata a capire perché ripetevo certi errori.",
+    text: "Mi ha descritto meglio di chiunque altro. Non credevo nella numerologia finché non ho letto la mia mappa. Una precisione inquietante.",
     stars: 5,
   },
   {
-    name: "Marco R.",
+    name: "Marco D.",
     role: "Sviluppatore Software",
-    text: "Da razionalista scettico, devo ammettere che i numeri raccontano qualcosa di vero. L'analisi dell'anno personale mi ha dato una prospettiva diversa sulle mie scelte professionali.",
+    text: "Inquietante quanto sia accurato. Da razionalista scettico, devo ammettere che i numeri raccontano qualcosa di vero.",
     stars: 5,
   },
   {
-    name: "Francesca L.",
+    name: "Laura S.",
     role: "Psicologa",
-    text: "Uso le analisi come strumento complementare nel mio lavoro di introspezione. I numeri offrono spunti di riflessione potentissimi. L'outfit del giorno poi è diventato un rituale!",
-    stars: 5,
-  },
-  {
-    name: "Alessandro D.",
-    role: "Coach",
-    text: "Il percorso dei 7 Pilastri è stato trasformativo. Ogni pilastro ha sbloccato consapevolezze profonde. Lo consiglio a tutti i miei clienti come punto di partenza.",
+    text: "Mi ha aiutato a capire la mia direzione. Uso le analisi come strumento di riflessione quotidiano. L'outfit del giorno è diventato un rituale!",
     stars: 5,
   },
 ];
@@ -43,7 +37,7 @@ const TestimonialsConversion = () => {
             Storie Reali
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Cosa dicono <span className="text-gradient-gold">di noi</span>
+            Cosa dicono <span className="text-gradient-gold">gli utenti</span>
           </h2>
         </motion.div>
 

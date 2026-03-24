@@ -4,23 +4,23 @@ import { Brain, Eye, Heart, Flame } from "lucide-react";
 const benefits = [
   {
     icon: Brain,
-    title: "Comprendi te stesso",
-    description: "Scopri le tue qualità nascoste, i tuoi talenti naturali e i blocchi che ti frenano.",
+    title: "Capisci perché ti succedono sempre le stesse cose",
+    description: "Scopri gli schemi nascosti che guidano le tue esperienze e le tue scelte.",
   },
   {
     icon: Eye,
-    title: "Scopri gli schemi della tua vita",
-    description: "Riconosci i pattern ricorrenti e impara a trasformarli a tuo vantaggio.",
+    title: "Scopri i tuoi punti di forza nascosti",
+    description: "Riconosci i talenti naturali che non sapevi di avere e usali a tuo vantaggio.",
   },
   {
     icon: Heart,
-    title: "Ottieni chiarezza su amore e lavoro",
+    title: "Ottieni chiarezza su amore, lavoro e decisioni",
     description: "Capisci le dinamiche relazionali e professionali scritte nei tuoi numeri.",
   },
   {
     icon: Flame,
-    title: "Usa la tua energia a tuo vantaggio",
-    description: "Ogni giorno ha una vibrazione diversa. Impara a cavalcarla.",
+    title: "Impara a usare la tua energia a tuo vantaggio",
+    description: "Ogni giorno ha una vibrazione diversa. Sapere come sfruttarla cambia tutto.",
   },
 ];
 
@@ -39,7 +39,7 @@ const Benefits = () => {
             Perché funziona
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Cosa scoprirai <span className="text-gradient-gold">su di te</span>
+            Questa non è <span className="text-gradient-gold">una semplice lettura</span>
           </h2>
         </motion.div>
 
