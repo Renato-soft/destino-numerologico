@@ -635,6 +635,7 @@
   },
   "dailyAnalysis": {
     "title": "Analisi del giorno",
-    "personalVibration": "Vibrazione personale del giorno: {{vibe}} · Anno Personale: {{year}}"
+    "personalVibration": "Vibrazione personale del giorno",
+    "personalYearLabel": "Anno Personale"
   }
 }
