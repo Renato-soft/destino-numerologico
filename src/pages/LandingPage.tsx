@@ -20,7 +20,7 @@ const LandingPage = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroConversion birthDate={birthDate} setBirthDate={setBirthDate} />
       <InstantUnlock />
-      <HowItWorks />
+      
       <Benefits />
       <ResultPreview />
       <EvolutionPath />
