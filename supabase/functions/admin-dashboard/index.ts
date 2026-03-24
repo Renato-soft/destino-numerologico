@@ -123,6 +123,28 @@ Deno.serve(async (req) => {
         .from("profiles")
         .select("user_id, nome, cognome, birth_date, sesso, created_at");
 
+      // Count logins per user from audit log
+      const loginCounts: Record<string, number> = {};
+      try {
+        const { data: auditRows } = await supabase
+          .schema("auth" as any)
+          .from("audit_log_entries")
+          .select("payload")
+          .in("payload->>action", ["login"]);
+
+        if (auditRows) {
+          for (const row of auditRows) {
+            const payload = typeof row.payload === "string" ? JSON.parse(row.payload) : row.payload;
+            const actorId = payload?.actor_id;
+            if (actorId) {
+              loginCounts[actorId] = (loginCounts[actorId] || 0) + 1;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Could not read audit log:", e);
+      }
+
       const userList = (profiles || []).map(p => {
         const authUser = users.find(u => u.id === p.user_id);
         return {
@@ -132,6 +154,8 @@ Deno.serve(async (req) => {
           email: authUser?.email || "N/A",
           created_at: p.created_at,
           sesso: p.sesso,
+          last_sign_in_at: authUser?.last_sign_in_at || null,
+          login_count: loginCounts[p.user_id] || 0,
         };
       });
 

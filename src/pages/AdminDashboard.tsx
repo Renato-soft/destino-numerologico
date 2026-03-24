@@ -26,6 +26,8 @@ interface OverviewData {
     email: string;
     created_at: string;
     sesso: string;
+    last_sign_in_at: string | null;
+    login_count: number;
   }[];
 }
 
@@ -211,11 +213,21 @@ const AdminDashboard = () => {
                     selectedUser === u.user_id ? "bg-primary/10 border border-primary/30" : "hover:bg-muted/30"
                   }`}
                 >
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{u.nome} {u.cognome}</p>
                     <p className="text-xs text-muted-foreground">{u.email}</p>
+                    <div className="flex gap-3 mt-1">
+                      <span className="text-xs text-muted-foreground">
+                        Ultimo accesso: {u.last_sign_in_at
+                          ? new Date(u.last_sign_in_at).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                          : "Mai"}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Accessi: {u.login_count}
+                      </span>
+                    </div>
                   </div>
-                  <Eye className="w-4 h-4 text-muted-foreground" />
+                  <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 </div>
               ))}
             </div>
