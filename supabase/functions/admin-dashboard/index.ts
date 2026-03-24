@@ -162,6 +162,7 @@ Deno.serve(async (req) => {
       });
 
       return new Response(JSON.stringify({
+        role: userRole,
         totalUsers,
         newToday,
         newLast3Days,

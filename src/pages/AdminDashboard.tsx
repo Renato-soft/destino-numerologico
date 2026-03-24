@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface OverviewData {
-  totalUsers: number;
+  role: "superadmin" | "admin";
   newToday: number;
   newLast3Days: number;
   stripe: {
