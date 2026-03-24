@@ -174,7 +174,7 @@ const AdminDashboard = () => {
     { label: "Login oggi", value: overview.loginsToday, icon: LogIn, color: "text-violet-500" },
     { label: "Login ultimi 3gg", value: overview.loginsLast3Days, icon: LogIn, color: "text-indigo-500" },
     { label: "Abbonamenti attivi", value: overview.stripe.activeSubscriptions, icon: CreditCard, color: "text-emerald-500" },
-    { label: "Non rinnovati", value: overview.stripe.canceledSubscriptions, icon: UserX, color: "text-red-500" },
+    { label: "Abbandono", value: overview.stripe.canceledSubscriptions, icon: UserX, color: "text-red-500" },
     { label: "Incasso totale", value: `€${overview.stripe.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-amber-500" },
   ];
 
@@ -292,7 +292,7 @@ const AdminDashboard = () => {
           <div className="glass-cosmic rounded-xl p-6 mb-8">
             <div className="flex items-center gap-2 mb-4">
               <UserX className="w-5 h-5 text-red-500" />
-              <h2 className="font-display text-lg font-semibold">Utenti non rinnovati</h2>
+              <h2 className="font-display text-lg font-semibold">Utenti in abbandono</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               {overview.stripe.churned.map(email => (
