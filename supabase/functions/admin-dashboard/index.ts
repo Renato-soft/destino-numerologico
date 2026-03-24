@@ -160,12 +160,20 @@ Deno.serve(async (req) => {
         .select("user_id, nome, cognome, birth_date, sesso, created_at");
 
       const loginCounts: Record<string, number> = {};
+      let loginsToday = 0;
+      let loginsLast3Days = 0;
       try {
         const { data: auditRows } = await supabase
           .schema("auth" as any)
           .from("audit_log_entries")
-          .select("payload")
+          .select("payload, created_at")
           .in("payload->>action", ["login"]);
+
+        const nowDate = new Date();
+        const todayStart = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate()).toISOString();
+        const threeDaysAgoLogin = new Date(nowDate);
+        threeDaysAgoLogin.setDate(threeDaysAgoLogin.getDate() - 3);
+        const threeDaysAgoStr = threeDaysAgoLogin.toISOString();
 
         if (auditRows) {
           for (const row of auditRows) {
@@ -173,6 +181,11 @@ Deno.serve(async (req) => {
             const actorId = payload?.actor_id;
             if (actorId) {
               loginCounts[actorId] = (loginCounts[actorId] || 0) + 1;
+            }
+            const createdAt = row.created_at;
+            if (createdAt) {
+              if (createdAt >= todayStart) loginsToday++;
+              if (createdAt >= threeDaysAgoStr) loginsLast3Days++;
             }
           }
         }
