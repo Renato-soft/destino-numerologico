@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download, Loader2 } from "lucide-react";
+import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download, Loader2, Star, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PLAN } from "@/hooks/useSubscription";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ import outfit3 from "@/assets/outfits/outfit3.jpg";
 
 const dailyFeatures = [
   { icon: Sun, title: "Scopri quando agire e quando aspettare", description: "Ogni giorno ha la sua energia. Ti diciamo com'è oggi la tua." },
-  { icon: Shirt, title: "Ricevi consigli pratici ogni giorno", description: "Ti suggeriamo quali colori usare in base alla tua energia." },
+  { icon: Shirt, title: "Ricevi consigli pratici sull'outfit", description: "Ti suggeriamo quali colori usare in base alla tua energia." },
   { icon: TrendingUp, title: "Allinea le tue scelte alla tua energia", description: "Consigli semplici e chiari su amore, lavoro e benessere." },
   { icon: MessageCircle, title: "Chat con consulente AI", description: "Fai tutte le domande che vuoi sui tuoi numeri e ricevi risposte subito." },
 ];
@@ -23,6 +23,14 @@ const outfitExamples = [
   { label: "Look Pomeriggio", img: outfit1 },
   { label: "Look Sera", img: outfit2 },
   { label: "Look Speciale", img: outfit3 },
+];
+
+const subscriptionFeatures = [
+  "Analisi del giorno personalizzata",
+  "Outfit del giorno basato sulla vibrazione",
+  "Consigli quotidiani mirati",
+  "Accesso alla community",
+  "Chat con consulente numerologico AI",
 ];
 
 const DailyExperience = () => {
@@ -73,28 +81,48 @@ const DailyExperience = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto mb-12 items-center">
-          {/* Left: feature descriptions in 2x2 grid */}
-          <div className="grid sm:grid-cols-2 gap-5">
-            {dailyFeatures.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center p-5 rounded-2xl border border-border/30 bg-card/30"
-              >
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="font-display text-lg font-bold mb-2">{feature.title}</h4>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </motion.div>
-            ))}
+        <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto mb-12 items-start">
+          {/* Left: feature cards + download box */}
+          <div className="flex flex-col gap-5">
+            <div className="grid sm:grid-cols-2 gap-5">
+              {dailyFeatures.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="text-center p-5 rounded-2xl border border-border/30 bg-card/30"
+                >
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <feature.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h4 className="font-display text-lg font-bold mb-2">{feature.title}</h4>
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Download info box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="rounded-2xl border border-primary/20 bg-primary/5 p-5 flex items-start gap-4"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Download className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h4 className="font-display text-base font-bold mb-1">Scarica e condividi i tuoi outfit</h4>
+                <p className="text-sm text-muted-foreground">
+                  Ogni foto outfit che ti piace può essere scaricata e utilizzata liberamente per uso personale, anche per i tuoi social.
+                </p>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Right: outfit examples in 2x2 grid, smaller */}
+          {/* Right: outfit examples */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -126,34 +154,34 @@ const DailyExperience = () => {
           </motion.div>
         </div>
 
-        {/* Download info box */}
+        {/* Subscription CTA box */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-2xl mx-auto mb-12 rounded-2xl border border-primary/20 bg-primary/5 p-6 flex items-start gap-4"
+          className="max-w-6xl mx-auto rounded-2xl border border-primary/20 bg-card/30 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6"
         >
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-            <Download className="w-5 h-5 text-primary" />
+          <div className="flex items-start gap-4 flex-1">
+            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
+              <Star className="w-5 h-5 text-accent" />
+            </div>
+            <div>
+              <h4 className="font-display text-base font-bold mb-0.5">Accesso completo ogni giorno</h4>
+              <p className="text-primary font-bold text-xl mb-3">€4,99 <span className="text-sm font-normal text-muted-foreground">/mese</span></p>
+              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
+                {subscriptionFeatures.map((feat) => (
+                  <div key={feat} className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-primary shrink-0" />
+                    <span className="text-sm text-muted-foreground">{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <div>
-            <h4 className="font-display text-base font-bold mb-1">Scarica e condividi i tuoi outfit</h4>
-            <p className="text-sm text-muted-foreground">
-              Ogni foto outfit che ti piace può essere scaricata e utilizzata liberamente per uso personale, anche per i tuoi social.
-            </p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
           <Button
-            variant="cosmic"
-            size="xl"
-            className="group"
+            variant="cosmic-outline"
+            size="lg"
+            className="group shrink-0"
             onClick={handleSubscribe}
             disabled={loading}
           >
@@ -161,8 +189,8 @@ const DailyExperience = () => {
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                Abbonati ora a solo 4,99€ al mese
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                Attiva abbonamento
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </>
             )}
           </Button>
