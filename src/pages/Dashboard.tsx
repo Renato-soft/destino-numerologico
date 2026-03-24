@@ -208,7 +208,7 @@ const Dashboard = () => {
                 </Link>
               </Button>
             )}
-            {userEmail === "regnew01@gmail.com" && (
+            {(userEmail === "regnew01@gmail.com" || userEmail === "realerenato@gmail.com") && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title="Pannello di Controllo">
                 <Shield className="w-5 h-5" />
               </Button>

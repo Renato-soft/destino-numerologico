@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ADMIN_EMAIL = "regnew01@gmail.com";
+const ADMIN_EMAILS = ["regnew01@gmail.com", "realerenato@gmail.com"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,12 +29,14 @@ Deno.serve(async (req) => {
 
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user || user.email !== ADMIN_EMAIL) {
+    if (userError || !user || !user.email || !ADMIN_EMAILS.includes(user.email)) {
       return new Response(JSON.stringify({ error: "Accesso negato" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : "admin";
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action") || "overview";
@@ -160,6 +162,7 @@ Deno.serve(async (req) => {
       });
 
       return new Response(JSON.stringify({
+        role: userRole,
         totalUsers,
         newToday,
         newLast3Days,
