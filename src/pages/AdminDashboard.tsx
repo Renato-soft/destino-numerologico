@@ -201,7 +201,7 @@ const AdminDashboard = () => {
         )}
 
         {/* User list + detail */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className={`grid grid-cols-1 ${overview.role === "superadmin" ? "lg:grid-cols-2" : ""} gap-6`}>
           {/* User list */}
           <div className="glass-cosmic rounded-xl p-6">
             <h2 className="font-display text-lg font-semibold mb-4">Tutti gli utenti ({overview.users.length})</h2>
