@@ -1,14 +1,52 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Zap, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Shield, Zap, Users, Sparkles, Star } from "lucide-react";
+import { calculateLifePath } from "@/lib/numerology";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface HeroConversionProps {
   birthDate: string;
   setBirthDate: (date: string) => void;
 }
 
+const lifePathDescriptions: Record<number, { keywords: string; talents: string; shadow: string; evolution: string }> = {
+  1: { keywords: "Iniziativa, autonomia, leadership", talents: "Indipendenza, coraggio, spirito pionieristico", shadow: "Egoismo, impulsività, difficoltà a collaborare", evolution: "Imparare a guidare senza dominare" },
+  2: { keywords: "Collaborazione, sensibilità, relazione", talents: "Empatia, diplomazia, ascolto", shadow: "Dipendenza, insicurezza, paura del conflitto", evolution: "Sviluppare fiducia in sé" },
+  3: { keywords: "Comunicazione, creatività, espressione", talents: "Entusiasmo, arte, socialità", shadow: "Dispersione, superficialità", evolution: "Dare forma concreta alle idee" },
+  4: { keywords: "Struttura, stabilità, metodo", talents: "Affidabilità, costanza, concretezza", shadow: "Rigidità, paura del cambiamento", evolution: "Costruire senza irrigidirsi" },
+  5: { keywords: "Cambiamento, libertà, esperienza", talents: "Adattabilità, curiosità", shadow: "Instabilità, eccessi", evolution: "Libertà con responsabilità" },
+  6: { keywords: "Responsabilità, amore, armonia", talents: "Cura, senso estetico, protezione", shadow: "Controllo, sacrificio eccessivo", evolution: "Amare senza annullarsi" },
+  7: { keywords: "Introspezione, ricerca, spiritualità", talents: "Analisi, profondità, intuizione", shadow: "Isolamento, diffidenza", evolution: "Fidarsi e condividere" },
+  8: { keywords: "Potere, realizzazione, materia", talents: "Leadership, gestione, successo", shadow: "Materialismo, durezza", evolution: "Usare il potere con etica" },
+  9: { keywords: "Umanità, chiusura, servizio", talents: "Compassione, visione ampia", shadow: "Vittimismo, dispersione emotiva", evolution: "Lasciare andare il passato" },
+  11: { keywords: "Visione, intuizione, ispirazione", talents: "Consapevolezza, centratura, empatia profonda", shadow: "Ipersensibilità, tensione interiore", evolution: "Una nuova identità non egoica e più empatica" },
+  22: { keywords: "Maestro costruttore, grandi progetti", talents: "Empatia, capacità di realizzare progetti concreti", shadow: "Pressione, perfezionismo", evolution: "Agire nel mondo in modo più consapevole" },
+  33: { keywords: "Amore universale, servizio, guida", talents: "Comunicazione innovativa, leggerezza, amore", shadow: "Eccessiva responsabilità emotiva", evolution: "Comunicare per il massimo benessere dell'umanità" },
+};
+
 const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const [lifePathNumber, setLifePathNumber] = useState<number | null>(null);
+
+  const handlePreview = () => {
+    if (!birthDate) return;
+    const [year, month, day] = birthDate.split("-").map(Number);
+    const lp = calculateLifePath(day, month, year);
+    setLifePathNumber(lp);
+    setShowPreview(true);
+  };
+
+  const desc = lifePathNumber ? lifePathDescriptions[lifePathNumber] || lifePathDescriptions[lifePathNumber > 9 ? 9 : lifePathNumber] : null;
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -85,11 +123,15 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
                 className="flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
                 placeholder="La tua data di nascita"
               />
-              <Button asChild variant="cosmic" size="xl" className="group whitespace-nowrap">
-                <Link to={birthDate ? `/auth?date=${birthDate}` : "/auth"}>
-                  Ottieni la tua lettura gratuita
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Link>
+              <Button
+                variant="cosmic"
+                size="xl"
+                className="group whitespace-nowrap"
+                onClick={handlePreview}
+                disabled={!birthDate}
+              >
+                Ottieni una preview
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           </motion.div>
@@ -116,6 +158,65 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Preview Modal */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="sm:max-w-lg border-primary/20 bg-background">
+          <DialogHeader className="text-center sm:text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 border border-primary/30">
+              <span className="font-display text-3xl font-bold text-primary">{lifePathNumber}</span>
+            </div>
+            <DialogTitle className="text-2xl font-display">
+              Il tuo Numero del Destino è il {lifePathNumber}
+            </DialogTitle>
+            <DialogDescription className="text-base text-muted-foreground mt-2">
+              Ecco un'anteprima di ciò che i tuoi numeri rivelano
+            </DialogDescription>
+          </DialogHeader>
+
+          {desc && (
+            <div className="space-y-4 py-4">
+              <div className="rounded-lg bg-primary/5 border border-primary/10 p-4 space-y-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Parole chiave</p>
+                  <p className="text-sm text-foreground">{desc.keywords}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">I tuoi talenti</p>
+                  <p className="text-sm text-foreground">{desc.talents}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">La tua sfida</p>
+                  <p className="text-sm text-foreground">{desc.shadow}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Direzione evolutiva</p>
+                  <p className="text-sm text-foreground">{desc.evolution}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2 rounded-lg bg-muted/50 border border-border p-3">
+                <Star className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Questa è solo una piccola anteprima. La tua <span className="text-foreground font-medium">Mappa Numerologica completa</span> include numeri dell'anima, personalità, cicli di vita e molto altro.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <Button asChild variant="cosmic" size="lg" className="w-full group">
+              <Link to={birthDate ? `/auth?date=${birthDate}` : "/auth"}>
+                Registrati gratis per la mappa completa
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+            <p className="text-xs text-center text-muted-foreground">
+              Gratis • Nessuna carta richiesta • Risultato immediato
+            </p>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Scroll indicator */}
       <motion.div
