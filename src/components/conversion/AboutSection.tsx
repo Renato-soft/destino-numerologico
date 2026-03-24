@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { BookOpen, Award, Users } from "lucide-react";
+import founderPhoto from "@/assets/founder-photo.jpg";
 
 const AboutSection = () => {
   return (
@@ -28,13 +29,8 @@ const AboutSection = () => {
             className="grid md:grid-cols-2 gap-8 items-center"
           >
             {/* Photo placeholder */}
-            <div className="aspect-[4/5] rounded-2xl bg-gradient-to-b from-muted/50 to-card border border-border/50 flex items-center justify-center overflow-hidden">
-              <div className="text-center p-8">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-4xl font-display font-bold text-primary-foreground">DN</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Destino Numerologico</p>
-              </div>
+            <div className="aspect-[4/5] rounded-2xl border border-border/50 overflow-hidden">
+              <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-full object-cover" />
             </div>
 
             <div className="space-y-6">
