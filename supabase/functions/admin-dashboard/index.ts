@@ -149,16 +149,19 @@ Deno.serve(async (req) => {
 
       const userList = (profiles || []).map(p => {
         const authUser = users.find(u => u.id === p.user_id);
-        return {
+        const entry: any = {
           user_id: p.user_id,
           nome: p.nome,
-          cognome: p.cognome,
-          email: authUser?.email || "N/A",
+          cognome: userRole === "viewer" ? (p.cognome ? p.cognome.charAt(0) + "." : "") : p.cognome,
           created_at: p.created_at,
           sesso: p.sesso,
           last_sign_in_at: authUser?.last_sign_in_at || null,
           login_count: loginCounts[p.user_id] || 0,
         };
+        if (userRole !== "viewer") {
+          entry.email = authUser?.email || "N/A";
+        }
+        return entry;
       });
 
       return new Response(JSON.stringify({
