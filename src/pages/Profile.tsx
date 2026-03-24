@@ -347,6 +347,9 @@ const ProfilePage = () => {
               e anche in costume da bagno per evidenziare le forme del corpo. 
               Più varietà carichi, più l'AI saprà consigliarti il look perfetto.
             </p>
+            <p className="text-sm text-muted-foreground mt-2 italic">
+              🔒 Tutte le foto caricate e gli outfit generati sono privati e visibili solo a te. Non verranno mai resi pubblici. Puoi eliminarli in qualunque momento.
+            </p>
 
             {extraPhotos.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
