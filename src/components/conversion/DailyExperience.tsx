@@ -104,7 +104,7 @@ const DailyExperience = () => {
         >
           <Button asChild variant="cosmic" size="lg" className="group">
             <Link to="/auth">
-              Scopri oggi la tua energia
+              Ogni giorno ha la sua energia. Ti diciamo come sfruttarla al meglio
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
