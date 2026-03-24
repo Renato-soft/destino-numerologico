@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-Deno.serve(() => new Response(Deno.env.get("LOVABLE_API_KEY") ?? "not found"));
+// API key available via Deno.env.get("LOVABLE_API_KEY")
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
