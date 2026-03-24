@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
@@ -36,6 +36,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [latestMap, setLatestMap] = useState<NumerologyMap | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { canAccess, subscribed, isPayPerUse, hasPayPerUsePurchase, canUseFreeRequest, loading: subLoading, refreshPayPerUsePurchases, checkSubscription } = useSubscription();
@@ -45,6 +46,7 @@ const Dashboard = () => {
     const checkAuthAndLoadData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
+      setUserEmail(session.user.email || null);
 
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
@@ -204,6 +206,11 @@ const Dashboard = () => {
                   <Map className="w-4 h-4 mr-2" />
                   La tua Mappa
                 </Link>
+              </Button>
+            )}
+            {userEmail === "regnew01@gmail.com" && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title="Pannello di Controllo">
+                <Shield className="w-5 h-5" />
               </Button>
             )}
             <Button variant="ghost" size="icon" onClick={handleLogout}>
