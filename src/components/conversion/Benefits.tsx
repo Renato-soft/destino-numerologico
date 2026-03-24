@@ -4,8 +4,8 @@ import { Brain, Eye, Heart, Flame } from "lucide-react";
 const benefits = [
   {
     icon: Brain,
-    title: "Comprendi te stesso",
-    description: "Scopri le tue qualità nascoste, i tuoi talenti naturali e i blocchi che ti frenano.",
+    title: "Capisci perché ti succedono sempre le stesse cose",
+    description: "Scopri gli schemi nascosti che guidano le tue esperienze e le tue scelte.",
   },
   {
     icon: Eye,
