@@ -14,9 +14,6 @@ const AboutSection = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              Chi siamo
-            </span>
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
               Chi <span className="text-gradient-gold">sono</span>
             </h2>
