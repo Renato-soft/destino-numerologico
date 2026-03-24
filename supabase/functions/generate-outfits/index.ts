@@ -460,6 +460,33 @@ Deno.serve(async (req) => {
 
     const results = await Promise.all(outfitPrompts.map((op) => generateImage(op.prompt, op.label)));
 
+    // Cleanup outfits older than 3 days
+    try {
+      const { data: allFiles } = await supabase.storage
+        .from("user-photos")
+        .list(`${user.id}/outfits`);
+
+      if (allFiles && allFiles.length > 0) {
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        const cutoffDate = threeDaysAgo.toISOString().split("T")[0];
+
+        const oldFiles = allFiles.filter((f) => {
+          // File names are like 2026-03-24_v7_day1.png
+          const dateMatch = f.name.match(/^(\d{4}-\d{2}-\d{2})_/);
+          return dateMatch && dateMatch[1] < cutoffDate;
+        });
+
+        if (oldFiles.length > 0) {
+          const pathsToDelete = oldFiles.map((f) => `${user.id}/outfits/${f.name}`);
+          await supabase.storage.from("user-photos").remove(pathsToDelete);
+          console.log(`Cleaned up ${oldFiles.length} old outfit files for user ${user.id}`);
+        }
+      }
+    } catch (cleanupErr) {
+      console.error("Cleanup error (non-fatal):", cleanupErr);
+    }
+
     return new Response(JSON.stringify({ outfits: results }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
