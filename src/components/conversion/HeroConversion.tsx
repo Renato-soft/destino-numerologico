@@ -78,22 +78,13 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
             className="max-w-md mx-auto mb-8"
           >
             <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <label htmlFor="birth-date-input" className="sr-only">Data di nascita</label>
-                <input
-                  id="birth-date-input"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all appearance-none [color-scheme:dark] [&::-webkit-date-and-time-value]:text-left"
-                  style={{ minWidth: 0 }}
-                />
-                {!birthDate && (
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none text-base">
-                    📅 Inserisci la tua data di nascita
-                  </span>
-                )}
-              </div>
+              <input
+                type="date"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                className="w-full sm:flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all [color-scheme:dark]"
+                aria-label="Data di nascita"
+              />
               <Button
                 variant="cosmic"
                 size="xl"
