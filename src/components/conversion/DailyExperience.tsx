@@ -28,8 +28,7 @@ const DailyExperience = () => {
             La tua energia <span className="text-gradient-gold">cambia ogni giorno</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Ogni giorno ha una vibrazione diversa. Scopri come sfruttarla al meglio
-            per prendere decisioni consapevoli.
+            Ogni giorno ha una vibrazione diversa. Sapere come usarla può cambiare tutto.
           </p>
         </motion.div>
 
