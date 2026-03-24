@@ -19,7 +19,7 @@ const LandingPage = () => {
       <BenefitsAndPreview />
       <DailyExperience />
       <EvolutionPath />
-      <PricingConversion />
+      
       <TestimonialsConversion />
       <AboutSection />
       <FAQSection />
