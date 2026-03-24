@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
+  LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,8 @@ interface OverviewData {
   totalUsers: number;
   newToday: number;
   newLast3Days: number;
+  loginsToday: number;
+  loginsLast3Days: number;
   stripe: {
     totalRevenue: number;
     revenueByProduct: Record<string, number>;
@@ -168,6 +171,8 @@ const AdminDashboard = () => {
     { label: "Utenti totali", value: overview.totalUsers, icon: Users, color: "text-primary" },
     { label: "Nuovi oggi", value: overview.newToday, icon: UserPlus, color: "text-green-500" },
     { label: "Nuovi ultimi 3gg", value: overview.newLast3Days, icon: UserPlus, color: "text-blue-500" },
+    { label: "Login oggi", value: overview.loginsToday, icon: LogIn, color: "text-violet-500" },
+    { label: "Login ultimi 3gg", value: overview.loginsLast3Days, icon: LogIn, color: "text-indigo-500" },
     { label: "Abbonamenti attivi", value: overview.stripe.activeSubscriptions, icon: CreditCard, color: "text-emerald-500" },
     { label: "Non rinnovati", value: overview.stripe.canceledSubscriptions, icon: UserX, color: "text-red-500" },
     { label: "Incasso totale", value: `€${overview.stripe.totalRevenue.toFixed(2)}`, icon: TrendingUp, color: "text-amber-500" },
@@ -196,7 +201,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
           {statCards.map((card, i) => (
             <motion.div
               key={i}
