@@ -37,8 +37,8 @@ const PricingConversion = () => {
                   <Gift className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold">Gratuito</h3>
-                  <p className="text-sm text-muted-foreground">Per iniziare il tuo viaggio</p>
+                   <h3 className="font-display text-xl font-bold">Inizia gratuitamente</h3>
+                   <p className="text-sm text-muted-foreground">Ottieni la tua prima analisi e scopri il tuo numero</p>
                 </div>
               </div>
               <ul className="space-y-3 mb-6">
