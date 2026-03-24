@@ -77,9 +77,9 @@ const PricingConversion = () => {
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Sblocca subito ciò che ti serve, senza aspettare.
-              </p>
+                 <p className="text-sm text-muted-foreground mb-4">
+                   Sblocca singoli contenuti senza abbonamento.
+                 </p>
               <ul className="space-y-3 mb-6">
                 {["Accesso immediato alla singola analisi", "Nessun vincolo o abbonamento", "Paga solo quello che ti interessa"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">
