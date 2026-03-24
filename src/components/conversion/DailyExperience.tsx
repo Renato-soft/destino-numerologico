@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download } from "lucide-react";
+import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { PLAN } from "@/hooks/useSubscription";
+import { toast } from "sonner";
 import outfit0 from "@/assets/outfits/outfit0.jpg";
 import outfit1 from "@/assets/outfits/outfit1.jpg";
 import outfit2 from "@/assets/outfits/outfit2.jpg";
@@ -22,6 +26,32 @@ const outfitExamples = [
 ];
 
 const DailyExperience = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth?mode=signup");
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: PLAN.price_id, mode: "subscription" },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Errore durante l'avvio del pagamento. Riprova.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
@@ -120,11 +150,21 @@ const DailyExperience = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <Button asChild variant="cosmic" size="xl" className="group">
-            <Link to="/auth?mode=signup">
-              Abbonati ora a solo 4,99€ al mese
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Link>
+          <Button
+            variant="cosmic"
+            size="xl"
+            className="group"
+            onClick={handleSubscribe}
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <>
+                Abbonati ora a solo 4,99€ al mese
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </>
+            )}
           </Button>
         </motion.div>
       </div>
