@@ -58,7 +58,7 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
 
           {/* Title */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1]">
-            <span className="text-foreground">La tua vita ha uno schema</span>
+            <span className="text-foreground">Perchè ti succedono sempre le stesse cose?</span>
             <br />
             <span className="text-gradient-gold">Scoprilo in 60 secondi</span>
           </h1>
