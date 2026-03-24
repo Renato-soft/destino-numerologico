@@ -220,6 +220,9 @@ const Dashboard = () => {
                 </Link>
               </Button>
             )}
+            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title="Profilo">
+              <User className="w-5 h-5" />
+            </Button>
             {(userEmail === "regnew01@gmail.com" || userEmail === "realerenato@gmail.com" || userEmail === "maria732008@live.it") && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title="Pannello di Controllo">
                 <Shield className="w-5 h-5" />
