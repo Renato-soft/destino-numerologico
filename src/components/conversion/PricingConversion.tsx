@@ -108,7 +108,7 @@ const PricingConversion = () => {
             {/* Badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-bold shadow-glow-gold">
               <Crown className="w-4 h-4" />
-              Offerta Consigliata — Miglior Valore
+              ⭐ PIÙ SCELTO — Miglior Valore
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mt-2">
