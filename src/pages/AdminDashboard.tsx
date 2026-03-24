@@ -292,7 +292,7 @@ const AdminDashboard = () => {
           <div className="glass-cosmic rounded-xl p-6 mb-8">
             <div className="flex items-center gap-2 mb-4">
               <UserX className="w-5 h-5 text-red-500" />
-              <h2 className="font-display text-lg font-semibold">Utenti non rinnovati</h2>
+              <h2 className="font-display text-lg font-semibold">Utenti in abbandono</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               {overview.stripe.churned.map(email => (
