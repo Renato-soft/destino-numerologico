@@ -15,6 +15,11 @@ const DailyOutfits = () => {
   const [photoCount, setPhotoCount] = useState(0);
   const navigate = useNavigate();
 
+  const getCacheKey = () => {
+    const today = new Date().toISOString().split("T")[0];
+    return `outfits_cache_${today}`;
+  };
+
   const fetchOutfits = async (force = false) => {
     setLoading(true);
     setError(null);
@@ -28,6 +33,22 @@ const DailyOutfits = () => {
         .select("id", { count: "exact", head: true })
         .eq("user_id", session.user.id);
       setPhotoCount(count || 0);
+
+      // Check sessionStorage cache first (avoid calling edge function on every dashboard visit)
+      if (!force) {
+        const cacheKey = getCacheKey();
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(Boolean)) {
+              setOutfits(parsed);
+              setLoading(false);
+              return;
+            }
+          } catch { /* invalid cache, proceed normally */ }
+        }
+      }
 
       const { data, error: fnError } = await supabase.functions.invoke("generate-outfits", {
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -43,6 +64,9 @@ const DailyOutfits = () => {
 
       if (data?.outfits) {
         setOutfits(data.outfits);
+        // Cache in sessionStorage for this session
+        const cacheKey = getCacheKey();
+        sessionStorage.setItem(cacheKey, JSON.stringify(data.outfits));
       } else if (data?.error) {
         setError(data.error);
       }
