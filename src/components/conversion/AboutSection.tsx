@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { BookOpen, Award, Users } from "lucide-react";
+import founderPhoto from "@/assets/founder-photo.jpg";
 
 const AboutSection = () => {
   return (
