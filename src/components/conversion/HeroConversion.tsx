@@ -82,11 +82,7 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className={`w-full sm:flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all [color-scheme:dark] ${
-                  birthDate
-                    ? "text-foreground [&::-webkit-datetime-edit]:text-foreground"
-                    : "text-transparent [&::-webkit-datetime-edit]:text-transparent sm:text-foreground sm:[&::-webkit-datetime-edit]:text-foreground"
-                }`}
+                className="w-full sm:flex-1 h-14 rounded-xl border border-border bg-muted/50 px-4 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all [color-scheme:dark]"
                 aria-label="Data di nascita"
               />
               <Button
