@@ -214,8 +214,8 @@ const AdminDashboard = () => {
               }).map(u => (
                 <div
                   key={u.user_id}
-                  onClick={() => fetchUserDetail(u.user_id)}
-                  className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
+                  onClick={() => overview.role === "superadmin" ? fetchUserDetail(u.user_id) : null}
+                  className={`flex items-center justify-between p-3 rounded-lg transition-colors ${overview.role === "superadmin" ? "cursor-pointer" : ""} ${
                     selectedUser === u.user_id ? "bg-primary/10 border border-primary/30" : "hover:bg-muted/30"
                   }`}
                 >
