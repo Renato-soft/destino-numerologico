@@ -13,7 +13,7 @@ const steps = [
   {
     icon: Hash,
     number: "2",
-    title: "Calcoliamo il tuo numero",
+    title: "Calcoliamo il tuo numero del destino",
     description: "Il nostro sistema applica la numerologia pitagorica autentica.",
   },
   {
