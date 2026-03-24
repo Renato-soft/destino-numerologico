@@ -215,6 +215,8 @@ Deno.serve(async (req) => {
         totalUsers,
         newToday,
         newLast3Days,
+        loginsToday,
+        loginsLast3Days,
         stripe: stripeData,
         users: userList,
       }), {
