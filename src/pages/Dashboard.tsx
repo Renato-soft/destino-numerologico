@@ -208,6 +208,11 @@ const Dashboard = () => {
                 </Link>
               </Button>
             )}
+            {userEmail === "regnew01@gmail.com" && (
+              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title="Pannello di Controllo">
+                <Shield className="w-5 h-5" />
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={handleLogout}>
               <LogOut className="w-5 h-5" />
             </Button>
