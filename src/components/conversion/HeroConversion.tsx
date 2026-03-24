@@ -65,7 +65,7 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            La tua vita ha uno schema
+            Perché ti succedono sempre le stesse cose?
             <br />
             La risposta è nei tuoi numeri.
           </p>
