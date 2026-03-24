@@ -9,7 +9,7 @@ import outfit3 from "@/assets/outfits/outfit3.jpg";
 
 const dailyFeatures = [
   { icon: Sun, title: "Scopri quando agire e quando aspettare", description: "Ogni giorno ha la sua energia. Ti diciamo com'è oggi la tua." },
-  { icon: Shirt, title: "Ricevi consigli pratici ogni giorno", description: "Ti suggeriamo cosa fare, cosa indossare e come muoverti al meglio." },
+  { icon: Shirt, title: "Ricevi consigli pratici ogni giorno", description: "Ti suggeriamo quali colori usare in base alla tua energia del giorno." },
   { icon: TrendingUp, title: "Allinea le tue scelte alla tua energia", description: "Consigli semplici e chiari su amore, lavoro e benessere." },
   { icon: MessageCircle, title: "Chat con consulente AI", description: "Fai tutte le domande che vuoi sui tuoi numeri e ricevi risposte subito." },
 ];
