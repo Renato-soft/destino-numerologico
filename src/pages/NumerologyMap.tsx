@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,23 +15,18 @@ import {
   calculatePersonalMonth,
   calculateLifeCycles,
   calculateQuintessenza,
-  personalYearMeanings,
 } from "@/lib/numerology";
-import { generateNumerologyPdf } from "@/lib/generatePdf";
 import NumerologyPyramid from "@/components/NumerologyPyramid";
 import NumberSection from "@/components/NumberSection";
 import {
   Sparkles,
   ArrowLeft,
-  Download,
   RefreshCw,
   Loader2,
-  ChevronDown,
   Lock,
   Crown,
 } from "lucide-react";
-import { getPersonalYearSectors, sectorMeta, type SectorKey } from "@/lib/personalYearSectors";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { type SectorKey } from "@/lib/personalYearSectors";
 
 interface Profile {
   nome: string;
@@ -51,6 +47,7 @@ interface NumerologyData {
 }
 
 const NumerologyMap = () => {
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [numerologyData, setNumerologyData] = useState<NumerologyData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -179,14 +176,14 @@ const NumerologyMap = () => {
       setExistingMapId(savedMap.id);
 
       toast({
-        title: "Mappa generata!",
-        description: "La tua mappa numerologica è pronta.",
+        title: t("map.generated"),
+        description: t("map.generatedDesc"),
       });
     } catch (error) {
       console.error("Error generating map:", error);
       toast({
-        title: "Errore",
-        description: "Si è verificato un errore durante la generazione della mappa.",
+        title: t("map.error"),
+        description: t("map.errorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -194,12 +191,20 @@ const NumerologyMap = () => {
     }
   };
 
+  const numberLabels = [
+    { label: t("map.destiny"), key: "lifePath" as const },
+    { label: t("map.self"), key: "expression" as const },
+    { label: t("map.soul"), key: "soul" as const },
+    { label: t("map.personality"), key: "personality" as const },
+    { label: t("map.quintessence"), key: "quintessenza" as const },
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-muted-foreground">Caricamento...</p>
+          <p className="text-muted-foreground">{t("map.loading")}</p>
         </div>
       </div>
     );
@@ -222,18 +227,28 @@ const NumerologyMap = () => {
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-display text-xl font-semibold">La tua Mappa</span>
+              <span className="font-display text-xl font-semibold">{t("map.headerTitle")}</span>
             </div>
           </div>
 
           {numerologyData && profile && hasMapAccess && (
-            <Button 
-              variant="cosmic-outline" 
+            <Button
+              variant="cosmic-outline"
               size="sm"
-              onClick={() => generateNumerologyPdf(profile, numerologyData, new Date().getFullYear())}
+              onClick={generateMap}
+              disabled={generating}
             >
-              <Download className="w-4 h-4 mr-2" />
-              Scarica PDF
+              {generating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t("map.regenerating")}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  {t("map.regenerate")}
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -250,10 +265,10 @@ const NumerologyMap = () => {
               <Sparkles className="w-12 h-12 text-primary" />
             </div>
             <h1 className="font-display text-3xl font-bold mb-4">
-              Genera la tua Mappa Numerologica
+              {t("map.generateTitle")}
             </h1>
             <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-              Scopri i tuoi numeri personali e ricevi una lettura completa basata sulla numerologia pitagorica.
+              {t("map.generateDesc")}
             </p>
             <Button
               variant="cosmic"
@@ -264,12 +279,12 @@ const NumerologyMap = () => {
               {generating ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Generazione in corso...
+                  {t("map.generating")}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Genera la Mappa
+                  {t("map.generateButton")}
                 </>
               )}
             </Button>
@@ -283,28 +298,19 @@ const NumerologyMap = () => {
             {/* Premium header */}
             <div className="glass-cosmic rounded-2xl p-8 text-center">
               <h1 className="font-display text-2xl md:text-3xl font-bold mb-4">
-                Mappa numerologica completa – Versione Premium
+                {t("map.premiumTitle")}
               </h1>
               <p className="text-muted-foreground text-lg">
-                <span className="text-primary font-semibold">{profile?.nome}</span>,
-                questa mappa numerologica è costruita secondo le regole della numerologia pitagorica classica,
-                mantenendo coerenza numerica dall'inizio alla fine. L'analisi che segue integra i tuoi numeri
-                principali in una lettura unitaria, chiara e approfondita.
+                {t("map.premiumDesc", { name: profile?.nome })}
               </p>
             </div>
 
             {/* Numbers grid */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {[
-                { label: "Destino", value: numerologyData.lifePath, key: 'lifePath' as const },
-                { label: "Io", value: numerologyData.expression, key: 'expression' as const },
-                { label: "Anima", value: numerologyData.soul, key: 'soul' as const },
-                { label: "Personalità", value: numerologyData.personality, key: 'personality' as const },
-                { label: "Quintessenza", value: numerologyData.quintessenza, key: 'quintessenza' as const },
-              ].map((item) => (
-                <div key={item.label} className="glass-cosmic rounded-xl p-6 text-center">
+              {numberLabels.map((item) => (
+                <div key={item.key} className="glass-cosmic rounded-xl p-6 text-center">
                   <div className="number-circle number-circle-lg mx-auto mb-3">
-                    {item.value}
+                    {numerologyData[item.key]}
                   </div>
                   <p className="font-display font-semibold">{item.label}</p>
                 </div>
@@ -321,7 +327,7 @@ const NumerologyMap = () => {
             />
 
             {/* Destino section - always visible */}
-            <NumberSection num={numerologyData.lifePath} type="destino" title={`Destino ${numerologyData.lifePath}`} />
+            <NumberSection num={numerologyData.lifePath} type="destino" title={`${t("map.destiny")} ${numerologyData.lifePath}`} />
 
             {/* Remaining sections - blurred for free users */}
             <div className="relative">
@@ -332,15 +338,14 @@ const NumerologyMap = () => {
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
                       <Lock className="w-8 h-8 text-primary" />
                     </div>
-                    <h3 className="font-display text-2xl font-bold mb-3">Sblocca la Mappa Completa</h3>
+                    <h3 className="font-display text-2xl font-bold mb-3">{t("map.unlockTitle")}</h3>
                     <p className="text-muted-foreground mb-6">
-                      Acquista il piano Base per accedere alla mappa numerologica completa con tutti i numeri, 
-                      i cicli della vita e l'analisi dell'anno personale.
+                      {t("map.unlockDesc")}
                     </p>
                     <Button variant="cosmic" size="lg" asChild>
                       <Link to="/pricing">
                         <Crown className="w-5 h-5 mr-2" />
-                        Scegli il tuo Piano
+                        {t("map.choosePlan")}
                       </Link>
                     </Button>
                   </div>
@@ -348,45 +353,55 @@ const NumerologyMap = () => {
               )}
               <div className={`space-y-8 ${!hasMapAccess ? "pointer-events-none select-none" : ""}`}>
 
-            <NumberSection num={numerologyData.expression} type="io" title={`Io ${numerologyData.expression}`} />
-            <NumberSection num={numerologyData.soul} type="anima" title={`Anima ${numerologyData.soul}`} />
-            <NumberSection num={numerologyData.personality} type="personalita" title={`Personalità ${numerologyData.personality}`} />
-            <NumberSection num={numerologyData.quintessenza} type="quintessenza" title={`Quintessenza ${numerologyData.quintessenza}`} />
+            <NumberSection num={numerologyData.expression} type="io" title={`${t("map.self")} ${numerologyData.expression}`} />
+            <NumberSection num={numerologyData.soul} type="anima" title={`${t("map.soul")} ${numerologyData.soul}`} />
+            <NumberSection num={numerologyData.personality} type="personalita" title={`${t("map.personality")} ${numerologyData.personality}`} />
+            <NumberSection num={numerologyData.quintessenza} type="quintessenza" title={`${t("map.quintessence")} ${numerologyData.quintessenza}`} />
 
             {/* Life Cycles section */}
             <div className="space-y-2">
-              <h2 className="font-display text-2xl font-bold mb-2">Cicli della Vita</h2>
+              <h2 className="font-display text-2xl font-bold mb-2">{t("map.lifeCycles")}</h2>
               <p className="text-muted-foreground text-sm mb-6">
-                I tre Cicli della Vita rappresentano le grandi fasi evolutive della tua esistenza, ciascuna governata da un numero diverso.
+                {t("map.lifeCyclesDesc")}
               </p>
             </div>
 
             {[
               {
                 cycle: numerologyData.cycles.firstCycle,
-                label: "Primo Ciclo",
-                period: `Dalla nascita (${numerologyData.cycles.firstCycle.startYear}) fino al passaggio tra ${numerologyData.cycles.firstCycle.endYear - 2} e ${numerologyData.cycles.firstCycle.endYear}`,
-                calcDetail: "Derivato dal mese di nascita.",
+                label: t("map.firstCycle"),
+                period: t("map.fromBirth", {
+                  start: numerologyData.cycles.firstCycle.startYear,
+                  end1: numerologyData.cycles.firstCycle.endYear - 2,
+                  end2: numerologyData.cycles.firstCycle.endYear,
+                }),
+                calcDetail: t("map.derivedMonth"),
               },
               {
                 cycle: numerologyData.cycles.secondCycle,
-                label: "Secondo Ciclo",
-                period: `Dal passaggio (${numerologyData.cycles.secondCycle.startYear}–${numerologyData.cycles.secondCycle.startYear + 2}) fino a ${numerologyData.cycles.secondCycle.endYear}`,
-                calcDetail: "Derivato dal giorno di nascita.",
+                label: t("map.secondCycle"),
+                period: t("map.fromTransition", {
+                  start: numerologyData.cycles.secondCycle.startYear,
+                  start2: numerologyData.cycles.secondCycle.startYear + 2,
+                  end: numerologyData.cycles.secondCycle.endYear,
+                }),
+                calcDetail: t("map.derivedDay"),
               },
               {
                 cycle: numerologyData.cycles.thirdCycle,
-                label: "Terzo Ciclo",
-                period: `Dal passaggio (${numerologyData.cycles.thirdCycle.startYear}) in poi`,
-                calcDetail: "Derivato dall'anno di nascita ridotto.",
+                label: t("map.thirdCycle"),
+                period: t("map.fromTransitionOnward", {
+                  start: numerologyData.cycles.thirdCycle.startYear,
+                }),
+                calcDetail: t("map.derivedYear"),
               },
             ].map((item) => (
               <NumberSection
                 key={item.label}
                 num={item.cycle.number}
                 type="ciclo"
-                title={`${item.label} — Numero ${item.cycle.number}`}
-                subtitle={`Periodo: ${item.period} · ${item.calcDetail}`}
+                title={`${item.label} — ${t("map.number")} ${item.cycle.number}`}
+                subtitle={`${t("map.period")}: ${item.period} · ${item.calcDetail}`}
               />
             ))}
 
