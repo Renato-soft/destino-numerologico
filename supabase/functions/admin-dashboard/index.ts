@@ -29,12 +29,14 @@ Deno.serve(async (req) => {
 
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user || user.email !== ADMIN_EMAIL) {
+    if (userError || !user || !user.email || !ADMIN_EMAILS.includes(user.email)) {
       return new Response(JSON.stringify({ error: "Accesso negato" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : "admin";
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action") || "overview";
