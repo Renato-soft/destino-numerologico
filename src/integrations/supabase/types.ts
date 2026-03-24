@@ -328,6 +328,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_schedule: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          feature_key: string
+          feature_label: string
+          id: string
+          unlock_after_days: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          feature_key: string
+          feature_label: string
+          id?: string
+          unlock_after_days?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          feature_key?: string
+          feature_label?: string
+          id?: string
+          unlock_after_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       numerology_maps: {
         Row: {
           computed_at: string

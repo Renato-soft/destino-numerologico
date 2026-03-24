@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
-  Eye, Loader2, UserX, ShoppingBag, X,
+  Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
@@ -37,6 +38,13 @@ interface UserDetail {
   outfits: { date: string; label: string; url: string }[];
 }
 
+interface FeatureScheduleItem {
+  feature_key: string;
+  feature_label: string;
+  unlock_after_days: number;
+  enabled: boolean;
+}
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -47,8 +55,14 @@ const AdminDashboard = () => {
   const [detailLoading, setDetailLoading] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
+  // Feature schedule state
+  const [featureSchedule, setFeatureSchedule] = useState<FeatureScheduleItem[]>([]);
+  const [scheduleEdits, setScheduleEdits] = useState<Record<string, number>>({});
+  const [savingSchedule, setSavingSchedule] = useState(false);
+
   useEffect(() => {
     fetchOverview();
+    fetchFeatureSchedule();
   }, []);
 
   const fetchOverview = async () => {
@@ -73,6 +87,35 @@ const AdminDashboard = () => {
       setError("Errore di connessione");
     }
     setLoading(false);
+  };
+
+  const fetchFeatureSchedule = async () => {
+    const { data } = await supabase.from("feature_schedule" as any).select("feature_key, feature_label, unlock_after_days, enabled").order("unlock_after_days");
+    if (data) {
+      setFeatureSchedule(data as any[]);
+      const edits: Record<string, number> = {};
+      (data as any[]).forEach((f: any) => { edits[f.feature_key] = f.unlock_after_days; });
+      setScheduleEdits(edits);
+    }
+  };
+
+  const handleSaveSchedule = async () => {
+    setSavingSchedule(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "update-schedule", schedules: scheduleEdits },
+      });
+
+      if (error) throw error;
+      await fetchFeatureSchedule();
+    } catch (err: any) {
+      console.error("Save schedule error:", err);
+    }
+    setSavingSchedule(false);
   };
 
   const fetchUserDetail = async (userId: string) => {
@@ -139,6 +182,8 @@ const AdminDashboard = () => {
     eve2: "Sera 2",
   };
 
+  const isSuperadmin = overview.role === "superadmin";
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -166,6 +211,58 @@ const AdminDashboard = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Feature Schedule Management - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <CalendarClock className="w-5 h-5 text-primary" />
+                <h2 className="font-display text-lg font-semibold">Schedulazione Servizi</h2>
+              </div>
+              <Button
+                variant="cosmic"
+                size="sm"
+                onClick={handleSaveSchedule}
+                disabled={savingSchedule}
+              >
+                {savingSchedule ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                Salva
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Imposta dopo quanti giorni dall'iscrizione ogni servizio diventa disponibile. 0 = subito disponibile.
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {featureSchedule.map((feature) => (
+                <div
+                  key={feature.feature_key}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border/30 bg-card/30"
+                >
+                  <span className="text-sm font-medium text-foreground">{feature.feature_label}</span>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={0}
+                      max={365}
+                      className="w-16 h-8 text-center text-sm"
+                      value={scheduleEdits[feature.feature_key] ?? feature.unlock_after_days}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        setScheduleEdits(prev => ({ ...prev, [feature.feature_key]: val }));
+                      }}
+                    />
+                    <span className="text-xs text-muted-foreground">gg</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Revenue by product */}
         {Object.keys(overview.stripe.revenueByProduct).length > 0 && (
@@ -201,7 +298,7 @@ const AdminDashboard = () => {
         )}
 
         {/* User list + detail */}
-        <div className={`grid grid-cols-1 ${overview.role === "superadmin" ? "lg:grid-cols-2" : ""} gap-6`}>
+        <div className={`grid grid-cols-1 ${isSuperadmin ? "lg:grid-cols-2" : ""} gap-6`}>
           {/* User list */}
           <div className="glass-cosmic rounded-xl p-6">
             <h2 className="font-display text-lg font-semibold mb-4">Tutti gli utenti ({overview.users.length})</h2>
@@ -214,8 +311,8 @@ const AdminDashboard = () => {
               }).map(u => (
                 <div
                   key={u.user_id}
-                  onClick={() => overview.role === "superadmin" ? fetchUserDetail(u.user_id) : null}
-                  className={`flex items-center justify-between p-3 rounded-lg transition-colors ${overview.role === "superadmin" ? "cursor-pointer" : ""} ${
+                  onClick={() => isSuperadmin ? fetchUserDetail(u.user_id) : null}
+                  className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isSuperadmin ? "cursor-pointer" : ""} ${
                     selectedUser === u.user_id ? "bg-primary/10 border border-primary/30" : "hover:bg-muted/30"
                   }`}
                 >
@@ -233,14 +330,14 @@ const AdminDashboard = () => {
                       </span>
                     </div>
                   </div>
-                  {overview.role === "superadmin" && <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+                  {isSuperadmin && <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                 </div>
               ))}
             </div>
           </div>
 
           {/* User detail - only for superadmin */}
-          {overview.role === "superadmin" && (
+          {isSuperadmin && (
             <div className="glass-cosmic rounded-xl p-6">
               {!selectedUser ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground">

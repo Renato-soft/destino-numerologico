@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Map, MessageCircle, FileText, Calendar,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield, Clock
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
 import { calculatePersonalYear } from "@/lib/numerology";
 
 interface Profile {
@@ -40,6 +41,7 @@ const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { canAccess, subscribed, isPayPerUse, hasPayPerUsePurchase, canUseFreeRequest, loading: subLoading, refreshPayPerUsePurchases, checkSubscription } = useSubscription();
+  const { isFeatureUnlocked, getDaysRemaining } = useFeatureSchedule();
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -86,7 +88,6 @@ const Dashboard = () => {
         if (purchaseSuccess === "success" && priceId) {
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
-            // Record pay-per-use purchase - find product_id from price_id
             const { PAY_PER_USE } = await import("@/hooks/useSubscription");
             const feature = Object.values(PAY_PER_USE).find(f => f.price_id === priceId);
             if (feature) {
@@ -162,26 +163,37 @@ const Dashboard = () => {
     );
   }
 
-  const PAY_PER_USE_ROUTES = ["/brand", "/house", "/compatibility", "/advanced-report"];
+  // Feature-to-route mapping for schedule checks in dashboard
+  const FEATURE_KEY_MAP: Record<string, string> = {
+    "/personal-year": "personal_year",
+    "/pillars": "pillars",
+    "/dates": "dates",
+    "/chat": "chat",
+    "/community": "community",
+    "/brand": "brand",
+    "/house": "house",
+    "/compatibility": "compatibility",
+    "/advanced-report": "advanced_report",
+    "/map": "map",
+  };
 
   const quickActions = [
-    // Pricing
     { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
-    // Subscription services
     ...(latestMap ? [] : [{ title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" }]),
     { title: t("dashboard.personalYear", { year: new Date().getFullYear() }), description: t("dashboard.personalYearDesc"), icon: Calendar, href: "/personal-year", color: "from-orange-500 to-amber-500" },
     { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
     { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
     { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
-    // Pay-per-use
     { title: t("dashboard.advancedReport"), description: "€2,00 " + t("pricing.perUse"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700", payPerUse: true },
     { title: t("dashboard.brandAnalyzer"), description: "€2,00 " + t("pricing.perUse"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500", payPerUse: true },
     { title: t("dashboard.houseVibration"), description: "€2,00 " + t("pricing.perUse"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500", payPerUse: true },
     { title: t("dashboard.compatibility"), description: "€2,00 " + t("pricing.perUse"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500", payPerUse: true },
-    // Other
     { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
     { description: t("dashboard.profileDesc"), icon: User, href: "/profile", color: "from-blue-500 to-cyan-500" },
   ];
+
+  const dailyAnalysisUnlocked = isFeatureUnlocked("daily_analysis");
+  const outfitsUnlocked = isFeatureUnlocked("outfits");
 
   return (
     <div className="min-h-screen bg-background">
@@ -230,8 +242,15 @@ const Dashboard = () => {
           <p className="text-muted-foreground text-lg">{t("dashboard.explore")}</p>
         </motion.section>
 
-        {latestMap && subscribed && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
-        {subscribed && <DailyOutfits />}
+        {latestMap && subscribed && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
+        {!dailyAnalysisUnlocked && subscribed && (
+          <ScheduleCountdown label="Analisi Giornaliera" daysLeft={getDaysRemaining("daily_analysis")} />
+        )}
+
+        {subscribed && outfitsUnlocked && <DailyOutfits />}
+        {subscribed && !outfitsUnlocked && (
+          <ScheduleCountdown label="Outfit del Giorno" daysLeft={getDaysRemaining("outfits")} />
+        )}
 
         {latestMap && (
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
@@ -256,45 +275,82 @@ const Dashboard = () => {
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quickActions.map((action, index) => (
-              <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
-                <Link to={action.href}>
-                  <div className={`group relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-cosmic ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
-                    {action.payPerUse && (
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
-                          <ShoppingCart className="w-3 h-3" />
-                          €2
-                        </Badge>
+            {quickActions.map((action, index) => {
+              const featureKey = FEATURE_KEY_MAP[action.href];
+              const isScheduleLocked = featureKey && !isFeatureUnlocked(featureKey);
+              const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
+
+              return (
+                <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
+                  <Link to={isScheduleLocked ? "#" : action.href} onClick={(e) => { if (isScheduleLocked) e.preventDefault(); }}>
+                    <div className={`group relative p-6 rounded-2xl border transition-all duration-300 ${isScheduleLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-cosmic"} ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
+                      {/* Schedule lock badge */}
+                      {isScheduleLocked && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-muted text-muted-foreground border-border border text-[10px] px-2 py-0.5 gap-1">
+                            <Clock className="w-3 h-3" />
+                            {daysLeft}g
+                          </Badge>
+                        </div>
+                      )}
+                      {/* Pay-per-use badge */}
+                      {!isScheduleLocked && action.payPerUse && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
+                            <ShoppingCart className="w-3 h-3" />
+                            €2
+                          </Badge>
+                        </div>
+                      )}
+                      {!isScheduleLocked && !action.payPerUse && !action.primary && !subscribed && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
+                            <Lock className="w-3 h-3" />
+                            PRO
+                          </Badge>
+                        </div>
+                      )}
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4 ${isScheduleLocked ? "grayscale" : ""}`}>
+                        <action.icon className="w-6 h-6 text-white" />
                       </div>
-                    )}
-                    {!action.payPerUse && !action.primary && !subscribed && (
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
-                          <Lock className="w-3 h-3" />
-                          PRO
-                        </Badge>
-                      </div>
-                    )}
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4`}>
-                      <action.icon className="w-6 h-6 text-white" />
+                      {action.title && (
+                        <h3 className="font-display text-lg font-semibold mb-1 flex items-center gap-2">
+                          {action.title}
+                          {!isScheduleLocked && <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />}
+                        </h3>
+                      )}
+                      <p className="text-sm text-muted-foreground">
+                        {isScheduleLocked ? `Disponibile tra ${daysLeft} giorn${daysLeft === 1 ? "o" : "i"}` : action.description}
+                      </p>
                     </div>
-                    {action.title && (
-                      <h3 className="font-display text-lg font-semibold mb-1 flex items-center gap-2">
-                        {action.title}
-                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                      </h3>
-                    )}
-                    <p className="text-sm text-muted-foreground">{action.description}</p>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.section>
       </main>
     </div>
   );
 };
+
+// Countdown banner component for dashboard sections
+const ScheduleCountdown = ({ label, daysLeft }: { label: string; daysLeft: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="mb-12 glass-cosmic rounded-2xl p-6 flex items-center gap-4"
+  >
+    <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center">
+      <Clock className="w-6 h-6 text-muted-foreground" />
+    </div>
+    <div>
+      <h3 className="font-display font-semibold text-foreground">{label}</h3>
+      <p className="text-sm text-muted-foreground">
+        Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}
+      </p>
+    </div>
+  </motion.div>
+);
 
 export default Dashboard;

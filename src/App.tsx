@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
+import { FeatureScheduleProvider } from "@/hooks/useFeatureSchedule";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -37,6 +38,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <SubscriptionProvider>
+        <FeatureScheduleProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -44,7 +46,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/map" element={<ProtectedRoute route="/map"><NumerologyMap /></ProtectedRoute>} />
-            <Route path="/personal-year" element={<ProtectedRoute route="/map"><PersonalYear /></ProtectedRoute>} />
+            <Route path="/personal-year" element={<ProtectedRoute route="/personal-year"><PersonalYear /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute route="/chat"><Chat /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute route="/history"><History /></ProtectedRoute>} />
             <Route path="/dates" element={<ProtectedRoute route="/dates"><FavorableDates /></ProtectedRoute>} />
@@ -62,6 +64,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+        </FeatureScheduleProvider>
         </SubscriptionProvider>
       </BrowserRouter>
     </TooltipProvider>
