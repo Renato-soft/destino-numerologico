@@ -120,9 +120,9 @@ const PricingConversion = () => {
                   <span className="text-4xl font-bold text-primary">€9,99</span>
                   <span className="text-muted-foreground">oggi</span>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4">
-                  Ottieni accesso immediato a tutte le analisi senza aspettare.
-                </p>
+                 <p className="text-muted-foreground text-sm mb-4">
+                   Accedi immediatamente a tutte le analisi senza aspettare giorni.
+                 </p>
                 <ul className="space-y-2 mb-4">
                   {[
                     "Tutti i contenuti sbloccati subito",
