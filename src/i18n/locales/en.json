@@ -634,7 +634,8 @@
     "practicalAdvice": "Practical advice"
   },
   "dailyAnalysis": {
-    "title": "Daily analysis",
-    "personalVibration": "Personal day vibration: {{vibe}} · Personal Year: {{year}}"
+    "title": "Daily Analysis",
+    "personalVibration": "Personal day vibration",
+    "personalYearLabel": "Personal Year"
   }
 }
