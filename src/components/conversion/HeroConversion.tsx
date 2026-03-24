@@ -183,7 +183,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
               <div className="flex items-start gap-2 rounded-lg bg-muted/50 border border-border p-3">
                 <Star className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <p className="text-sm text-muted-foreground">
-                  Questa è solo una piccola anteprima. La tua <span className="text-foreground font-medium">Mappa Numerologica completa</span> include numeri dell'anima, personalità, cicli di vita e molto altro.
+                  Questo è solo un assaggio! Registrandoti gratis scoprirai <span className="text-foreground font-medium">molto di più su di te</span>: chi sei dentro, come ti vedono gli altri e cosa ti riserva il futuro.
                 </p>
               </div>
             </div>
