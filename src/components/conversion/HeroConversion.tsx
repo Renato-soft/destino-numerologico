@@ -60,7 +60,7 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-10 leading-[1.1]">
             <span className="text-foreground">Perchè ti succedono sempre le stesse cose?</span>
             <br />
-            <span className="text-gradient-gold">Scoprilo in 60 secondi</span>
+            <span className="block mt-4 text-gradient-gold">Scoprilo in 60 secondi</span>
           </h1>
 
           {/* Subtitle */}
