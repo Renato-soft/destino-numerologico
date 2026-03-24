@@ -69,7 +69,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Una lettura numerologica personalizzata basata sulla tua data di nascita.
             <br className="hidden sm:block" />
-            Chiara, pratica e sorprendentemente accurata.
+            Scopri chi sei davvero, cosa ti blocca e cosa ti aspetta.
           </p>
 
           {/* Birth date input + CTA */}
