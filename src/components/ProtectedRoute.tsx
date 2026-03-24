@@ -1,8 +1,9 @@
 import { useSubscription, PAY_PER_USE } from "@/hooks/useSubscription";
+import { useFeatureSchedule, ROUTE_TO_FEATURE } from "@/hooks/useFeatureSchedule";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Lock, Crown, ShoppingCart } from "lucide-react";
+import { Lock, Crown, ShoppingCart, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,16 +15,43 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
   const { canAccess, isPayPerUse, getPayPerUseFeature, canUseFreeRequest, incrementFreeRequests, subscribed, loading } = useSubscription();
+  const { isFeatureUnlocked, getDaysRemaining, loading: scheduleLoading } = useFeatureSchedule();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { toast } = useToast();
   const [usedFreePass, setUsedFreePass] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
 
-  if (loading) {
+  if (loading || scheduleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Check feature schedule first (time-based unlock)
+  const featureKey = ROUTE_TO_FEATURE[route];
+  if (featureKey && !isFeatureUnlocked(featureKey)) {
+    const daysLeft = getDaysRemaining(featureKey);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-md text-center space-y-6">
+          <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+            <Clock className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
+          <p className="text-muted-foreground">
+            Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
+          </p>
+          <div className="flex items-center justify-center gap-2 text-primary">
+            <Clock className="w-5 h-5" />
+            <span className="text-lg font-semibold">{daysLeft} giorn{daysLeft === 1 ? "o" : "i"} rimanent{daysLeft === 1 ? "e" : "i"}</span>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/dashboard")}>
+            Torna alla dashboard
+          </Button>
+        </div>
       </div>
     );
   }

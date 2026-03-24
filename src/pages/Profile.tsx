@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import {
-  ArrowLeft, User, Check, Loader2, Calendar, RefreshCw, Camera, Upload, Trash2, Globe
+  ArrowLeft, User, Check, Loader2, Calendar, RefreshCw, Camera, Upload, Trash2, Globe, Plus, ImagePlus
 } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,8 @@ interface UserPhoto {
   signedUrl?: string;
 }
 
+const MAX_PHOTOS = 10;
+
 const ProfilePage = () => {
   const { t, i18n } = useTranslation();
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -45,10 +47,10 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const photoTypes = [
-    { key: "face", label: t("profile.face") },
-    { key: "full_front", label: t("profile.frontFull") },
-    { key: "full_side", label: t("profile.sideFull") },
+  const basePhotoTypes = [
+    { key: "face", label: t("profile.face"), required: true },
+    { key: "full_front", label: t("profile.frontFull"), required: false },
+    { key: "full_side", label: t("profile.sideFull"), required: false },
   ];
 
   useEffect(() => { loadProfile(); }, []);
@@ -179,6 +181,20 @@ const ProfilePage = () => {
     } finally { setUploadingPhoto(null); }
   };
 
+  // Extra photos are those not in base types
+  const extraPhotos = photos.filter(p => !basePhotoTypes.some(b => b.key === p.type));
+  const canAddMore = photos.length < MAX_PHOTOS;
+
+  const handleExtraPhotoUpload = async (file: File) => {
+    if (photos.length >= MAX_PHOTOS) {
+      toast({ title: "Limite raggiunto", description: `Puoi caricare massimo ${MAX_PHOTOS} foto`, variant: "destructive" });
+      return;
+    }
+    const extraIndex = extraPhotos.length + 1;
+    const type = `extra_${Date.now()}`;
+    await handlePhotoUpload(type, file);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -273,7 +289,7 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Photos */}
+          {/* Photos - Base */}
           <div className="glass-cosmic rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-3 mb-2">
               <Camera className="w-5 h-5 text-primary" />
@@ -281,11 +297,11 @@ const ProfilePage = () => {
             </div>
             <p className="text-sm text-muted-foreground">{t("profile.photosDesc")}</p>
             <div className="grid gap-4">
-              {photoTypes.map((pt) => {
+              {basePhotoTypes.map((pt) => {
                 const existingPhoto = photos.find(p => p.type === pt.key);
                 return (
                   <div key={pt.key} className="space-y-1">
-                    <Label>{pt.label}</Label>
+                    <Label>{pt.label} {pt.required && <span className="text-destructive">*</span>}</Label>
                     <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${existingPhoto?.signedUrl ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/50"}`}>
                       {uploadingPhoto === pt.key ? (
                         <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -295,7 +311,7 @@ const ProfilePage = () => {
                           <div className="absolute inset-0 bg-black/0 hover:bg-black/30 rounded-xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all">
                             <span className="text-white text-sm font-medium">{t("profile.changePhoto")}</span>
                           </div>
-                          {pt.key !== "face" && (
+                          {!pt.required && (
                             <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePhotoDelete(existingPhoto); }}
                               className="absolute top-1 right-1 p-1.5 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors z-10" title={t("profile.deletePhoto")}>
                               <Trash2 className="w-4 h-4" />
@@ -314,6 +330,58 @@ const ProfilePage = () => {
                 );
               })}
             </div>
+          </div>
+
+          {/* Extra Photos */}
+          <div className="glass-cosmic rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <ImagePlus className="w-5 h-5 text-primary" />
+                <h3 className="font-display font-semibold">Foto aggiuntive</h3>
+              </div>
+              <span className="text-xs text-muted-foreground">{photos.length}/{MAX_PHOTOS}</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Carica altre foto per migliorare la personalizzazione degli outfit. 
+              Più espressioni, angolazioni e luci diverse aiutano l'AI a conoscerti meglio.
+            </p>
+
+            {extraPhotos.length > 0 && (
+              <div className="grid grid-cols-3 gap-3">
+                {extraPhotos.map((photo) => (
+                  <div key={photo.id} className="relative aspect-square rounded-xl overflow-hidden border border-border/50">
+                    {photo.signedUrl ? (
+                      <img src={photo.signedUrl} alt="Foto extra" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handlePhotoDelete(photo)}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {canAddMore && (
+              <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-all">
+                {uploadingPhoto?.startsWith("extra_") ? (
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                ) : (
+                  <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                    <Plus className="w-6 h-6" />
+                    <span className="text-xs">Aggiungi foto ({MAX_PHOTOS - photos.length} rimaste)</span>
+                  </div>
+                )}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleExtraPhotoUpload(file); }} />
+              </label>
+            )}
           </div>
 
           {/* Regenerate map */}

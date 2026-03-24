@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Shirt, Sun, Moon, Loader2, RefreshCw, X } from "lucide-react";
+import { Shirt, Sun, Moon, Loader2, RefreshCw, X, Camera, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const DailyOutfits = () => {
   const [outfits, setOutfits] = useState<(string | null)[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [photoCount, setPhotoCount] = useState(0);
+  const navigate = useNavigate();
 
   const fetchOutfits = async (force = false) => {
     setLoading(true);
@@ -17,6 +20,13 @@ const DailyOutfits = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
+
+      // Check photo count
+      const { count } = await supabase
+        .from("photos")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", session.user.id);
+      setPhotoCount(count || 0);
 
       const { data, error: fnError } = await supabase.functions.invoke("generate-outfits", {
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -86,6 +96,35 @@ const DailyOutfits = () => {
           </Button>
         )}
       </div>
+
+      {/* Photo prompt banner */}
+      {!loading && photoCount < 5 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3"
+        >
+          <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-foreground">
+              Migliora i tuoi outfit con più foto!
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Caricando più foto del tuo viso e del tuo corpo, l'AI potrà analizzare meglio espressioni, 
+              colorito e corporatura per consigli ancora più personalizzati. Attualmente hai {photoCount} foto su 10.
+            </p>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="mt-2 text-amber-500 hover:text-amber-400 p-0 h-auto"
+              onClick={() => navigate("/profile")}
+            >
+              <Camera className="w-4 h-4 mr-1" />
+              Carica più foto →
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
       {loading ? (
         <div className="glass-cosmic rounded-2xl p-12 flex flex-col items-center justify-center gap-4">
