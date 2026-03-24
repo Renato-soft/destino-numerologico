@@ -9,8 +9,8 @@ const benefits = [
   },
   {
     icon: Eye,
-    title: "Scopri gli schemi della tua vita",
-    description: "Riconosci i pattern ricorrenti e impara a trasformarli a tuo vantaggio.",
+    title: "Scopri i tuoi punti di forza nascosti",
+    description: "Riconosci i talenti naturali che non sapevi di avere e usali a tuo vantaggio.",
   },
   {
     icon: Heart,
