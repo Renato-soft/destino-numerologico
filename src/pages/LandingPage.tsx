@@ -1,7 +1,7 @@
 import { useState } from "react";
 import HeroConversion from "@/components/conversion/HeroConversion";
 import InstantUnlock from "@/components/conversion/InstantUnlock";
-import HowItWorks from "@/components/conversion/HowItWorks";
+
 import Benefits from "@/components/conversion/Benefits";
 import ResultPreview from "@/components/conversion/ResultPreview";
 import EvolutionPath from "@/components/conversion/EvolutionPath";
@@ -20,7 +20,7 @@ const LandingPage = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroConversion birthDate={birthDate} setBirthDate={setBirthDate} />
       <InstantUnlock />
-      <HowItWorks />
+      
       <Benefits />
       <ResultPreview />
       <EvolutionPath />
