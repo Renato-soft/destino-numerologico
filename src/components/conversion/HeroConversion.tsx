@@ -108,11 +108,6 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
             La risposta è nei tuoi numeri.
           </p>
 
-          {/* Destiny explanation */}
-          <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4 leading-relaxed">
-            Il Numero del Destino è come una bussola nascosta nella tua data di nascita. Ti dice chi sei, quali sono i tuoi superpoteri e dove sta andando la tua vita.
-          </p>
-
           {/* Birth date input + CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -175,7 +170,7 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
               Il tuo Numero del Destino è il {lifePathNumber}
             </DialogTitle>
             <DialogDescription className="text-base text-muted-foreground mt-2">
-              Ecco cosa dicono i tuoi numeri su di te:
+              Il Numero del Destino è come una bussola nascosta nella tua data di nascita. Ti dice chi sei, quali sono i tuoi superpoteri e dove sta andando la tua vita.
             </DialogDescription>
           </DialogHeader>
 
