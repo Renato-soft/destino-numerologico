@@ -7,22 +7,22 @@ const benefits = [
   {
     icon: Brain,
     title: "Capisci perché ti succedono sempre le stesse cose",
-    description: "Scopri gli schemi nascosti che guidano le tue esperienze e le tue scelte.",
+    description: "Ti mostriamo cosa si ripete nella tua vita e perché, così puoi cambiarlo.",
   },
   {
     icon: Eye,
     title: "Scopri i tuoi punti di forza nascosti",
-    description: "Riconosci i talenti naturali che non sapevi di avere e usali a tuo vantaggio.",
+    description: "Hai dei talenti che ancora non conosci. Noi ti aiutiamo a trovarli.",
   },
   {
     icon: Heart,
     title: "Ottieni chiarezza su amore, lavoro e decisioni",
-    description: "Capisci le dinamiche relazionali e professionali scritte nei tuoi numeri.",
+    description: "I tuoi numeri ti dicono cosa funziona meglio per te in amore e nel lavoro.",
   },
   {
     icon: Flame,
     title: "Impara a usare la tua energia a tuo vantaggio",
-    description: "Ogni giorno ha una vibrazione diversa. Sapere come sfruttarla cambia tutto.",
+    description: "Ogni giorno è diverso. Sapere qual è il momento giusto ti fa fare scelte migliori.",
   },
 ];
 
