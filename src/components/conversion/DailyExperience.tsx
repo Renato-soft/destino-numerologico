@@ -2,12 +2,23 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp } from "lucide-react";
+import outfit0 from "@/assets/outfits/outfit0.jpg";
+import outfit1 from "@/assets/outfits/outfit1.jpg";
+import outfit2 from "@/assets/outfits/outfit2.jpg";
+import outfit3 from "@/assets/outfits/outfit3.jpg";
 
 const dailyFeatures = [
   { icon: Sun, title: "Scopri quando agire e quando aspettare", description: "Ogni giorno ha la sua energia. Ti diciamo com'è oggi la tua." },
   { icon: Shirt, title: "Ricevi consigli pratici ogni giorno", description: "Ti suggeriamo cosa fare, cosa indossare e come muoverti al meglio." },
   { icon: TrendingUp, title: "Allinea le tue scelte alla tua energia", description: "Consigli semplici e chiari su amore, lavoro e benessere." },
   { icon: MessageCircle, title: "Chat con consulente AI", description: "Fai tutte le domande che vuoi sui tuoi numeri e ricevi risposte subito." },
+];
+
+const outfitExamples = [
+  { label: "Look Mattina", img: outfit0 },
+  { label: "Look Pomeriggio", img: outfit1 },
+  { label: "Look Sera", img: outfit2 },
+  { label: "Look Speciale", img: outfit3 },
 ];
 
 const DailyExperience = () => {
@@ -53,36 +64,31 @@ const DailyExperience = () => {
             ))}
           </div>
 
-          {/* Right: outfit examples */}
+          {/* Right: outfit examples in 2x2 grid, smaller */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="grid grid-cols-2 gap-3"
+            className="grid grid-cols-2 gap-3 max-w-sm mx-auto lg:mx-0 lg:ml-auto"
           >
-            {[
-              { label: "Look Mattina", img: "c6391514-2714-4b7c-a663-06570df3043f/c118fda6-a347-40d7-8696-53aab4da8c6f.png" },
-              { label: "Look Pomeriggio", img: "c6391514-2714-4b7c-a663-06570df3043f/d9242b23-b031-4952-8b11-05a8b79866ab.png" },
-              { label: "Look Sera", img: "c6391514-2714-4b7c-a663-06570df3043f/4815403f-9c1f-4c81-9ce8-a56abf70aec3.png" },
-              { label: "Look Speciale", img: "c6391514-2714-4b7c-a663-06570df3043f/3982d63e-2ab2-443e-8178-30d3a1cf24b5.png" },
-            ].map((outfit, i) => (
+            {outfitExamples.map((outfit, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + i * 0.1 }}
-                className="rounded-2xl overflow-hidden border border-border/30 bg-card/30 group"
+                className="rounded-xl overflow-hidden border border-border/30 bg-card/30 group"
               >
                 <div className="aspect-[3/4] overflow-hidden">
                   <img
-                    src={`https://oxkurjhomofoibihhmoq.supabase.co/storage/v1/object/public/generated-images/${outfit.img}`}
+                    src={outfit.img}
                     alt={outfit.label}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
-                <div className="p-2 text-center">
+                <div className="py-1.5 text-center">
                   <p className="text-xs font-medium text-muted-foreground">{outfit.label}</p>
                 </div>
               </motion.div>
