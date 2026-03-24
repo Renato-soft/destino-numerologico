@@ -120,10 +120,10 @@ const DailyExperience = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <Button asChild variant="cosmic" size="lg" className="group">
-            <Link to="/auth">
-              Scopri oggi la tua energia
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          <Button asChild variant="cosmic" size="xl" className="group">
+            <Link to="/auth?mode=signup">
+              Abbonati ora a solo 4,99€ al mese
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </motion.div>
