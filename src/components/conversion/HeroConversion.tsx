@@ -18,19 +18,19 @@ interface HeroConversionProps {
   setBirthDate: (date: string) => void;
 }
 
-const lifePathDescriptions: Record<number, { keywords: string; talents: string; shadow: string; evolution: string }> = {
-  1: { keywords: "Iniziativa, autonomia, leadership", talents: "Indipendenza, coraggio, spirito pionieristico", shadow: "Egoismo, impulsività, difficoltà a collaborare", evolution: "Imparare a guidare senza dominare" },
-  2: { keywords: "Collaborazione, sensibilità, relazione", talents: "Empatia, diplomazia, ascolto", shadow: "Dipendenza, insicurezza, paura del conflitto", evolution: "Sviluppare fiducia in sé" },
-  3: { keywords: "Comunicazione, creatività, espressione", talents: "Entusiasmo, arte, socialità", shadow: "Dispersione, superficialità", evolution: "Dare forma concreta alle idee" },
-  4: { keywords: "Struttura, stabilità, metodo", talents: "Affidabilità, costanza, concretezza", shadow: "Rigidità, paura del cambiamento", evolution: "Costruire senza irrigidirsi" },
-  5: { keywords: "Cambiamento, libertà, esperienza", talents: "Adattabilità, curiosità", shadow: "Instabilità, eccessi", evolution: "Libertà con responsabilità" },
-  6: { keywords: "Responsabilità, amore, armonia", talents: "Cura, senso estetico, protezione", shadow: "Controllo, sacrificio eccessivo", evolution: "Amare senza annullarsi" },
-  7: { keywords: "Introspezione, ricerca, spiritualità", talents: "Analisi, profondità, intuizione", shadow: "Isolamento, diffidenza", evolution: "Fidarsi e condividere" },
-  8: { keywords: "Potere, realizzazione, materia", talents: "Leadership, gestione, successo", shadow: "Materialismo, durezza", evolution: "Usare il potere con etica" },
-  9: { keywords: "Umanità, chiusura, servizio", talents: "Compassione, visione ampia", shadow: "Vittimismo, dispersione emotiva", evolution: "Lasciare andare il passato" },
-  11: { keywords: "Visione, intuizione, ispirazione", talents: "Consapevolezza, centratura, empatia profonda", shadow: "Ipersensibilità, tensione interiore", evolution: "Una nuova identità non egoica e più empatica" },
-  22: { keywords: "Maestro costruttore, grandi progetti", talents: "Empatia, capacità di realizzare progetti concreti", shadow: "Pressione, perfezionismo", evolution: "Agire nel mondo in modo più consapevole" },
-  33: { keywords: "Amore universale, servizio, guida", talents: "Comunicazione innovativa, leggerezza, amore", shadow: "Eccessiva responsabilità emotiva", evolution: "Comunicare per il massimo benessere dell'umanità" },
+const lifePathDescriptions: Record<number, string> = {
+  1: "Sei una persona nata per fare strada da sola. Hai un'energia forte, ti piace prendere decisioni e guidare gli altri. A volte puoi sembrare un po' testardo, ma è perché sai cosa vuoi. La tua sfida? Imparare a lavorare anche in squadra.",
+  2: "Sei una persona che sente tutto. Capisci gli altri meglio di chiunque, sai ascoltare e creare armonia intorno a te. A volte però ti metti da parte troppo. La tua sfida? Credere di più in te stesso.",
+  3: "Sei pieno di idee, creatività e voglia di esprimerti. La gente ama starti intorno perché porti energia e allegria. A volte rischi di disperdere le tue energie in troppe cose. La tua sfida? Dare forma concreta a quello che hai dentro.",
+  4: "Sei una persona affidabile, concreta e organizzata. Quando fai qualcosa, la fai bene. A volte però fai fatica ad accettare i cambiamenti. La tua sfida? Restare solido senza diventare rigido.",
+  5: "Sei nato per esplorare, cambiare e vivere esperienze nuove. La routine ti sta stretta e hai bisogno di libertà. A volte però rischi di esagerare. La tua sfida? Essere libero senza perdere il controllo.",
+  6: "Sei una persona che ama prendersi cura degli altri. Hai un grande senso di responsabilità e ami l'armonia. A volte però ti sacrifichi troppo per gli altri. La tua sfida? Amare gli altri senza dimenticare te stesso.",
+  7: "Sei una persona profonda, che ama pensare, analizzare e capire il senso delle cose. Hai una grande intuizione. A volte però tendi a isolarti un po' troppo. La tua sfida? Aprirti agli altri e fidarti.",
+  8: "Sei nato per realizzare grandi cose. Hai una forza interiore enorme e sai come ottenere risultati. A volte però rischi di concentrarti troppo sul lato materiale. La tua sfida? Usare la tua forza per fare del bene.",
+  9: "Sei una persona con un cuore grande e una visione ampia del mondo. Senti il bisogno di aiutare gli altri. A volte però fai fatica a lasciar andare il passato. La tua sfida? Guardare avanti con fiducia.",
+  11: "Hai un'energia speciale. Sei molto intuitivo e senti le cose prima che accadano. Hai la capacità di ispirare chi ti sta intorno. A volte però ti senti diverso dagli altri. La tua sfida? Usare la tua sensibilità come un dono, non come un peso.",
+  22: "Sei qui per costruire qualcosa di grande. Hai la capacità di trasformare le idee in realtà concrete che aiutano gli altri. A volte la pressione può sembrarti tanta. La tua sfida? Fidarti del tuo percorso e andare avanti un passo alla volta.",
+  33: "Hai un amore enorme dentro di te. Sei qui per comunicare, ispirare e portare luce nella vita delle persone. A volte senti di portare il peso del mondo sulle spalle. La tua sfida? Dare amore senza dimenticare di darlo anche a te stesso.",
 };
 
 const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
@@ -176,23 +176,8 @@ const HeroConversion = ({ birthDate, setBirthDate }: HeroConversionProps) => {
 
           {desc && (
             <div className="space-y-4 py-4">
-              <div className="rounded-lg bg-primary/5 border border-primary/10 p-4 space-y-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Parole chiave</p>
-                  <p className="text-sm text-foreground">{desc.keywords}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">I tuoi talenti</p>
-                  <p className="text-sm text-foreground">{desc.talents}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">La tua sfida</p>
-                  <p className="text-sm text-foreground">{desc.shadow}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Direzione evolutiva</p>
-                  <p className="text-sm text-foreground">{desc.evolution}</p>
-                </div>
+              <div className="rounded-lg bg-primary/5 border border-primary/10 p-4">
+                <p className="text-sm text-foreground leading-relaxed">{desc}</p>
               </div>
 
               <div className="flex items-start gap-2 rounded-lg bg-muted/50 border border-border p-3">
