@@ -18,11 +18,8 @@ const ResultPreview = () => {
             Anteprima
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            Ecco cosa <span className="text-gradient-gold">riceverai</span>
+            Ecco cosa <span className="text-gradient-gold">scoprirai</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Un esempio reale di lettura numerologica
-          </p>
         </motion.div>
 
         <motion.div
