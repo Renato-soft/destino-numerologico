@@ -674,5 +674,19 @@
     "number": "Numero",
     "period": "Periodo",
     "loading": "Caricamento..."
+  },
+  "numberSection": {
+    "example": "Esempio concreto",
+    "gifts": "I tuoi doni naturali",
+    "challenge": "La sfida da affrontare",
+    "advice": "Consiglio pratico"
+  },
+  "pyramid": {
+    "title": "Mappa dei Numeri",
+    "talentArea": "Area di eccellenza (talenti)",
+    "visionBeing": "Vision / essere",
+    "fortunePath": "Sentiero della fortuna",
+    "skillsCharacter": "Capacità e carattere",
+    "missionDoing": "Mission / fare"
   }
 }

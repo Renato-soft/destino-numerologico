@@ -674,5 +674,19 @@
     "number": "Number",
     "period": "Period",
     "loading": "Loading..."
+  },
+  "numberSection": {
+    "example": "Concrete example",
+    "gifts": "Your natural gifts",
+    "challenge": "The challenge to face",
+    "advice": "Practical advice"
+  },
+  "pyramid": {
+    "title": "Numbers Map",
+    "talentArea": "Area of excellence (talents)",
+    "visionBeing": "Vision / being",
+    "fortunePath": "Path of fortune",
+    "skillsCharacter": "Skills and character",
+    "missionDoing": "Mission / doing"
   }
 }
