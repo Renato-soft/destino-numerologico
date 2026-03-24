@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : "admin";
+    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : user.email === "realerenato@gmail.com" ? "admin" : "viewer";
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action") || "overview";
