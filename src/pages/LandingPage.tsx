@@ -1,7 +1,7 @@
 import { useState } from "react";
 import HeroConversion from "@/components/conversion/HeroConversion";
 import InstantUnlock from "@/components/conversion/InstantUnlock";
-import HowItWorks from "@/components/conversion/HowItWorks";
+
 import Benefits from "@/components/conversion/Benefits";
 import ResultPreview from "@/components/conversion/ResultPreview";
 import EvolutionPath from "@/components/conversion/EvolutionPath";
