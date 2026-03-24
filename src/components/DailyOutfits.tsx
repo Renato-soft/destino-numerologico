@@ -107,7 +107,10 @@ const DailyOutfits = () => {
           </div>
         </div>
         {!loading && (
-          <Button variant="ghost" size="icon" onClick={() => fetchOutfits(true)} title={t("outfits.regenerate")}>
+          <Button variant="ghost" size="icon" onClick={() => {
+            sessionStorage.removeItem(getCacheKey());
+            fetchOutfits(true);
+          }} title={t("outfits.regenerate")}>
             <RefreshCw className="w-4 h-4" />
           </Button>
         )}
