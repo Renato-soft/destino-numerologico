@@ -17,9 +17,9 @@ const LandingPage = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
       <HeroConversion birthDate={birthDate} setBirthDate={setBirthDate} />
       <BenefitsAndPreview />
+      <DailyExperience />
       <EvolutionPath />
       <PricingConversion />
-      <DailyExperience />
       <TestimonialsConversion />
       <AboutSection />
       <FAQSection />
