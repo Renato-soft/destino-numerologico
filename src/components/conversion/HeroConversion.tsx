@@ -67,7 +67,7 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Perché ti succedono sempre le stesse cose?
             <br />
-            La risposta è nei tuoi numeri.
+            La risposta è nella tua data di nascita!
           </p>
 
           {/* Birth date input + CTA */}
