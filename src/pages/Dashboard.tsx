@@ -1,20 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Sparkles, Map, MessageCircle, FileText, Calendar,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield, Clock
+import {
+  Sparkles, Map, MessageCircle, Calendar,
+  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield, Clock, Check
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
-import { calculatePersonalYear } from "@/lib/numerology";
 
 interface Profile {
   nome: string;
@@ -40,7 +39,10 @@ const Dashboard = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { canAccess, subscribed, isPayPerUse, hasPayPerUsePurchase, canUseFreeRequest, loading: subLoading, refreshPayPerUsePurchases, checkSubscription } = useSubscription();
+  const {
+    subscribed, loading: subLoading, refreshPayPerUsePurchases, checkSubscription,
+    isInTrial, isTrialExpired, trialRemainingMs, hasUnlockAll
+  } = useSubscription();
   const { isFeatureUnlocked, getDaysRemaining } = useFeatureSchedule();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -87,22 +89,30 @@ const Dashboard = () => {
         if (purchaseSuccess === "success" && priceId) {
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
-            const { PAY_PER_USE } = await import("@/hooks/useSubscription");
-            const feature = Object.values(PAY_PER_USE).find(f => f.price_id === priceId);
+            const { PAY_PER_USE, TRIAL_PPU, UNLOCK_ALL } = await import("@/hooks/useSubscription");
+            const allProducts = { ...PAY_PER_USE, ...TRIAL_PPU };
+            const feature = Object.values(allProducts).find(f => f.price_id === priceId);
+            const isUnlockAll = priceId === UNLOCK_ALL.price_id;
             if (feature) {
               await supabase.from("pay_per_use_purchases").insert({
                 user_id: session.user.id,
                 product_id: feature.product_id,
               });
-              await refreshPayPerUsePurchases();
             }
+            if (isUnlockAll) {
+              await supabase.from("pay_per_use_purchases").insert({
+                user_id: session.user.id,
+                product_id: UNLOCK_ALL.product_id,
+              });
+            }
+            await refreshPayPerUsePurchases();
           }
         }
         if (subscriptionSuccess === "success") {
           await checkSubscription();
         }
         setSearchParams({}, { replace: true });
-        toast({ title: t("dashboard.purchaseComplete"), description: t("dashboard.purchaseCompleteDesc") });
+        toast({ title: "Acquisto completato!", description: "Il servizio è stato sbloccato con successo." });
       };
       handlePurchaseReturn();
     }
@@ -120,11 +130,6 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const getDaySuffix = (days: number) => {
-    if (i18n.language?.startsWith("en")) return days === 1 ? "" : "s";
-    return days === 1 ? "o" : "i";
-  };
-
   if (loading || subLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -136,7 +141,8 @@ const Dashboard = () => {
     );
   }
 
-  if (!subscribed && !canUseFreeRequest()) {
+  // Trial expired and not subscribed: show upgrade screen
+  if (isTrialExpired() && !subscribed) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
@@ -144,25 +150,32 @@ const Dashboard = () => {
           <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
             <Crown className="w-10 h-10 text-primary" />
           </div>
-          <h2 className="font-display text-2xl font-bold">{t("pricing.upgradeRequired")}</h2>
-          <p className="text-muted-foreground">{t("dashboard.freeTrialExpired")}</p>
-          <Button variant="cosmic" size="lg" onClick={() => navigate("/pricing")}>
-            <Crown className="w-5 h-5 mr-2" />
-            {t("dashboard.subscribeNow")}
-          </Button>
+          <h2 className="font-display text-2xl font-bold">La tua prova gratuita è scaduta</h2>
+          <p className="text-muted-foreground">Hai esplorato il potere dei numeri! Ora scegli come continuare il tuo percorso.</p>
+          <div className="space-y-3">
+            <Button variant="cosmic" size="lg" className="w-full" onClick={() => navigate("/pricing")}>
+              <Crown className="w-5 h-5 mr-2" />
+              Abbonati a €4,99/mese
+            </Button>
+            <p className="text-xs text-muted-foreground">oppure sblocca tutto a €9,99 una tantum</p>
+          </div>
           <div className="flex items-center justify-center gap-4 pt-2">
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-              ← {t("common.home")}
+              ← Home
             </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-1" />
-              {t("common.logout")}
+              Logout
             </Button>
           </div>
         </motion.div>
       </div>
     );
   }
+
+  const trialActive = isInTrial();
+  const trialMs = trialRemainingMs();
+  const trialHours = Math.ceil(trialMs / (1000 * 60 * 60));
 
   const FEATURE_KEY_MAP: Record<string, string> = {
     "/personal-year": "personal_year",
@@ -177,22 +190,125 @@ const Dashboard = () => {
     "/map": "map",
   };
 
+  // Service cards with marketing descriptions
   const quickActions = [
-    { title: t("pricing.title"), description: t("pricing.subtitle"), icon: Crown, href: "/pricing", color: "from-amber-500 to-yellow-600", primary: true },
-    ...(latestMap ? [] : [{ title: t("dashboard.generateMap"), description: t("dashboard.generateMapDesc"), icon: Map, href: "/map", color: "from-primary to-accent" }]),
-    { title: t("dashboard.personalYear", { year: new Date().getFullYear() }), description: t("dashboard.personalYearDesc"), icon: Calendar, href: "/personal-year", color: "from-orange-500 to-amber-500" },
-    { title: t("dashboard.pillars"), description: t("dashboard.pillarsDesc"), icon: Compass, href: "/pillars", color: "from-fuchsia-500 to-purple-600" },
-    { title: t("dashboard.favorableDates"), description: t("dashboard.favorableDatesDesc"), icon: Calendar, href: "/dates", color: "from-amber-500 to-orange-500" },
-    { title: t("dashboard.chat"), description: t("dashboard.chatDesc"), icon: MessageCircle, href: "/chat", color: "from-secondary to-purple-500" },
-    { title: t("dashboard.advancedReport"), description: "€2,00 " + t("pricing.perUse"), icon: ScrollText, href: "/advanced-report", color: "from-amber-600 to-yellow-700", payPerUse: true },
-    { title: t("dashboard.brandAnalyzer"), description: "€2,00 " + t("pricing.perUse"), icon: Target, href: "/brand", color: "from-violet-500 to-fuchsia-500", payPerUse: true },
-    { title: t("dashboard.houseVibration"), description: "€2,00 " + t("pricing.perUse"), icon: Home, href: "/house", color: "from-cyan-500 to-sky-500", payPerUse: true },
-    { title: t("dashboard.compatibility"), description: "€2,00 " + t("pricing.perUse"), icon: Users, href: "/compatibility", color: "from-pink-500 to-rose-500", payPerUse: true },
-    { title: t("dashboard.community"), description: t("dashboard.communityDesc"), icon: MessageCircle, href: "/community", color: "from-indigo-500 to-purple-500" },
+    // Pricing CTA
+    ...(!subscribed ? [{
+      title: "Scegli il tuo piano",
+      description: "Sblocca tutto il potere della numerologia",
+      icon: Crown,
+      href: "/pricing",
+      color: "from-amber-500 to-yellow-600",
+      primary: true,
+      badge: null as string | null,
+    }] : []),
+    // Map
+    ...(latestMap ? [] : [{
+      title: "Mappa Numerologica",
+      description: "Il tuo profilo numerologico completo in un'unica mappa personalizzata",
+      icon: Map,
+      href: "/map",
+      color: "from-primary to-accent",
+      badge: trialActive && !subscribed ? "GRATIS" : subscribed ? "INCLUSO" : null,
+    }]),
+    // Chat
+    {
+      title: "Chat con l'Esperto",
+      description: "Fai domande e ricevi risposte personalizzate dalla tua guida numerologica AI",
+      icon: MessageCircle,
+      href: "/chat",
+      color: "from-secondary to-purple-500",
+      badge: trialActive && !subscribed ? "GRATIS" : subscribed ? "INCLUSO" : null,
+    },
+    // Date Favorevoli
+    {
+      title: "Date Favorevoli",
+      description: "Scopri i giorni migliori per decisioni importanti, incontri e nuovi inizi",
+      icon: Calendar,
+      href: "/dates",
+      color: "from-amber-500 to-orange-500",
+      badge: trialActive && !subscribed ? "GRATIS" : null,
+      payPerUse: !trialActive || subscribed ? false : false,
+      payPerUsePrice: "€1,99",
+      isAlwaysPPU: true,
+    },
+    // Anno Personale
+    {
+      title: "Anno Personale " + new Date().getFullYear(),
+      description: "Le energie e le opportunità che ti aspettano quest'anno",
+      icon: Calendar,
+      href: "/personal-year",
+      color: "from-orange-500 to-amber-500",
+      badge: subscribed ? "INCLUSO" : trialActive ? "€1,99" : null,
+      trialPPU: true,
+    },
+    // Pilastri
+    {
+      title: "I Pilastri della Crescita",
+      description: "Un percorso guidato per la tua evoluzione personale",
+      icon: Compass,
+      href: "/pillars",
+      color: "from-fuchsia-500 to-purple-600",
+      badge: subscribed ? "INCLUSO" : trialActive ? "€1,99" : null,
+      trialPPU: true,
+    },
+    // Report Avanzato
+    {
+      title: "Report Avanzato",
+      description: "Un'analisi approfondita generata dall'AI su misura per te",
+      icon: ScrollText,
+      href: "/advanced-report",
+      color: "from-amber-600 to-yellow-700",
+      badge: subscribed ? "INCLUSO" : "€1,99",
+      trialPPU: !subscribed,
+    },
+    // Brand Analyzer
+    {
+      title: "Analizzatore Brand",
+      description: "Scopri la vibrazione energetica del tuo brand o progetto",
+      icon: Target,
+      href: "/brand",
+      color: "from-violet-500 to-fuchsia-500",
+      badge: hasUnlockAll ? "SBLOCCATO" : "€1,99",
+      payPerUse: true,
+      payPerUsePrice: "€1,99",
+    },
+    // Vibrazione Casa
+    {
+      title: "Vibrazione Casa",
+      description: "Analizza l'energia del tuo indirizzo e scopri come influenza la tua vita",
+      icon: Home,
+      href: "/house",
+      color: "from-cyan-500 to-sky-500",
+      badge: hasUnlockAll ? "SBLOCCATO" : "€1,99",
+      payPerUse: true,
+      payPerUsePrice: "€1,99",
+    },
+    // Compatibilità
+    {
+      title: "Compatibilità",
+      description: "Scopri l'affinità numerologica con il tuo partner, amico o collega",
+      icon: Users,
+      href: "/compatibility",
+      color: "from-pink-500 to-rose-500",
+      badge: hasUnlockAll ? "SBLOCCATO" : "€1,99",
+      payPerUse: true,
+      payPerUsePrice: "€1,99",
+    },
+    // Community
+    {
+      title: "Community",
+      description: "Condividi esperienze e scoperte con altri appassionati di numerologia",
+      icon: MessageCircle,
+      href: "/community",
+      color: "from-indigo-500 to-purple-500",
+      badge: subscribed ? "INCLUSO" : null,
+    },
   ];
 
   const dailyAnalysisUnlocked = isFeatureUnlocked("daily_analysis");
   const outfitsUnlocked = isFeatureUnlocked("outfits");
+  const showDailyContent = subscribed || trialActive;
 
   return (
     <div className="min-h-screen bg-background">
@@ -235,7 +351,7 @@ const Dashboard = () => {
       </header>
 
       <main className="relative z-10 container mx-auto px-4 py-8">
-        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
             {t("dashboard.welcome").split("<1>")[0]}
             <span className="text-gradient-gold">{profile?.nome}</span>
@@ -244,16 +360,35 @@ const Dashboard = () => {
           <p className="text-muted-foreground text-lg">{t("dashboard.explore")}</p>
         </motion.section>
 
-        {latestMap && subscribed && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
-        {!dailyAnalysisUnlocked && subscribed && (
-          <ScheduleCountdown label={t("dashboard.dailyAnalysis")} daysLeft={getDaysRemaining("daily_analysis")} t={t} daySuffix={getDaySuffix} />
+        {/* Trial banner */}
+        {trialActive && !subscribed && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center justify-between flex-wrap gap-3"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Prova gratuita attiva</p>
+                <p className="text-xs text-muted-foreground">
+                  Scade tra {trialHours} or{trialHours === 1 ? "a" : "e"} — Esplora i servizi gratuiti!
+                </p>
+              </div>
+            </div>
+            <Button variant="cosmic" size="sm" onClick={() => navigate("/pricing")}>
+              Abbonati ora
+            </Button>
+          </motion.div>
         )}
 
-        {subscribed && outfitsUnlocked && <DailyOutfits />}
-        {subscribed && !outfitsUnlocked && (
-          <ScheduleCountdown label={t("dashboard.outfitOfDay")} daysLeft={getDaysRemaining("outfits")} t={t} daySuffix={getDaySuffix} />
-        )}
+        {/* Daily Analysis & Outfits */}
+        {latestMap && showDailyContent && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
+        {showDailyContent && outfitsUnlocked && <DailyOutfits />}
 
+        {/* Numbers */}
         {latestMap && (
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
             <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.yourNumbers")}</h2>
@@ -274,8 +409,9 @@ const Dashboard = () => {
           </motion.section>
         )}
 
+        {/* Service cards */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.quickActions")}</h2>
+          <h2 className="font-display text-xl font-semibold mb-4">I tuoi servizi</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action, index) => {
               const featureKey = FEATURE_KEY_MAP[action.href];
@@ -283,44 +419,62 @@ const Dashboard = () => {
               const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
 
               return (
-                <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.05 }}>
+                <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.03 }}>
                   <Link to={isScheduleLocked ? "#" : action.href} onClick={(e) => { if (isScheduleLocked) e.preventDefault(); }}>
-                    <div className={`group relative p-6 rounded-2xl border transition-all duration-300 ${isScheduleLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-cosmic"} ${action.primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
-                      {isScheduleLocked && (
+                    <div className={`group relative p-5 rounded-2xl border transition-all duration-300 ${isScheduleLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-cosmic"} ${(action as any).primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
+                      {/* Badge */}
+                      {isScheduleLocked ? (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-muted text-muted-foreground border-border border text-[10px] px-2 py-0.5 gap-1">
                             <Clock className="w-3 h-3" />
                             {daysLeft}{i18n.language?.startsWith("en") ? "d" : "g"}
                           </Badge>
                         </div>
-                      )}
-                      {!isScheduleLocked && action.payPerUse && (
+                      ) : action.badge === "GRATIS" ? (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-2 py-0.5">
+                            GRATIS
+                          </Badge>
+                        </div>
+                      ) : action.badge === "INCLUSO" ? (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
+                            <Check className="w-3 h-3" />
+                            INCLUSO
+                          </Badge>
+                        </div>
+                      ) : action.badge === "SBLOCCATO" ? (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-2 py-0.5 gap-1">
+                            <Check className="w-3 h-3" />
+                            SBLOCCATO
+                          </Badge>
+                        </div>
+                      ) : action.badge === "€1,99" ? (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
                             <ShoppingCart className="w-3 h-3" />
-                            €2
+                            €1,99
                           </Badge>
                         </div>
-                      )}
-                      {!isScheduleLocked && !action.payPerUse && !action.primary && !subscribed && (
+                      ) : !subscribed && !(action as any).primary ? (
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
                             <Lock className="w-3 h-3" />
                             PRO
                           </Badge>
                         </div>
-                      )}
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-4 ${isScheduleLocked ? "grayscale" : ""}`}>
+                      ) : null}
+
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-3 ${isScheduleLocked ? "grayscale" : ""}`}>
                         <action.icon className="w-6 h-6 text-white" />
                       </div>
-                      {action.title && (
-                        <h3 className="font-display text-lg font-semibold mb-1 flex items-center gap-2">
-                          {action.title}
-                          {!isScheduleLocked && <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />}
-                        </h3>
-                      )}
-                      <p className="text-sm text-muted-foreground">
-                        {isScheduleLocked ? t("dashboard.availableIn", { days: daysLeft, suffix: getDaySuffix(daysLeft) }) : action.description}
+                      <h3 className="font-display text-base font-semibold mb-1 flex items-center gap-2">
+                        {action.title}
+                        {!isScheduleLocked && <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />}
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {isScheduleLocked ? `Disponibile tra ${daysLeft} giorn${daysLeft === 1 ? "o" : "i"}` : action.description}
                       </p>
                     </div>
                   </Link>
@@ -333,23 +487,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-const ScheduleCountdown = ({ label, daysLeft, t, daySuffix }: { label: string; daysLeft: number; t: any; daySuffix: (d: number) => string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="mb-12 glass-cosmic rounded-2xl p-6 flex items-center gap-4"
-  >
-    <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center">
-      <Clock className="w-6 h-6 text-muted-foreground" />
-    </div>
-    <div>
-      <h3 className="font-display font-semibold text-foreground">{label}</h3>
-      <p className="text-sm text-muted-foreground">
-        {t("dashboard.availableIn", { days: daysLeft, suffix: daySuffix(daysLeft) })}
-      </p>
-    </div>
-  </motion.div>
-);
 
 export default Dashboard;
