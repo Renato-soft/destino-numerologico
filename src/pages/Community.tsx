@@ -635,7 +635,7 @@ export default function Community() {
                     return (
                       <button
                         key={v}
-                        onClick={() => handleReact(post.id, v)}
+                        onClick={() => userId ? handleReact(post.id, v) : navigate("/auth?mode=signup")}
                         className={`
                           flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all
                           ${isActive
@@ -699,29 +699,37 @@ export default function Community() {
                           </div>
                         ))}
 
-                        {/* New comment input */}
-                        <div className="flex gap-2 items-end">
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
-                            {userName?.charAt(0)?.toUpperCase() || "?"}
+                        {/* New comment input - only for logged-in users */}
+                        {userId ? (
+                          <div className="flex gap-2 items-end">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
+                              {userName?.charAt(0)?.toUpperCase() || "?"}
+                            </div>
+                            <div className="flex-1 flex gap-2">
+                              <Textarea
+                                value={commentTexts[post.id] || ""}
+                                onChange={(e) => setCommentTexts((prev) => ({ ...prev, [post.id]: e.target.value }))}
+                                placeholder="Scrivi un commento..."
+                                maxLength={500}
+                                className="min-h-[36px] text-xs bg-input/30 border-border/30 resize-none py-2"
+                              />
+                              <Button
+                                size="icon"
+                                className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                                onClick={() => handleAddComment(post.id)}
+                                disabled={!(commentTexts[post.id] || "").trim()}
+                              >
+                                <Send className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex-1 flex gap-2">
-                            <Textarea
-                              value={commentTexts[post.id] || ""}
-                              onChange={(e) => setCommentTexts((prev) => ({ ...prev, [post.id]: e.target.value }))}
-                              placeholder="Scrivi un commento..."
-                              maxLength={500}
-                              className="min-h-[36px] text-xs bg-input/30 border-border/30 resize-none py-2"
-                            />
-                            <Button
-                              size="icon"
-                              className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-accent text-primary-foreground"
-                              onClick={() => handleAddComment(post.id)}
-                              disabled={!(commentTexts[post.id] || "").trim()}
-                            >
-                              <Send className="w-3.5 h-3.5" />
+                        ) : (
+                          <div className="text-center py-2">
+                            <Button variant="ghost" size="sm" className="text-xs text-primary" asChild>
+                              <Link to="/auth?mode=signup">Registrati per commentare</Link>
                             </Button>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
