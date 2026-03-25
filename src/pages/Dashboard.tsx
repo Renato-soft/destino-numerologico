@@ -12,6 +12,7 @@ import {
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
 import SimplifiedMiniMap from "@/components/SimplifiedMiniMap";
+import { calculateLifePath, calculatePersonalYear } from "@/lib/numerology";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
@@ -392,9 +393,17 @@ const Dashboard = () => {
         {showDailyContent && outfitsUnlocked && <DailyOutfits />}
 
         {/* Simplified mini-map for trial users without full map */}
-        {trialActive && !subscribed && !latestMap && profile && (
-          <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
-        )}
+        {trialActive && !subscribed && !latestMap && profile && (() => {
+          const [y, m, d] = profile.birth_date.split("-").map(Number);
+          const trialLifePath = calculateLifePath(d, m, y);
+          const trialPersonalYear = calculatePersonalYear(d, m, new Date().getFullYear());
+          return (
+            <>
+              <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
+              {dailyAnalysisUnlocked && <DailyAnalysis personalYear={trialPersonalYear} lifePath={trialLifePath} />}
+            </>
+          );
+        })()}
 
         {/* Numbers */}
         {latestMap && (
