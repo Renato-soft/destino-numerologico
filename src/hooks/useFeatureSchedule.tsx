@@ -72,8 +72,9 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   }, [loadSchedule]);
 
   const isFeatureUnlocked = useCallback((featureKey: string): boolean => {
+    if (bypassSchedule) return true;
     const feature = schedule.find(f => f.feature_key === featureKey);
-    if (!feature) return true; // unknown features are unlocked by default
+    if (!feature) return true;
     if (!feature.enabled) return false;
     if (feature.unlock_after_days === 0) return true;
     if (!userCreatedAt) return false;
@@ -82,7 +83,7 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
     const now = new Date();
     const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
     return daysSinceCreation >= feature.unlock_after_days;
-  }, [schedule, userCreatedAt]);
+  }, [schedule, userCreatedAt, bypassSchedule]);
 
   const getDaysRemaining = useCallback((featureKey: string): number => {
     const feature = schedule.find(f => f.feature_key === featureKey);
