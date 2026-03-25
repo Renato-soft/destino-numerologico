@@ -24,17 +24,23 @@ Tra qualche istante comincerò a guidarti. Prenditi questo momento per sistemart
   // 30 seconds of silence approximation using pauses
   const longPause = "\n... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...\n";
   
-  // 10 seconds pause between steps
-  const stepPause = "\n... ... ... ... ... ... ... ... ... ...\n";
+  // 20 seconds pause between steps
+  const stepPause = "\n... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...\n";
 
   let script = intro + longPause;
 
   script += "Bene, cominciamo.\n" + stepPause;
 
   steps.forEach((step, i) => {
-    // If first step mentions sitting/posizione, integrate rather than repeat
     if (i === 0 && /sied|posizione|comodo/i.test(step)) {
-      script += `Hai già trovato la tua posizione. ${step.replace(/[Ss]iediti[^.]*\./g, "").trim()}\n`;
+      // Remove only the sitting-related sentences, keep everything else
+      const sentences = step.split(/(?<=\.)\s*/);
+      const kept = sentences.filter(s => !/sied|posizione|comodo/i.test(s));
+      const remaining = kept.join(" ").trim();
+      if (remaining.length > 5) {
+        script += `Hai già trovato la tua posizione. ${remaining}\n`;
+      }
+      // If nothing remains, skip the step entirely
     } else {
       script += `${step}\n`;
     }
