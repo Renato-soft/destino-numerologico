@@ -37,12 +37,11 @@ serve(async (req) => {
     const filePath = `pillar_${pillarIndex}.mp3`;
 
     // Check if already generated
-    const { data: existing } = await supabase.storage
+    const { data: files } = await supabase.storage
       .from("meditation-music")
-      .createSignedUrl(filePath, 60);
+      .list("", { search: filePath });
 
-    if (existing?.signedUrl) {
-      // File exists, return public URL
+    if (files && files.length > 0 && files.some(f => f.name === filePath)) {
       const { data: publicUrl } = supabase.storage
         .from("meditation-music")
         .getPublicUrl(filePath);
@@ -52,26 +51,27 @@ serve(async (req) => {
       });
     }
 
-    // Generate music via ElevenLabs
-    console.log(`Generating meditation music for pillar ${pillarIndex}: ${prompt}`);
+    // Generate ambient sound via ElevenLabs Sound Effects API
+    console.log(`Generating meditation sound for pillar ${pillarIndex}: ${prompt}`);
 
-    const response = await fetch("https://api.elevenlabs.io/v1/music", {
+    const response = await fetch("https://api.elevenlabs.io/v1/sound-generation", {
       method: "POST",
       headers: {
         "xi-api-key": ELEVENLABS_API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt,
-        duration_seconds: 180, // 3 minutes
+        text: prompt,
+        duration_seconds: 22,
+        prompt_influence: 0.5,
       }),
     });
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error(`ElevenLabs Music API error [${response.status}]:`, errorBody);
+      console.error(`ElevenLabs SFX API error [${response.status}]:`, errorBody);
       return new Response(
-        JSON.stringify({ error: `Music generation failed: ${response.status}` }),
+        JSON.stringify({ error: `Sound generation failed: ${response.status}`, details: errorBody }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -89,7 +89,7 @@ serve(async (req) => {
     if (uploadError) {
       console.error("Upload error:", uploadError);
       return new Response(
-        JSON.stringify({ error: "Failed to store music" }),
+        JSON.stringify({ error: "Failed to store sound" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
