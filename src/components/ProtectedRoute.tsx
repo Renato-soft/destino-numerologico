@@ -32,9 +32,12 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
     );
   }
 
-  // Check feature schedule (time-based unlock)
+  // During trial, free routes bypass feature schedule
+  const isFreeInTrial = isInTrial() && ["/map", "/chat", "/dates"].includes(route);
+
+  // Check feature schedule (time-based unlock) — skip for trial free routes
   const featureKey = ROUTE_TO_FEATURE[route];
-  if (featureKey && !isFeatureUnlocked(featureKey)) {
+  if (!isFreeInTrial && featureKey && !isFeatureUnlocked(featureKey)) {
     const daysLeft = getDaysRemaining(featureKey);
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
