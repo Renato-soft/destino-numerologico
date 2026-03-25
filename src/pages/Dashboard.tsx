@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
+import SimplifiedMiniMap from "@/components/SimplifiedMiniMap";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
@@ -389,6 +390,11 @@ const Dashboard = () => {
         {/* Daily Analysis & Outfits */}
         {latestMap && showDailyContent && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {showDailyContent && outfitsUnlocked && <DailyOutfits />}
+
+        {/* Simplified mini-map for trial users without full map */}
+        {trialActive && !subscribed && !latestMap && profile && (
+          <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
+        )}
 
         {/* Numbers */}
         {latestMap && (
