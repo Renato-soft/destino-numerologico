@@ -66,6 +66,9 @@ const LandingPage = () => {
         <EvolutionPath />
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
+        <CommunityPreview />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
         <TestimonialsConversion />
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
@@ -73,9 +76,6 @@ const LandingPage = () => {
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
         <FAQSection />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <CommunityPreview />
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
         <FinalCTA birthDate={birthDate} setBirthDate={setBirthDate} onPreview={handlePreview} />
