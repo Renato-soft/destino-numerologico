@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Zap, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Shield, Zap, Users, Sparkles, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeroConversionProps {
   birthDate: string;
