@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
   }
 
   // During trial, free routes bypass feature schedule
-  const isFreeInTrial = isInTrial() && ["/map", "/chat", "/dates"].includes(route);
+  const isFreeInTrial = isInTrial() && ["/chat", "/dates"].includes(route);
 
   // Check feature schedule (time-based unlock) — skip for trial free routes
   const featureKey = ROUTE_TO_FEATURE[route];
