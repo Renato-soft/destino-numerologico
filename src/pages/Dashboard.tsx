@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
+import SimplifiedMiniMap from "@/components/SimplifiedMiniMap";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
@@ -209,7 +210,9 @@ const Dashboard = () => {
       icon: Map,
       href: "/map",
       color: "from-primary to-accent",
-      badge: trialActive && !subscribed ? "GRATIS" : subscribed ? "INCLUSO" : null,
+      badge: hasUnlockAll ? "SBLOCCATO" : subscribed ? "INCLUSO" : "€1,99",
+      payPerUse: true,
+      payPerUsePrice: "€1,99",
     }]),
     // Chat
     {
@@ -388,6 +391,11 @@ const Dashboard = () => {
         {latestMap && showDailyContent && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
         {showDailyContent && outfitsUnlocked && <DailyOutfits />}
 
+        {/* Simplified mini-map for trial users without full map */}
+        {trialActive && !subscribed && !latestMap && profile && (
+          <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
+        )}
+
         {/* Numbers */}
         {latestMap && (
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
@@ -415,7 +423,7 @@ const Dashboard = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action, index) => {
               const featureKey = FEATURE_KEY_MAP[action.href];
-              const isFreeInTrial = trialActive && ["/map", "/chat", "/dates"].includes(action.href);
+              const isFreeInTrial = trialActive && ["/chat", "/dates"].includes(action.href);
               const isScheduleLocked = featureKey && !isFreeInTrial && !isFeatureUnlocked(featureKey);
               const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
 

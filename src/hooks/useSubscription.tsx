@@ -43,6 +43,12 @@ export const PAY_PER_USE = {
     price: 1.99,
     route: "/dates",
   },
+  map: {
+    product_id: "prod_UDJZwi1ePtlJsM",
+    price_id: "price_1TEswAQYqblmeN59vbNWz1QO",
+    price: 1.99,
+    route: "/map",
+  },
 } as const;
 
 export type PayPerUseFeature = keyof typeof PAY_PER_USE;
@@ -60,7 +66,7 @@ export const TRIAL_PPU = {
 export type TrialPPUFeature = keyof typeof TRIAL_PPU;
 
 // Routes FREE during 24h trial
-const TRIAL_FREE_ROUTES = ["/map", "/chat", "/dates"];
+const TRIAL_FREE_ROUTES = ["/chat", "/dates"];
 
 // Routes included in subscription (post-trial)
 const SUBSCRIPTION_ROUTES = ["/map", "/personal-year", "/pillars", "/chat", "/community", "/profile", "/advanced-report"];
@@ -71,6 +77,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
   "/house": "house",
   "/compatibility": "compatibility",
   "/dates": "dates",
+  "/map": "map",
 };
 
 // Routes that are PPU only during trial
@@ -210,10 +217,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     // Always-PPU routes: accessible if purchased or unlock-all
     if (route in PAY_PER_USE_ROUTES) {
       if (state.hasUnlockAll) return true;
+      // Map is included in subscription
+      if (route === "/map" && state.subscribed) return true;
       const feature = PAY_PER_USE_ROUTES[route];
       const productId = PAY_PER_USE[feature].product_id;
       if (state.payPerUsePurchases.includes(productId)) return true;
-      // During trial, dates are free
+      // During trial, dates and chat are free
       if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;
       return false;
     }
