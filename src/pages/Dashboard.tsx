@@ -47,6 +47,20 @@ const Dashboard = () => {
   } = useSubscription();
   const { isFeatureUnlocked, getDaysRemaining } = useFeatureSchedule();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [todayPostCount, setTodayPostCount] = useState(0);
+
+  useEffect(() => {
+    const fetchTodayPosts = async () => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from("community_posts")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", todayStart.toISOString());
+      setTodayPostCount(count || 0);
+    };
+    fetchTodayPosts();
+  }, []);
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
@@ -339,8 +353,13 @@ const Dashboard = () => {
                 </Link>
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={() => navigate("/community")} title="Community">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/community")} title="Community" className="relative">
               <Users className="w-5 h-5" />
+              {todayPostCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                  {todayPostCount > 99 ? "99+" : todayPostCount}
+                </span>
+              )}
             </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title={t("dashboard.profile")}>
               <User className="w-5 h-5" />
