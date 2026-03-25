@@ -29,8 +29,8 @@ serve(async (req) => {
       });
     }
 
-    // Use "Brian" voice - deep, calm male voice with multilingual v2 for Italian
-    const voiceId = "nPczCjzI2devNBz1zQrb";
+    // Use "Bill" voice - older, deeper, warmer male voice with multilingual v2 for Italian
+    const voiceId = "pqHfZKP75CvOlQylNhV4"; // Bill - mature, warm
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`,
@@ -44,11 +44,11 @@ serve(async (req) => {
           text,
           model_id: "eleven_multilingual_v2",
           voice_settings: {
-            stability: 0.75,
-            similarity_boost: 0.6,
-            style: 0.3,
-            use_speaker_boost: true,
-            speed: 0.8,
+            stability: 0.9,
+            similarity_boost: 0.5,
+            style: 0.1,
+            use_speaker_boost: false,
+            speed: 0.7,
           },
         }),
       }
