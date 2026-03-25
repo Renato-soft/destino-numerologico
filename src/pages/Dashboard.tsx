@@ -209,7 +209,9 @@ const Dashboard = () => {
       icon: Map,
       href: "/map",
       color: "from-primary to-accent",
-      badge: trialActive && !subscribed ? "GRATIS" : subscribed ? "INCLUSO" : null,
+      badge: hasUnlockAll ? "SBLOCCATO" : subscribed ? "INCLUSO" : "€1,99",
+      payPerUse: true,
+      payPerUsePrice: "€1,99",
     }]),
     // Chat
     {
@@ -415,7 +417,7 @@ const Dashboard = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action, index) => {
               const featureKey = FEATURE_KEY_MAP[action.href];
-              const isFreeInTrial = trialActive && ["/map", "/chat", "/dates"].includes(action.href);
+              const isFreeInTrial = trialActive && ["/chat", "/dates"].includes(action.href);
               const isScheduleLocked = featureKey && !isFreeInTrial && !isFeatureUnlocked(featureKey);
               const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
 
