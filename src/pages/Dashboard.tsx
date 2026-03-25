@@ -415,7 +415,8 @@ const Dashboard = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickActions.map((action, index) => {
               const featureKey = FEATURE_KEY_MAP[action.href];
-              const isScheduleLocked = featureKey && !isFeatureUnlocked(featureKey);
+              const isFreeInTrial = trialActive && ["/map", "/chat", "/dates"].includes(action.href);
+              const isScheduleLocked = featureKey && !isFreeInTrial && !isFeatureUnlocked(featureKey);
               const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
 
               return (
