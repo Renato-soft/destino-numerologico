@@ -86,6 +86,7 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   }, [schedule, userCreatedAt, bypassSchedule]);
 
   const getDaysRemaining = useCallback((featureKey: string): number => {
+    if (bypassSchedule) return 0;
     const feature = schedule.find(f => f.feature_key === featureKey);
     if (!feature || feature.unlock_after_days === 0) return 0;
     if (!userCreatedAt) return feature.unlock_after_days;
@@ -94,7 +95,7 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
     const now = new Date();
     const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
     return Math.max(0, feature.unlock_after_days - daysSinceCreation);
-  }, [schedule, userCreatedAt]);
+  }, [schedule, userCreatedAt, bypassSchedule]);
 
   const getFeatureByRoute = useCallback((route: string): FeatureScheduleItem | null => {
     const featureKey = ROUTE_TO_FEATURE[route];
