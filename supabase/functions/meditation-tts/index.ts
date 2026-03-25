@@ -29,8 +29,8 @@ serve(async (req) => {
       });
     }
 
-    // Custom Italian voice from Voice Library
-    const voiceId = "2mvMyhTjl4X2FGED1Ug8";
+    // Daniel - deep, warm male voice (default voice, works on free plan)
+    const voiceId = "onwK4e9ZLuTAKqWW03F9";
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`,
