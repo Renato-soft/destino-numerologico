@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Volume2, Loader2, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+const NATURE_AUDIO_VERSION = "20260325-v2";
+
 interface MeditationAudioPlayerProps {
   pillarIndex: number;
 }
@@ -40,7 +42,7 @@ export default function MeditationAudioPlayer({ pillarIndex }: MeditationAudioPl
     setLoading(true);
 
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/meditation-music/pillar_${pillarIndex}.mp3`;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/meditation-music/pillar_${pillarIndex}.mp3?v=${NATURE_AUDIO_VERSION}`;
 
       const audio = new Audio(url);
       audio.loop = true;
