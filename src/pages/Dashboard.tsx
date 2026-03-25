@@ -338,7 +338,7 @@ const Dashboard = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title={t("dashboard.profile")}>
               <User className="w-5 h-5" />
             </Button>
-            {(userEmail === "regnew01@gmail.com" || userEmail === "realerenato@gmail.com" || userEmail === "maria732008@live.it") && (
+            {(userEmail === "regnew01@gmail.com" || userEmail === "maria732008@live.it") && (
               <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title={t("dashboard.controlPanel")}>
                 <Shield className="w-5 h-5" />
               </Button>
