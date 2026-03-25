@@ -3,23 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Volume2, Loader2, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Sound prompts for each pillar
+const PILLAR_SOUNDS: Record<number, string> = {
+  0: "Soft Tibetan singing bowl resonating slowly with gentle wind and distant nature ambience, peaceful meditation drone",
+  1: "Warm ambient pad with soft crystal chimes and gentle flowing water, creative and uplifting meditation atmosphere",
+  2: "Deep resonant bell with soft rain and gentle breathing sounds, introspective calm meditation ambience",
+  3: "Gentle forest ambience with birds, soft wind through trees, and distant flowing stream, peaceful nature meditation",
+  4: "Low frequency drone with soft metallic resonance and gentle heartbeat rhythm, deep transformative meditation",
+  5: "Ocean waves gently lapping shore with distant wind chimes and soft ambient pad, cyclical calming meditation",
+  6: "Ethereal choir-like ambient pad with soft high-pitched tones and gentle cosmic drone, transcendent meditation atmosphere",
+};
+
 interface MeditationAudioPlayerProps {
-  script: string;
-  userName: string;
+  pillarIndex: number;
 }
 
-export default function MeditationAudioPlayer({ script, userName }: MeditationAudioPlayerProps) {
+export default function MeditationAudioPlayer({ pillarIndex }: MeditationAudioPlayerProps) {
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const mediaSourceRef = useRef<MediaSource | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      abortRef.current?.abort();
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -28,7 +34,6 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
   }, []);
 
   const handleStop = () => {
-    abortRef.current?.abort();
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -44,14 +49,12 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
     }
 
     setLoading(true);
-    const controller = new AbortController();
-    abortRef.current = controller;
 
     try {
-      const personalizedScript = script.replace(/\{nome\}/g, userName);
+      const prompt = PILLAR_SOUNDS[pillarIndex] || PILLAR_SOUNDS[0];
 
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/meditation-tts`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/meditation-music`,
         {
           method: "POST",
           headers: {
@@ -59,55 +62,26 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ text: personalizedScript }),
-          signal: controller.signal,
+          body: JSON.stringify({ pillarIndex, prompt }),
         }
       );
 
       if (!response.ok) {
-        throw new Error(`Errore TTS: ${response.status}`);
+        throw new Error(`Errore: ${response.status}`);
       }
 
-      // Collect the streamed response into a blob for playback
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No response body");
+      const data = await response.json();
 
-      const chunks: Uint8Array[] = [];
-      let firstChunkReceived = false;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (controller.signal.aborted) break;
-
-        chunks.push(value);
-
-        // Start playback as soon as we have enough data (~50KB)
-        if (!firstChunkReceived && chunks.reduce((s, c) => s + c.length, 0) > 50000) {
-          firstChunkReceived = true;
-          setLoading(false);
-          setPlaying(true);
-        }
-      }
-
-      if (controller.signal.aborted) return;
-
-      const blob = new Blob(chunks as BlobPart[], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(blob);
-
-      const audio = new Audio(audioUrl);
+      const audio = new Audio(data.url);
+      audio.loop = true; // Loop the ambient sound
+      audio.volume = 0.6;
       audioRef.current = audio;
-
-      audio.onended = () => {
-        setPlaying(false);
-        URL.revokeObjectURL(audioUrl);
-      };
 
       audio.onerror = () => {
         setPlaying(false);
         toast({
           title: "Errore audio",
-          description: "Non è stato possibile riprodurre la meditazione.",
+          description: "Non è stato possibile riprodurre la musica.",
           variant: "destructive",
         });
       };
@@ -116,11 +90,10 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
       setLoading(false);
       setPlaying(true);
     } catch (error) {
-      if ((error as Error).name === "AbortError") return;
-      console.error("Meditation TTS error:", error);
+      console.error("Meditation music error:", error);
       toast({
         title: "Errore",
-        description: "Non è stato possibile generare l'audio della meditazione. Riprova.",
+        description: "Non è stato possibile caricare la musica di meditazione. Riprova.",
         variant: "destructive",
       });
       setLoading(false);
@@ -138,12 +111,12 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
       {loading ? (
         <>
           <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-          Preparazione della meditazione...
+          Preparazione musica...
         </>
       ) : playing ? (
         <>
           <Square className="w-5 h-5 mr-2" />
-          Ferma la meditazione
+          Ferma la musica
         </>
       ) : (
         <>
