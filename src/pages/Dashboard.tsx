@@ -47,6 +47,20 @@ const Dashboard = () => {
   } = useSubscription();
   const { isFeatureUnlocked, getDaysRemaining } = useFeatureSchedule();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [todayPostCount, setTodayPostCount] = useState(0);
+
+  useEffect(() => {
+    const fetchTodayPosts = async () => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from("community_posts")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", todayStart.toISOString());
+      setTodayPostCount(count || 0);
+    };
+    fetchTodayPosts();
+  }, []);
 
   useEffect(() => {
     const checkAuthAndLoadData = async () => {
