@@ -19,7 +19,7 @@ const dailyFeatures = [
 
 const outfitExamples = [
   { label: "", img: outfit3 },
-  { label: "Look Pomeriggio", img: outfit1 },
+  { label: "", img: outfit1 },
   { label: "", img: outfit2 },
   { label: "Look Speciale", img: outfit0 },
 ];
