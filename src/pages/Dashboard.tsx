@@ -388,11 +388,10 @@ const Dashboard = () => {
           </motion.div>
         )}
 
-        {/* Daily Analysis & Outfits */}
+        {/* Daily Analysis */}
         {latestMap && showDailyContent && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
-        {showDailyContent && outfitsUnlocked && <DailyOutfits />}
 
-        {/* Simplified mini-map for trial users without full map */}
+        {/* Simplified mini-map + analysis for trial users without full map */}
         {trialActive && !subscribed && !latestMap && profile && (() => {
           const [y, m, d] = profile.birth_date.split("-").map(Number);
           const trialLifePath = calculateLifePath(d, m, y);
@@ -404,6 +403,9 @@ const Dashboard = () => {
             </>
           );
         })()}
+
+        {/* Outfits (after analysis) */}
+        {showDailyContent && outfitsUnlocked && <DailyOutfits />}
 
         {/* Numbers */}
         {latestMap && (
