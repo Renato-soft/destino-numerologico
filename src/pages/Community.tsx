@@ -150,23 +150,24 @@ export default function Community() {
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/auth"); return; }
-      setUserId(session.user.id);
+      if (session) {
+        setUserId(session.user.id);
 
-      const [profileRes, mapRes] = await Promise.all([
-        supabase.from("profiles").select("nome").eq("user_id", session.user.id).maybeSingle(),
-        supabase.from("numerology_maps").select("personal_year").eq("user_id", session.user.id)
-          .order("computed_at", { ascending: false }).limit(1).maybeSingle(),
-      ]);
+        const [profileRes, mapRes] = await Promise.all([
+          supabase.from("profiles").select("nome").eq("user_id", session.user.id).maybeSingle(),
+          supabase.from("numerology_maps").select("personal_year").eq("user_id", session.user.id)
+            .order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+        ]);
 
-      if (profileRes.data) setUserName(profileRes.data.nome);
-      if (mapRes.data) setPersonalYear(mapRes.data.personal_year);
+        if (profileRes.data) setUserName(profileRes.data.nome);
+        if (mapRes.data) setPersonalYear(mapRes.data.personal_year);
+      }
 
       await loadPosts();
       setLoading(false);
     };
     init();
-  }, [navigate, loadPosts]);
+  }, [loadPosts]);
 
   // Load notifications when userId is available
   useEffect(() => {
