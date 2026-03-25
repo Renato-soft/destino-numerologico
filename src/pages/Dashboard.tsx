@@ -339,6 +339,9 @@ const Dashboard = () => {
                 </Link>
               </Button>
             )}
+            <Button variant="ghost" size="icon" onClick={() => navigate("/community")} title="Community">
+              <Users className="w-5 h-5" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title={t("dashboard.profile")}>
               <User className="w-5 h-5" />
             </Button>
