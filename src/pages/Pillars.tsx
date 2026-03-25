@@ -589,8 +589,7 @@ export default function Pillars() {
 
                       {/* Audio meditation button */}
                       <MeditationAudioPlayer
-                        script={activePillarData.meditation.script}
-                        userName={profile?.nome || "caro amico"}
+                        pillarIndex={activePillar}
                       />
                     </div>
 
