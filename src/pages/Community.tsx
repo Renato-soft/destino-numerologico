@@ -150,23 +150,24 @@ export default function Community() {
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/auth"); return; }
-      setUserId(session.user.id);
+      if (session) {
+        setUserId(session.user.id);
 
-      const [profileRes, mapRes] = await Promise.all([
-        supabase.from("profiles").select("nome").eq("user_id", session.user.id).maybeSingle(),
-        supabase.from("numerology_maps").select("personal_year").eq("user_id", session.user.id)
-          .order("computed_at", { ascending: false }).limit(1).maybeSingle(),
-      ]);
+        const [profileRes, mapRes] = await Promise.all([
+          supabase.from("profiles").select("nome").eq("user_id", session.user.id).maybeSingle(),
+          supabase.from("numerology_maps").select("personal_year").eq("user_id", session.user.id)
+            .order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+        ]);
 
-      if (profileRes.data) setUserName(profileRes.data.nome);
-      if (mapRes.data) setPersonalYear(mapRes.data.personal_year);
+        if (profileRes.data) setUserName(profileRes.data.nome);
+        if (mapRes.data) setPersonalYear(mapRes.data.personal_year);
+      }
 
       await loadPosts();
       setLoading(false);
     };
     init();
-  }, [navigate, loadPosts]);
+  }, [loadPosts]);
 
   // Load notifications when userId is available
   useEffect(() => {
@@ -321,7 +322,7 @@ export default function Community() {
       <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0">
         <div className="container mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild>
-            <Link to="/dashboard"><ArrowLeft className="w-5 h-5" /></Link>
+            <Link to={userId ? "/dashboard" : "/"}><ArrowLeft className="w-5 h-5" /></Link>
           </Button>
           <div className="flex items-center gap-3 flex-1">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -428,45 +429,63 @@ export default function Community() {
           )}
         </AnimatePresence>
 
-        {/* New Post */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-cosmic rounded-2xl p-5 space-y-3"
-        >
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-sm font-bold text-primary">
-              {userName?.charAt(0)?.toUpperCase() || "?"}
+        {/* New Post - only for logged-in users */}
+        {userId ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-2xl p-5 space-y-3"
+          >
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-sm font-bold text-primary">
+                {userName?.charAt(0)?.toUpperCase() || "?"}
+              </div>
+              <div>
+                <p className="text-sm font-medium">{userName || "Utente"}</p>
+                {personalYear && (
+                  <p className="text-[10px] text-muted-foreground">Anno Personale {personalYear}</p>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium">{userName || "Utente"}</p>
-              {personalYear && (
-                <p className="text-[10px] text-muted-foreground">Anno Personale {personalYear}</p>
-              )}
+            <Textarea
+              placeholder="Condividi la tua esperienza, una riflessione o una domanda..."
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+              maxLength={1000}
+              className="bg-input/50 border-border/50 min-h-[80px] resize-none"
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-muted-foreground">
+                {newPostContent.length}/1000
+              </span>
+              <Button
+                onClick={handleCreatePost}
+                disabled={!newPostContent.trim() || posting}
+                size="sm"
+                className="bg-gradient-to-r from-primary to-accent text-primary-foreground"
+              >
+                <Send className="w-4 h-4 mr-1" />
+                Pubblica
+              </Button>
             </div>
-          </div>
-          <Textarea
-            placeholder="Condividi la tua esperienza, una riflessione o una domanda..."
-            value={newPostContent}
-            onChange={(e) => setNewPostContent(e.target.value)}
-            maxLength={1000}
-            className="bg-input/50 border-border/50 min-h-[80px] resize-none"
-          />
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">
-              {newPostContent.length}/1000
-            </span>
-            <Button
-              onClick={handleCreatePost}
-              disabled={!newPostContent.trim() || posting}
-              size="sm"
-              className="bg-gradient-to-r from-primary to-accent text-primary-foreground"
-            >
-              <Send className="w-4 h-4 mr-1" />
-              Pubblica
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-2xl p-5 text-center space-y-3"
+          >
+            <p className="text-sm text-muted-foreground">
+              Registrati per partecipare alla discussione e condividere le tue esperienze!
+            </p>
+            <Button variant="cosmic" size="sm" asChild>
+              <Link to="/auth?mode=signup">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Registrati gratis
+              </Link>
             </Button>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         {/* Filters */}
         <div className="flex items-center gap-2">
@@ -616,7 +635,7 @@ export default function Community() {
                     return (
                       <button
                         key={v}
-                        onClick={() => handleReact(post.id, v)}
+                        onClick={() => userId ? handleReact(post.id, v) : navigate("/auth?mode=signup")}
                         className={`
                           flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all
                           ${isActive
@@ -680,29 +699,37 @@ export default function Community() {
                           </div>
                         ))}
 
-                        {/* New comment input */}
-                        <div className="flex gap-2 items-end">
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
-                            {userName?.charAt(0)?.toUpperCase() || "?"}
+                        {/* New comment input - only for logged-in users */}
+                        {userId ? (
+                          <div className="flex gap-2 items-end">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
+                              {userName?.charAt(0)?.toUpperCase() || "?"}
+                            </div>
+                            <div className="flex-1 flex gap-2">
+                              <Textarea
+                                value={commentTexts[post.id] || ""}
+                                onChange={(e) => setCommentTexts((prev) => ({ ...prev, [post.id]: e.target.value }))}
+                                placeholder="Scrivi un commento..."
+                                maxLength={500}
+                                className="min-h-[36px] text-xs bg-input/30 border-border/30 resize-none py-2"
+                              />
+                              <Button
+                                size="icon"
+                                className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                                onClick={() => handleAddComment(post.id)}
+                                disabled={!(commentTexts[post.id] || "").trim()}
+                              >
+                                <Send className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex-1 flex gap-2">
-                            <Textarea
-                              value={commentTexts[post.id] || ""}
-                              onChange={(e) => setCommentTexts((prev) => ({ ...prev, [post.id]: e.target.value }))}
-                              placeholder="Scrivi un commento..."
-                              maxLength={500}
-                              className="min-h-[36px] text-xs bg-input/30 border-border/30 resize-none py-2"
-                            />
-                            <Button
-                              size="icon"
-                              className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-accent text-primary-foreground"
-                              onClick={() => handleAddComment(post.id)}
-                              disabled={!(commentTexts[post.id] || "").trim()}
-                            >
-                              <Send className="w-3.5 h-3.5" />
+                        ) : (
+                          <div className="text-center py-2">
+                            <Button variant="ghost" size="sm" className="text-xs text-primary" asChild>
+                              <Link to="/auth?mode=signup">Registrati per commentare</Link>
                             </Button>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
