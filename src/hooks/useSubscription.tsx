@@ -274,8 +274,27 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
+  subscribed: false,
+  fullAccess: false,
+  subscriptionEnd: null,
+  loading: true,
+  payPerUsePurchases: [],
+  profileCreatedAt: null,
+  hasUnlockAll: false,
+  checkSubscription: async () => {},
+  canAccess: () => false,
+  isInTrial: () => false,
+  isTrialExpired: () => false,
+  trialRemainingMs: () => 0,
+  isPayPerUse: () => false,
+  getPayPerUseFeature: () => null,
+  getTrialPPUFeature: () => null,
+  hasPayPerUsePurchase: () => false,
+  refreshPayPerUsePurchases: async () => {},
+};
+
 export function useSubscription() {
   const ctx = useContext(SubscriptionContext);
-  if (!ctx) throw new Error("useSubscription must be used within SubscriptionProvider");
-  return ctx;
+  return ctx ?? DEFAULT_SUBSCRIPTION;
 }
