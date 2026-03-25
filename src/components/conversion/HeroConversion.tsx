@@ -22,6 +22,16 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
       <div className="absolute bottom-32 left-[20%] text-primary/10 font-display text-9xl font-bold select-none opacity-10">3</div>
 
       <div className="relative z-10 container mx-auto px-4 text-center max-w-4xl">
+        {/* Login button */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+          <Button variant="outline" size="sm" asChild className="gap-2 bg-background/10 backdrop-blur-sm border-primary/30 hover:bg-primary/20">
+            <Link to="/auth">
+              <LogIn className="w-4 h-4" />
+              Accedi
+            </Link>
+          </Button>
+        </div>
+
         <div className="animate-fadeIn">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/30 mb-8">
