@@ -37,11 +37,18 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   const [schedule, setSchedule] = useState<FeatureScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userCreatedAt, setUserCreatedAt] = useState<string | null>(null);
+  const [bypassSchedule, setBypassSchedule] = useState(false);
+
+  const BYPASS_EMAILS = ["regnew01@gmail.com", "maria732008@live.it"];
 
   const loadSchedule = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setLoading(false); return; }
+
+      if (BYPASS_EMAILS.includes(session.user.email || "")) {
+        setBypassSchedule(true);
+      }
 
       const [scheduleResult, profileResult] = await Promise.all([
         supabase.from("feature_schedule" as any).select("feature_key, feature_label, unlock_after_days, enabled"),
@@ -65,8 +72,9 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   }, [loadSchedule]);
 
   const isFeatureUnlocked = useCallback((featureKey: string): boolean => {
+    if (bypassSchedule) return true;
     const feature = schedule.find(f => f.feature_key === featureKey);
-    if (!feature) return true; // unknown features are unlocked by default
+    if (!feature) return true;
     if (!feature.enabled) return false;
     if (feature.unlock_after_days === 0) return true;
     if (!userCreatedAt) return false;
@@ -75,9 +83,10 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
     const now = new Date();
     const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
     return daysSinceCreation >= feature.unlock_after_days;
-  }, [schedule, userCreatedAt]);
+  }, [schedule, userCreatedAt, bypassSchedule]);
 
   const getDaysRemaining = useCallback((featureKey: string): number => {
+    if (bypassSchedule) return 0;
     const feature = schedule.find(f => f.feature_key === featureKey);
     if (!feature || feature.unlock_after_days === 0) return 0;
     if (!userCreatedAt) return feature.unlock_after_days;
@@ -86,7 +95,7 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
     const now = new Date();
     const daysSinceCreation = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
     return Math.max(0, feature.unlock_after_days - daysSinceCreation);
-  }, [schedule, userCreatedAt]);
+  }, [schedule, userCreatedAt, bypassSchedule]);
 
   const getFeatureByRoute = useCallback((route: string): FeatureScheduleItem | null => {
     const featureKey = ROUTE_TO_FEATURE[route];
