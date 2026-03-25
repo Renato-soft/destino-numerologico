@@ -3,16 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Monthly subscription
 export const PLAN = {
-  product_id: "prod_UC8lYk5YrO4Yqs",
-  price_id: "price_1TDkU2QYqblmeN5938H6Ngdh",
+  product_id: "prod_UDOGRjZ732JeQE",
+  price_id: "price_1TExUBAD91QoshNxsggizR9i",
   price: 4.99,
   mode: "subscription" as const,
 };
 
 // One-time unlock all PPU services
 export const UNLOCK_ALL = {
-  product_id: "prod_UDIt7ZtgNla3sI",
-  price_id: "price_1TEsI5QYqblmeN59kIS5yCSY",
+  product_id: "prod_UDOHs7QVee5CLc",
+  price_id: "price_1TExUVAD91QoshNxkdJ9rWWg",
   price: 9.99,
   mode: "payment" as const,
 };
@@ -20,32 +20,32 @@ export const UNLOCK_ALL = {
 // Pay-per-use features (€1.99 each)
 export const PAY_PER_USE = {
   brand: {
-    product_id: "prod_UC8lN3jvcAjuzY",
-    price_id: "price_1TDkUNQYqblmeN595nGv1zB9",
+    product_id: "prod_UDOHQBseMWWyFG",
+    price_id: "price_1TExUzAD91QoshNxWhjs9fYd",
     price: 1.99,
     route: "/brand",
   },
   house: {
-    product_id: "prod_UC8mJfdxp6RpW1",
-    price_id: "price_1TDkUhQYqblmeN591f3H6jz9",
+    product_id: "prod_UDOHFvU32YplQC",
+    price_id: "price_1TExVFAD91QoshNxYEcyOuqT",
     price: 1.99,
     route: "/house",
   },
   compatibility: {
-    product_id: "prod_UC8mkojnoUFaIT",
-    price_id: "price_1TDkV1QYqblmeN59W8daDqfv",
+    product_id: "prod_UDOIgkWNAAyvic",
+    price_id: "price_1TExVoAD91QoshNx4VrbqB0l",
     price: 1.99,
     route: "/compatibility",
   },
   dates: {
-    product_id: "prod_UDIwNAEoaAu2Vy",
-    price_id: "price_1TEsKqQYqblmeN59BQcf9mdm",
+    product_id: "prod_UDOInKYIUMKr0m",
+    price_id: "price_1TExW7AD91QoshNx0euel2rL",
     price: 1.99,
     route: "/dates",
   },
   map: {
-    product_id: "prod_UDJZwi1ePtlJsM",
-    price_id: "price_1TEswAQYqblmeN59vbNWz1QO",
+    product_id: "prod_UDOI89LlThJOD5",
+    price_id: "price_1TExWNAD91QoshNx3TSmt6S7",
     price: 1.99,
     route: "/map",
   },
@@ -56,8 +56,8 @@ export type PayPerUseFeature = keyof typeof PAY_PER_USE;
 // Trial PPU: services available once at €1.99 during 24h trial
 export const TRIAL_PPU = {
   advancedReport: {
-    product_id: "prod_UC8mCVkYDpgclN",
-    price_id: "price_1TDkVKQYqblmeN59aDjwfbTs",
+    product_id: "prod_UDOJVMKudX9Jxx",
+    price_id: "price_1TExWeAD91QoshNxLtKcy1bd",
     price: 1.99,
     route: "/advanced-report",
   },
