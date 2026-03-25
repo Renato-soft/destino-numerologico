@@ -43,6 +43,12 @@ export const PAY_PER_USE = {
     price: 1.99,
     route: "/dates",
   },
+  map: {
+    product_id: "prod_UDJZwi1ePtlJsM",
+    price_id: "price_1TEswAQYqblmeN59vbNWz1QO",
+    price: 1.99,
+    route: "/map",
+  },
 } as const;
 
 export type PayPerUseFeature = keyof typeof PAY_PER_USE;
@@ -60,7 +66,7 @@ export const TRIAL_PPU = {
 export type TrialPPUFeature = keyof typeof TRIAL_PPU;
 
 // Routes FREE during 24h trial
-const TRIAL_FREE_ROUTES = ["/map", "/chat", "/dates"];
+const TRIAL_FREE_ROUTES = ["/chat", "/dates"];
 
 // Routes included in subscription (post-trial)
 const SUBSCRIPTION_ROUTES = ["/map", "/personal-year", "/pillars", "/chat", "/community", "/profile", "/advanced-report"];
@@ -71,6 +77,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
   "/house": "house",
   "/compatibility": "compatibility",
   "/dates": "dates",
+  "/map": "map",
 };
 
 // Routes that are PPU only during trial
