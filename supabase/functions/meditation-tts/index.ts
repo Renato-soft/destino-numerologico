@@ -30,10 +30,10 @@ serve(async (req) => {
     }
 
     // Use "Brian" voice - deep, calm male voice with multilingual v2 for Italian
-    const voiceId = "nPczCjzI2devNBz1zQrb"; // Brian
+    const voiceId = "nPczCjzI2devNBz1zQrb";
 
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`,
       {
         method: "POST",
         headers: {
@@ -66,13 +66,12 @@ serve(async (req) => {
       );
     }
 
-    const audioBuffer = await response.arrayBuffer();
-
-    return new Response(audioBuffer, {
+    // Stream the audio response directly
+    return new Response(response.body, {
       headers: {
         ...corsHeaders,
         "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=86400",
+        "Transfer-Encoding": "chunked",
       },
     });
   } catch (error) {

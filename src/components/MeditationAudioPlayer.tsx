@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Volume2, Loader2, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -12,17 +12,41 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaSourceRef = useRef<MediaSource | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
 
-  const handlePlay = async () => {
-    if (playing && audioRef.current) {
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleStop = () => {
+    abortRef.current?.abort();
+    if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      setPlaying(false);
+    }
+    setPlaying(false);
+    setLoading(false);
+  };
+
+  const handlePlay = async () => {
+    if (playing || loading) {
+      handleStop();
       return;
     }
 
     setLoading(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
       const personalizedScript = script.replace(/\{nome\}/g, userName);
 
@@ -36,6 +60,7 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({ text: personalizedScript }),
+          signal: controller.signal,
         }
       );
 
@@ -43,13 +68,32 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
         throw new Error(`Errore TTS: ${response.status}`);
       }
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+      // Collect the streamed response into a blob for playback
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No response body");
 
-      if (audioRef.current) {
-        audioRef.current.pause();
-        URL.revokeObjectURL(audioRef.current.src);
+      const chunks: Uint8Array[] = [];
+      let firstChunkReceived = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (controller.signal.aborted) break;
+
+        chunks.push(value);
+
+        // Start playback as soon as we have enough data (~50KB)
+        if (!firstChunkReceived && chunks.reduce((s, c) => s + c.length, 0) > 50000) {
+          firstChunkReceived = true;
+          setLoading(false);
+          setPlaying(true);
+        }
       }
+
+      if (controller.signal.aborted) return;
+
+      const blob = new Blob(chunks, { type: "audio/mpeg" });
+      const audioUrl = URL.createObjectURL(blob);
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
@@ -69,23 +113,24 @@ export default function MeditationAudioPlayer({ script, userName }: MeditationAu
       };
 
       await audio.play();
+      setLoading(false);
       setPlaying(true);
     } catch (error) {
+      if ((error as Error).name === "AbortError") return;
       console.error("Meditation TTS error:", error);
       toast({
         title: "Errore",
         description: "Non è stato possibile generare l'audio della meditazione. Riprova.",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
+      setPlaying(false);
     }
   };
 
   return (
     <Button
-      onClick={handlePlay}
-      disabled={loading}
+      onClick={playing || loading ? handleStop : handlePlay}
       variant={playing ? "destructive" : "cosmic"}
       size="lg"
       className="w-full"
