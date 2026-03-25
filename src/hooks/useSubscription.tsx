@@ -217,10 +217,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     // Always-PPU routes: accessible if purchased or unlock-all
     if (route in PAY_PER_USE_ROUTES) {
       if (state.hasUnlockAll) return true;
+      // Map is included in subscription
+      if (route === "/map" && state.subscribed) return true;
       const feature = PAY_PER_USE_ROUTES[route];
       const productId = PAY_PER_USE[feature].product_id;
       if (state.payPerUsePurchases.includes(productId)) return true;
-      // During trial, dates are free
+      // During trial, dates and chat are free
       if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;
       return false;
     }
