@@ -29,8 +29,8 @@ serve(async (req) => {
       });
     }
 
-    // Use "Bill" voice - older, deeper, warmer male voice with multilingual v2 for Italian
-    const voiceId = "pqHfZKP75CvOlQylNhV4"; // Bill - mature, warm
+    // Custom Italian voice from Voice Library
+    const voiceId = "2mvMyhTjl4X2FGED1Ug8";
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`,
