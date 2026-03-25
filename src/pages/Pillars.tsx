@@ -15,6 +15,7 @@ import {
   Trophy,
   X,
 } from "lucide-react";
+import MeditationAudioPlayer from "@/components/MeditationAudioPlayer";
 import { pillarsContent, type PillarContent } from "@/data/pillarsContent";
 import { calculateKarmicLessons, karmicLessonMeanings } from "@/lib/karmicLessons";
 import { numberMeanings, masterMeanings } from "@/lib/numerology";
