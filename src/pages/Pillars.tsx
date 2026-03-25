@@ -590,6 +590,8 @@ export default function Pillars() {
                       {/* Audio meditation button */}
                       <MeditationAudioPlayer
                         pillarIndex={activePillar}
+                        userName={profile?.nome || "amico"}
+                        meditationSteps={activePillarData.meditation.steps}
                       />
                     </div>
 
