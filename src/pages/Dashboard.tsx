@@ -306,7 +306,7 @@ const Dashboard = () => {
       icon: MessageCircle,
       href: "/community",
       color: "from-indigo-500 to-purple-500",
-      badge: subscribed ? "INCLUSO" : null,
+      badge: "GRATIS",
     },
   ];
 
