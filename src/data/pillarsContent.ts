@@ -19,7 +19,8 @@ export interface PillarContent {
   meditation: {
     title: string;
     duration: string;
-    script: string; // Full guided meditation script with {nome} placeholder
+    steps: string[]; // Short summary steps shown to user
+    script: string; // Full guided meditation script with {nome} placeholder (hidden from UI)
   };
   badgeId: string;
   badgeName: string;
