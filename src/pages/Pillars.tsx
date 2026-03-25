@@ -575,16 +575,15 @@ export default function Pillars() {
                           {activePillarData.meditation.duration}
                         </span>
                       </div>
-                      <ol className="space-y-4">
-                        {activePillarData.meditation.steps.map((step, i) => (
-                          <li key={i} className="flex gap-3 text-sm text-muted-foreground">
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-secondary/10 text-secondary text-xs flex items-center justify-center font-semibold">
-                              {i + 1}
-                            </span>
-                            {step}
-                          </li>
-                        ))}
-                      </ol>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line mb-6">
+                        {activePillarData.meditation.script.replace(/\{nome\}/g, profile?.nome || "caro amico")}
+                      </p>
+
+                      {/* Audio meditation button */}
+                      <MeditationAudioPlayer
+                        script={activePillarData.meditation.script}
+                        userName={profile?.nome || "caro amico"}
+                      />
                     </div>
 
                     {activePillarProgress && !activePillarProgress.meditation_completed && (
