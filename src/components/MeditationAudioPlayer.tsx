@@ -42,7 +42,7 @@ export default function MeditationAudioPlayer({ pillarIndex }: MeditationAudioPl
     setLoading(true);
 
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/meditation-music/pillar_${pillarIndex}.mp3`;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/meditation-music/pillar_${pillarIndex}.mp3?v=${NATURE_AUDIO_VERSION}`;
 
       const audio = new Audio(url);
       audio.loop = true;
