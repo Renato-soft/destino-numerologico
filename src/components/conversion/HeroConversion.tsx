@@ -12,7 +12,13 @@ const HeroConversion = ({ birthDate, setBirthDate, onPreview }: HeroConversionPr
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Login button - fixed top right */}
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-2">
+        <Button variant="ghost" size="sm" asChild className="gap-2 text-foreground/80 hover:text-primary hover:bg-primary/10">
+          <Link to="/community">
+            <Users className="w-4 h-4" />
+            Community
+          </Link>
+        </Button>
         <Button variant="outline" size="sm" asChild className="gap-2 bg-background/10 backdrop-blur-sm border-primary/30 hover:bg-primary/20">
           <Link to="/auth">
             <LogIn className="w-4 h-4" />
