@@ -14,6 +14,7 @@ const TestimonialsConversion = lazy(() => import("@/components/conversion/Testim
 const AboutSection = lazy(() => import("@/components/conversion/AboutSection"));
 const FAQSection = lazy(() => import("@/components/conversion/FAQSection"));
 const FinalCTA = lazy(() => import("@/components/conversion/FinalCTA"));
+const CommunityPreview = lazy(() => import("@/components/conversion/CommunityPreview"));
 const FooterConversion = lazy(() => import("@/components/conversion/FooterConversion"));
 
 const lifePathDescriptions: Record<number, string> = {
@@ -72,6 +73,9 @@ const LandingPage = () => {
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
         <FAQSection />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <CommunityPreview />
       </Suspense>
       <Suspense fallback={<SectionFallback />}>
         <FinalCTA birthDate={birthDate} setBirthDate={setBirthDate} onPreview={handlePreview} />
