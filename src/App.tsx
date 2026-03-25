@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import { FeatureScheduleProvider } from "@/hooks/useFeatureSchedule";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
@@ -28,7 +28,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
-import LandingPage from "./pages/LandingPage";
+
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,7 @@ const App = () => (
         <SubscriptionProvider>
         <FeatureScheduleProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
