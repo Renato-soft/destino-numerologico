@@ -63,6 +63,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione del Cuore Profondo",
       duration: "10 minuti",
+      steps: [
+        "Chiudi gli occhi e porta l'attenzione al centro del petto.",
+        "Immagina una luce calda che pulsa nel tuo cuore.",
+        "Ad ogni respiro, la luce si espande lentamente.",
+        "Chiedi silenziosamente: \"Cosa desidera veramente la mia Anima?\"",
+        "Resta in ascolto per 3-5 minuti senza giudicare le risposte.",
+        "Ringrazia e apri dolcemente gli occhi.",
+      ],
       script: " Pace a te, {nome}. Sono un vecchio monaco e sono qui per guidarti. Siediti comodamente, caro mio, e permetti al tuo corpo di rilassarsi completamente. Lascia che le spalle si abbassino, che la fronte si distenda. Chiudi gli occhi dolcemente, come fiori che si riposano al tramonto. ... Ora, {nome}, porta la tua attenzione al tuo respiro. Senti l'aria fresca entrare ed uscire dal tuo corpo. Non forzarlo, lascialo fluire così come vuole. ... Immagina ora, proprio al centro del tuo petto, un piccolo puntino luminoso. È come una piccola scintilla, una luce delicata che brilla. Questa luce è il tuo desiderio più profondo, il tuo vero Sé, l'essenza di ciò che sei. ... Non devi fare nulla, solo osservarla. Lascia che questa scintilla, questa luce, diventi un po' più grande ad ogni respiro. Non è un fuoco che brucia, ma uno che riscalda, che illumina con dolcezza. ... Forse, mentre la osservi, ti verrà in mente qualcosa che ti rende davvero felice, qualcosa che ti fa sentire completo e in pace. Non afferrare quel pensiero, lascialo danzare nella tua mente come una leggera farfalla. ... Siamo solo osservatori in questo momento, {nome}. Osserviamo la purezza del tuo desiderio più sacro. È lì, sempre presente, anche quando la vita sembra confusa o rumorosa. ... Quando sei pronto, con calma, apri lentamente gli occhi, portando con te questa consapevolezza. Ricorda che questo seme luminoso è sempre dentro di te, pronto a guidarti.",
     },
     badgeId: "pillar_anima",
@@ -104,6 +112,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione della Luce Creativa",
       duration: "8 minuti",
+      steps: [
+        "Siediti comodamente e immagina una luce dorata sopra la tua testa.",
+        "La luce scende lentamente e avvolge ogni parte del tuo corpo.",
+        "Senti ogni cellula vibrare con la tua energia unica.",
+        "Visualizza te stesso mentre esprimi il tuo talento più grande.",
+        "Senti la gioia e la libertà di quell'espressione.",
+        "Porta questa sensazione con te nella giornata.",
+      ],
       script: " Benvenuto ancora, {nome}. Siediti comodamente e lascia che il tuo respiro diventi calmo e regolare. Sentiti radicato alla terra sotto di te, come un albero con le sue radici profonde... Chiudi gli occhi, {nome}, e porta l'attenzione al centro del tuo petto. Immagina che da lì parta un raggio di luce, un raggio colorato e brillante. Questa luce è la tua 'Espressione', il tuo modo unico di mostrarti al mondo. ... Forse è un raggio giallo, che simboleggia la tua gioia e la tua capacità di far ridere. O un raggio blu, che mostra la tua calma e la tua saggezza. O rosso, per la tua energia e il tuo coraggio. ... Non preoccuparti del colore, caro {nome}. Lascia che sia la tua luce a scegliersi. Senti come questo raggio si espande dal tuo corpo, toccando le persone e le cose intorno a te con gentilezza. ... Questo raggio rappresenta i tuoi talenti, le tue passioni, il modo in cui parli, come ti muovi, come risolvi i problemi. È il tuo modo speciale di interagire con il mondo. ... Senti la bellezza di questa luce unica. Non ci sono altre luci esattamente come la tua. È il tuo dono speciale per il mondo. ... Accetta e ama questa luce, {nome}. Non c'è bisogno di nasconderla o cambiarla. È perfetta così com'è. ... Quando ti sentirai pronto, con calma, apri gli occhi, e porta con te la consapevolezza della tua luce unica.",
     },
     badgeId: "pillar_espressione",
@@ -146,6 +162,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione dello Specchio Interiore",
       duration: "10 minuti",
+      steps: [
+        "Chiudi gli occhi e immagina di stare davanti a uno specchio.",
+        "Osserva l'immagine riflessa: questa è la tua Personalità.",
+        "Ora guarda oltre lo specchio e vedi il tuo vero sé.",
+        "Nota le differenze senza giudizio.",
+        "Immagina che lo specchio diventi trasparente, unificando le due immagini.",
+        "Respira profondamente e accogli l'integrazione.",
+      ],
       script: " Respiriamo insieme, {nome}. Lascia che ogni espirazione sciolga un po' di tensione, che ogni inspirazione porti nuova calma. Immagina ora di essere un attore su un piccolo palco. ... Oggi, caro {nome}, non c'è pubblico. Sei solo tu. Immagina di indossare tanti abiti diversi, tanti costumi. Questo è ciò che mostriamo al mondo: la nostra 'Personalità'. ... Qualche volta indossiamo l'abito della 'persona forte', altre volte quello della 'persona divertente', o della 'persona timida'. Sono tutti modi di presentarti. ... Ora, con gli occhi della tua mente, togliti tutti questi abiti, un costume alla volta. Lascia che cadano ai tuoi piedi. Non c'è bisogno di nascondersi qui, in questo spazio sacro. ... Senti la leggerezza di non avere più addosso nessuna 'maschera'. Chi sei tu, senza nessun abito, senza nessun ruolo? Senti la tua pelle, la tua vera essenza. ... Non c'è nulla da cambiare, nulla da giudicare. Siamo solo esseri umani che, a volte, indossano abiti per sentirsi più sicuri o per essere accettati. ... Ma ricorda, la tua vera bellezza, la tua vera natura, è sotto ogni travestimento. ... Quando sarai pronto, {nome}, apri gli occhi. E porta con te la consapevolezza di chi sei, al di là di ciò che mostri al mondo.",
     },
     badgeId: "pillar_personalita",
@@ -187,6 +211,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione del Sentiero",
       duration: "12 minuti",
+      steps: [
+        "Chiudi gli occhi e immagina di camminare su un sentiero in un bosco.",
+        "Il sentiero rappresenta il tuo Destino. Osserva il paesaggio attorno.",
+        "Guarda indietro e vedi da dove sei venuto. Onora il cammino fatto.",
+        "Guarda avanti: cosa vedi? Lascia che l'intuizione ti mostri il prossimo passo.",
+        "Senti la terra sotto i piedi e la fiducia nel tuo percorso.",
+        "Apri gli occhi portando con te questa certezza interiore.",
+      ],
       script: " Carissimo {nome}, prendi una posizione comoda e lascia che il tuo respiro ti porti in uno stato di calma profonda. ... Chiudi gli occhi, {nome}, e immagina di essere su un sentiero sereno in un bosco incantato. Questo sentiero è il tuo 'Destino', il cammino che la tua anima ha scelto. ... A volte il sentiero è largo e illuminato dal sole, e camminare è facile. Altre volte, ci sono delle salite, o qualche sasso sul cammino. Queste sono le lezioni che la vita ti offre. ... Non devi avere paura di queste lezioni, {nome}. Sono lì per farti diventare più saggio, più forte, più consapevole. Ogni sasso superato, ogni salita affrontata, ti mostra qualcosa di te stesso che non conoscevi. ... Senti che questo sentiero è tuo, e solo tuo. Non c'è un modo giusto o sbagliato di percorrerlo. ... Semplicemente, osserva il paesaggio. Cosa vedi? Forse alberi maestosi, fiori colorati, uccelli che cantano. C'è bellezza in ogni angolo del tuo cammino. ... Senti la saggezza che emerge dentro di te, la comprensione che ogni passo, anche quello più piccolo, ha un significato. ... Confida nel tuo cammino, {nome}. Ogni esperienza ti sta preparando per qualcosa di meraviglioso. ... Quando sei pronto, apri i tuoi occhi, e ricorda che ogni giorno è un passo su questo bellissimo sentiero della tua vita.",
     },
     badgeId: "pillar_destino",
@@ -229,6 +261,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione dell'Integrazione Karmica",
       duration: "10 minuti",
+      steps: [
+        "Siediti in silenzio e pensa a una sfida ricorrente nella tua vita.",
+        "Immagina questa sfida come una porta chiusa davanti a te.",
+        "Nella tua mano appare una chiave dorata: è la consapevolezza.",
+        "Inserisci la chiave e apri la porta. Cosa c'è dall'altra parte?",
+        "Attraversa la porta e senti la nuova energia integrarsi in te.",
+        "Ringrazia la lezione per ciò che ti ha insegnato.",
+      ],
       script: " Lascia che il tuo respiro si approfondisca, {nome}. Senti il tuo corpo stabile, ma allo stesso tempo leggero. ... Chiudi gli occhi, mio caro, e immagina di essere in un giardino segreto, pieno di fiori meravigliosi. Ma in un angolo, c'è un piccolo pezzo di terra dove sembra mancare qualcosa. ... Questo pezzo di terra rappresenta le tue 'Lezioni Karmiche', quelle aree della tua vita dove c'è ancora spazio per crescere, per imparare. Sono come quei semi che non sono ancora sbocciati. ... Non sono mancanze, {nome}, ma opportunità. Pensaci, in questo piccolo angolo, cosa vorresti piantare? Quale fiore, quale pianta vorresti veder crescere? ... Forse è la pazienza, e immagini di piantare un piccolo seme e aspettare che spunti. Forse è la condivisione, e immagini di piantare un fiore e condividerlo con gli altri. ... Sentiti come un giardiniere amorevole che si prende cura di questo pezzo di terra. Non c'è giudizio, solo desiderio di nutrimento e crescita. ... Puoi portare acqua e luce a questo pezzo di terra, semplicemente con la tua intenzione e con la tua volontà di imparare. ... Sii gentile con te stesso, {nome}. Ogni seme ha bisogno del suo tempo per germogliare e fiorire. ... Quando ti sentirai pronto, apri i tuoi occhi, e ricorda che ogni giorno è una nuova occasione per coltivare questo giardino interiore.",
     },
     badgeId: "pillar_karma",
@@ -270,6 +310,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione del Ciclo",
       duration: "8 minuti",
+      steps: [
+        "Chiudi gli occhi e immagina un grande orologio cosmico.",
+        "La lancetta indica il tuo Anno Personale attuale.",
+        "Senti l'energia di questo numero avvolgerti.",
+        "Chiedi: \"Come posso onorare al meglio questo ciclo?\"",
+        "Ascolta le risposte che emergono spontaneamente.",
+        "Concludi con un respiro profondo di accettazione.",
+      ],
       script: " Ancora una volta, troviamo la pace nel respiro, {nome}. Lascia che il tuo corpo si rilassi e la tua mente si calmi. ... Immagina ora di essere su una spiaggia, al confine tra l'anno appena passato e l'anno che sta per arrivare. Senti la sabbia sotto i tuoi piedi, il suono delle onde, che è come il ritmo del tempo. ... Il sole sta tramontando dietro di te, salutando il vecchio anno con i suoi ricordi e le sue lezioni. Davanti a te, l'orizzonte si tinge dei colori vivaci dell'alba, annunciando l'anno nuovo. ... Questo nuovo anno, {nome}, ha una sua energia speciale, un suo tema, come il colore dominante di questa alba. Forse è un rosso energico, un blu calmo, un verde di crescita. ... Non devi sapere con la mente cos'è, semplicemente sentilo. Lascia che questa energia, questa vibrazione, ti avvolga. ... Cosa desideri portare in questo nuovo capitolo della tua vita? Quali semi vuoi piantare con l'energia di quest'anno? Non risposte complesse, solo un sentire, un'intenzione. ... Accogli questo nuovo ciclo, caro {nome}, con fiducia e apertura. Ogni anno ti offre doni e opportunità unici. ... Quando sei pronto, apri con dolcezza gli occhi, e porta con te la fresca energia del tuo 'Anno Personale'.",
     },
     badgeId: "pillar_anno",
@@ -311,6 +359,14 @@ export const pillarsContent: PillarContent[] = [
     meditation: {
       title: "Meditazione della Visione Suprema",
       duration: "15 minuti",
+      steps: [
+        "Chiudi gli occhi e immagina di salire in alto, sempre più in alto.",
+        "Dall'alto puoi vedere l'intero panorama della tua vita.",
+        "Osserva i 6 pilastri precedenti come luci che brillano sotto di te.",
+        "Vedi come si connettono formando un disegno unico: il tuo disegno.",
+        "Senti la gratitudine per il tuo viaggio e la certezza del tuo cammino.",
+        "Scendi dolcemente, portando con te la visione d'insieme.",
+      ],
       script: " Carissimo {nome}, respira profondamente, sentiti leggero e libero. Lascia che la tua mente sia come un cielo limpido, senza nuvole. ... Chiudi gli occhi, e immagina di essere su una montagna molto alta, e puoi vedere tutto il paesaggio sotto di te. Da qui, vedi il tuo cammino, non solo un pezzo, ma tutta la strada che hai percorso e quella che ti aspetta. ... Alla fine di questo cammino, in lontananza, vedi una luce splendente. Questa luce, {nome}, è la tua 'Visione Evolutiva', la tua missione più alta, il dono più grande che puoi portare al mondo. ... Non è una meta concreta, ma un senso, un sentimento che ti guida. Forse è la gioia che vuoi condividere, la pace che vuoi creare, la bellezza che vuoi mostrare agli altri. ... Sentila nel tuo cuore, questa luce. È grande, luminosa, e ti riempie di un calore speciale. ... Non devi affrettarti a raggiungerla, {nome}. Ogni passo del tuo cammino ti porta sempre più vicino a questa luce, a questo scopo. Ogni azione, ogni pensiero, può essere guidato da questa visione. ... Ricorda, tu sei un essere unico e speciale, e porti un dono unico al mondo. Non c'è nessuno come te. ... Quando sarai pronto, {nome}, apri gli occhi, e porta con te la consapevolezza di questa luce guida, la tua 'stella polare' che ti illuminerà sempre.",
     },
     badgeId: "pillar_visione",
