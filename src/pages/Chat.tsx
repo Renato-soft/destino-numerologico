@@ -278,10 +278,10 @@ const Chat = () => {
   };
 
   const quickQuestions = [
-    "Come sarà la mia giornata di oggi?",
-    "Quali date sono favorevoli questo mese?",
-    "Spiegami il mio Life Path",
-    "Cosa mi consigli di indossare oggi?",
+    "Qual è il significato profondo del mio numero del destino?",
+    "Che energia porta il mese di oggi per me?",
+    "Come posso sfruttare al meglio il mio anno personale?",
+    "Dimmi qualcosa sulla mia anima e personalità",
   ];
 
   if (loading) {
