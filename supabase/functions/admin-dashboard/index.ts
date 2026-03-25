@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const ADMIN_EMAILS = ["regnew01@gmail.com", "realerenato@gmail.com", "maria732008@live.it"];
+const ADMIN_EMAILS = ["regnew01@gmail.com", "maria732008@live.it"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : user.email === "realerenato@gmail.com" ? "admin" : "viewer";
+    const userRole = user.email === "regnew01@gmail.com" ? "superadmin" : "viewer";
 
     // Determine action from query string or body
     const url = new URL(req.url);
