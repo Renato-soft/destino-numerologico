@@ -38,11 +38,6 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const stripeKey = (Deno.env.get("STRIPE_SECRET_KEY") ?? "").trim();
-    if (!stripeKey || stripeKey.startsWith("pk_")) {
-      return unsubscribedResponse({ error: "Stripe key misconfigured" });
-    }
-
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
 
@@ -53,13 +48,18 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
 
-    // Manual overrides
+    // Manual overrides — check BEFORE Stripe key validation
     if (OVERRIDES.includes(user.email.toLowerCase())) {
       logStep("Manual override found – full access");
       return new Response(
         JSON.stringify({ subscribed: true, subscription_end: null, full_access: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
       );
+    }
+
+    const stripeKey = (Deno.env.get("STRIPE_SECRET_KEY") ?? "").trim();
+    if (!stripeKey || stripeKey.startsWith("pk_")) {
+      return unsubscribedResponse({ error: "Stripe key misconfigured" });
     }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
