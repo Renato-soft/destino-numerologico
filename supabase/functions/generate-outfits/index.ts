@@ -352,14 +352,25 @@ Deno.serve(async (req) => {
     const vibeStyles = isFemale ? femaleVibeStyles : maleVibeStyles;
     const style = vibeStyles[vibeKey] || vibeStyles[1];
 
-    // Get user photo
-    let userPhotoUrl: string | null = null;
+    // Get ALL user photos for comprehensive appearance analysis
+    const userPhotoUrls: string[] = [];
     const photos = photosResult.data;
     if (photos && photos.length > 0) {
-      const preferred =
-        photos.find((p) => p.type === "full_front") || photos.find((p) => p.type === "face") || photos[0];
-      const { data } = await supabase.storage.from("user-photos").createSignedUrl(preferred.storage_path, 600);
-      userPhotoUrl = data?.signedUrl || null;
+      // Prioritize: face first, then full_front, full_side, then extras
+      const sortOrder: Record<string, number> = { face: 0, full_front: 1, full_side: 2 };
+      const sorted = [...photos].sort((a, b) => {
+        const oa = sortOrder[a.type] ?? 3;
+        const ob = sortOrder[b.type] ?? 3;
+        return oa - ob;
+      });
+      // Get signed URLs for all photos (max 6 to avoid token limits)
+      const photosToUse = sorted.slice(0, 6);
+      const signedResults = await Promise.all(
+        photosToUse.map((p) => supabase.storage.from("user-photos").createSignedUrl(p.storage_path, 600))
+      );
+      for (const result of signedResults) {
+        if (result.data?.signedUrl) userPhotoUrls.push(result.data.signedUrl);
+      }
     }
 
     // Season context
