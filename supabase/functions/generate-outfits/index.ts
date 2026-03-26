@@ -381,7 +381,8 @@ Deno.serve(async (req) => {
     const ageHint = userAge
       ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.`
       : "";
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
+    const vibrationEmphasis = `CRITICAL: The outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). The colors, textures and overall feel should channel this specific frequency. This is NOT optional — the numerological alignment is the core purpose of the outfit suggestion.`;
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
 
     const outfitPrompts = [
       {
