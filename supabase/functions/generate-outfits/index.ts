@@ -424,7 +424,6 @@ Deno.serve(async (req) => {
               contentParts.push({ type: "image_url", image_url: { url } });
             }
             messages.push({ role: "user", content: contentParts });
-            });
           } else {
             messages.push({
               role: "user",
