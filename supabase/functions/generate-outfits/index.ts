@@ -391,78 +391,97 @@ Deno.serve(async (req) => {
       },
     ];
 
-    const generateImage = async (prompt: string, label: string) => {
-      try {
-        const messages: any[] = [];
+    const generateImage = async (prompt: string, label: string, maxRetries = 2): Promise<string | null> => {
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          if (attempt > 0) {
+            console.log(`Retry ${attempt}/${maxRetries} for ${label}`);
+            await new Promise(r => setTimeout(r, 1000 * attempt));
+          }
 
-        if (userPhotoUrl) {
-          messages.push({
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ""}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. This is a ${genderLabel}. ${prompt}`,
-              },
-              { type: "image_url", image_url: { url: userPhotoUrl } },
-            ],
+          const messages: any[] = [];
+
+          if (userPhotoUrl) {
+            messages.push({
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ""}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. This is a ${genderLabel}. ${prompt}`,
+                },
+                { type: "image_url", image_url: { url: userPhotoUrl } },
+              ],
+            });
+          } else {
+            messages.push({
+              role: "user",
+              content: prompt,
+            });
+          }
+
+          const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${lovableApiKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-3.1-flash-image-preview",
+              messages,
+              modalities: ["image", "text"],
+            }),
           });
-        } else {
-          messages.push({
-            role: "user",
-            content: prompt,
+
+          if (!response.ok) {
+            const errText = await response.text();
+            console.error(`AI error for ${label} (attempt ${attempt}):`, response.status, errText);
+            if (attempt === maxRetries) return null;
+            continue;
+          }
+
+          const data = await response.json();
+          const imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+          if (!imageData) {
+            console.error(`No image returned for ${label} (attempt ${attempt})`);
+            if (attempt === maxRetries) return null;
+            continue;
+          }
+
+          const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
+          const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+
+          const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
+          const { error: uploadError } = await supabase.storage.from("user-photos").upload(filePath, binaryData, {
+            contentType: "image/png",
+            upsert: true,
           });
+
+          if (uploadError) {
+            console.error(`Upload error for ${label}:`, uploadError);
+            return null;
+          }
+
+          const { data: signedData } = await supabase.storage.from("user-photos").createSignedUrl(filePath, 3600);
+          return signedData?.signedUrl || null;
+        } catch (e) {
+          console.error(`Error generating ${label} (attempt ${attempt}):`, e);
+          if (attempt === maxRetries) return null;
         }
-
-        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
-            messages,
-            modalities: ["image", "text"],
-          }),
-        });
-
-        if (!response.ok) {
-          console.error(`AI error for ${label}:`, response.status, await response.text());
-          return null;
-        }
-
-        const data = await response.json();
-        const imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-        if (!imageData) {
-          console.error(`No image returned for ${label}`);
-          return null;
-        }
-
-        const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
-        const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-
-        const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
-        const { error: uploadError } = await supabase.storage.from("user-photos").upload(filePath, binaryData, {
-          contentType: "image/png",
-          upsert: true,
-        });
-
-        if (uploadError) {
-          console.error(`Upload error for ${label}:`, uploadError);
-          return null;
-        }
-
-        const { data: signedData } = await supabase.storage.from("user-photos").createSignedUrl(filePath, 3600);
-
-        return signedData?.signedUrl || null;
-      } catch (e) {
-        console.error(`Error generating ${label}:`, e);
-        return null;
       }
+      return null;
     };
 
-    const results = await Promise.all(outfitPrompts.map((op) => generateImage(op.prompt, op.label)));
+    // Generate outfits in pairs to reduce concurrent load
+    const [day1, day2] = await Promise.all([
+      generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
+      generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
+    ]);
+    const [eve1, eve2] = await Promise.all([
+      generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
+      generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
+    ]);
+    const results = [day1, day2, eve1, eve2];
 
     // Cleanup outfits older than 3 days
     try {
