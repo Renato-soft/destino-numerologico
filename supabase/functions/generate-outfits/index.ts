@@ -413,16 +413,17 @@ Deno.serve(async (req) => {
 
           const messages: any[] = [];
 
-          if (userPhotoUrl) {
-            messages.push({
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ""}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. This is a ${genderLabel}. ${prompt}`,
-                },
-                { type: "image_url", image_url: { url: userPhotoUrl } },
-              ],
+          if (userPhotoUrls.length > 0) {
+            const contentParts: any[] = [
+              {
+                type: "text",
+                text: `I'm providing ${userPhotoUrls.length} reference photo(s) of this person. Carefully analyze ALL photos to understand their: exact skin tone/complexion, hair color and style, facial features, body build/shape, and approximate body proportions. Then generate a new full-body image of THIS SAME person wearing the described outfit. You MUST faithfully preserve their skin tone, facial features, hair color, body type and build across all generated images. The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
+              },
+            ];
+            for (const url of userPhotoUrls) {
+              contentParts.push({ type: "image_url", image_url: { url } });
+            }
+            messages.push({ role: "user", content: contentParts });
             });
           } else {
             messages.push({
