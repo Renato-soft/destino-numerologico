@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { compressImage } from "@/lib/imageCompression";
 import { 
   Sparkles, 
   User, 
@@ -112,13 +113,15 @@ const Onboarding = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handlePhotoChange = (type: keyof FormData["photos"]) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handlePhotoChange = (type: keyof FormData["photos"]) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         toast({ variant: "destructive", title: t("onboarding.fileTooLarge"), description: t("onboarding.fileTooLargeDesc") });
         return;
       }
+
+      file = await compressImage(file);
 
       setFormData((prev) => ({
         ...prev,

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { compressImage } from "@/lib/imageCompression";
 
 interface Profile {
   nome: string;
@@ -140,12 +141,13 @@ const ProfilePage = () => {
   };
 
   const handlePhotoUpload = async (type: string, file: File) => {
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: t("onboarding.fileTooLarge"), description: "Max 5MB", variant: "destructive" });
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: t("onboarding.fileTooLarge"), description: "Max 10MB", variant: "destructive" });
       return;
     }
     setUploadingPhoto(type);
     try {
+      file = await compressImage(file);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       const userId = session.user.id;
