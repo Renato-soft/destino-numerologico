@@ -352,14 +352,25 @@ Deno.serve(async (req) => {
     const vibeStyles = isFemale ? femaleVibeStyles : maleVibeStyles;
     const style = vibeStyles[vibeKey] || vibeStyles[1];
 
-    // Get user photo
-    let userPhotoUrl: string | null = null;
+    // Get ALL user photos for comprehensive appearance analysis
+    const userPhotoUrls: string[] = [];
     const photos = photosResult.data;
     if (photos && photos.length > 0) {
-      const preferred =
-        photos.find((p) => p.type === "full_front") || photos.find((p) => p.type === "face") || photos[0];
-      const { data } = await supabase.storage.from("user-photos").createSignedUrl(preferred.storage_path, 600);
-      userPhotoUrl = data?.signedUrl || null;
+      // Prioritize: face first, then full_front, full_side, then extras
+      const sortOrder: Record<string, number> = { face: 0, full_front: 1, full_side: 2 };
+      const sorted = [...photos].sort((a, b) => {
+        const oa = sortOrder[a.type] ?? 3;
+        const ob = sortOrder[b.type] ?? 3;
+        return oa - ob;
+      });
+      // Get signed URLs for all photos (max 6 to avoid token limits)
+      const photosToUse = sorted.slice(0, 6);
+      const signedResults = await Promise.all(
+        photosToUse.map((p) => supabase.storage.from("user-photos").createSignedUrl(p.storage_path, 600))
+      );
+      for (const result of signedResults) {
+        if (result.data?.signedUrl) userPhotoUrls.push(result.data.signedUrl);
+      }
     }
 
     // Season context
@@ -370,7 +381,8 @@ Deno.serve(async (req) => {
     const ageHint = userAge
       ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.`
       : "";
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${numerologyContext}`;
+    const vibrationEmphasis = `CRITICAL: The outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). The colors, textures and overall feel should channel this specific frequency. This is NOT optional — the numerological alignment is the core purpose of the outfit suggestion.`;
+    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
 
     const outfitPrompts = [
       {
@@ -401,17 +413,17 @@ Deno.serve(async (req) => {
 
           const messages: any[] = [];
 
-          if (userPhotoUrl) {
-            messages.push({
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Based on this person's appearance (face, skin tone, body type, hair${userAge ? `, age ~${userAge}` : ""}), generate a new full-body image of them wearing the described outfit. Preserve their facial features, skin tone, hair color and body build faithfully. The clothing style must be age-appropriate. This is a ${genderLabel}. ${prompt}`,
-                },
-                { type: "image_url", image_url: { url: userPhotoUrl } },
-              ],
-            });
+          if (userPhotoUrls.length > 0) {
+            const contentParts: any[] = [
+              {
+                type: "text",
+                text: `I'm providing ${userPhotoUrls.length} reference photo(s) of this person. Carefully analyze ALL photos to understand their: exact skin tone/complexion, hair color and style, facial features, body build/shape, and approximate body proportions. Then generate a new full-body image of THIS SAME person wearing the described outfit. You MUST faithfully preserve their skin tone, facial features, hair color, body type and build across all generated images. The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
+              },
+            ];
+            for (const url of userPhotoUrls) {
+              contentParts.push({ type: "image_url", image_url: { url } });
+            }
+            messages.push({ role: "user", content: contentParts });
           } else {
             messages.push({
               role: "user",
