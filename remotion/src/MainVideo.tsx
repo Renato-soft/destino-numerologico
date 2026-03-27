@@ -8,7 +8,7 @@ import { OutfitScene } from "./scenes/OutfitScene";
 import { ChatScene } from "./scenes/ChatScene";
 import { CTAScene } from "./scenes/CTAScene";
 import { loadFont } from "@remotion/google-fonts/Poppins";
-import { loadFont as loadDisplay } from "@remotion/google-fonts/Playfair Display";
+import { loadFont as loadDisplay } from "@remotion/google-fonts/PlayfairDisplay";
 
 const { fontFamily: bodyFont } = loadFont("normal", { weights: ["400", "600", "700"], subsets: ["latin"] });
 const { fontFamily: displayFont } = loadDisplay("normal", { weights: ["700", "900"], subsets: ["latin"] });
