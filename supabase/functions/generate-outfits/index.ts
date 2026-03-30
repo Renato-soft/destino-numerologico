@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 // Male outfit styles by vibration number
-const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; mood: string }> = {
+const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
   1: {
     day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes",
     day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers",
@@ -18,6 +18,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots",
     swim: "dark burgundy fitted swim trunks, mid-thigh length, clean minimal design",
     intimate: "dark burgundy boxer briefs, fitted, minimal branding",
+    bold: "dark burgundy fitted boxer briefs, confident athletic pose, editorial fitness style",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -27,6 +28,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers",
     swim: "light blue swim trunks with subtle pattern, mid-thigh length",
     intimate: "soft blue boxer briefs, comfortable cotton blend",
+    bold: "light blue fitted boxer briefs, relaxed confident pose, modern editorial style",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -36,6 +38,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots",
     swim: "warm terracotta swim trunks, relaxed fit, mid-thigh",
     intimate: "mustard yellow boxer briefs, modern cut",
+    bold: "terracotta fitted boxer briefs, expressive confident pose, editorial style",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -45,6 +48,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots",
     swim: "olive green swim trunks, classic cut, mid-thigh length",
     intimate: "dark green boxer briefs, fitted cotton",
+    bold: "olive green fitted boxer briefs, grounded natural pose, editorial fitness style",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -54,6 +58,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers",
     swim: "cobalt blue swim trunks with dynamic side stripe, mid-thigh",
     intimate: "bright blue boxer briefs, athletic fit",
+    bold: "cobalt blue fitted boxer briefs, dynamic athletic pose, sporty editorial style",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -63,6 +68,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes",
     swim: "sage green swim trunks, tailored fit, mid-thigh",
     intimate: "mint green boxer briefs, soft cotton blend",
+    bold: "sage green fitted boxer briefs, natural relaxed pose, editorial style",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -72,6 +78,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots",
     swim: "dark navy swim trunks, minimalist design, mid-thigh",
     intimate: "charcoal grey boxer briefs, sleek minimal design",
+    bold: "dark navy fitted boxer briefs, minimal confident pose, editorial style",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -81,6 +88,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots",
     swim: "black swim trunks, sleek fitted cut, mid-thigh",
     intimate: "black boxer briefs, premium fitted design",
+    bold: "black fitted boxer briefs, powerful confident pose, premium editorial style",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -90,12 +98,13 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers",
     swim: "burgundy swim trunks, classic fit, mid-thigh",
     intimate: "wine-red boxer briefs, comfortable fitted cut",
+    bold: "burgundy fitted boxer briefs, warm confident pose, editorial style",
     mood: "compassionate, wise, universal",
   },
 };
 
 // Female outfit styles by vibration number
-const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; mood: string }> = {
+const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
   1: {
     day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels",
     day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots",
@@ -103,6 +112,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "black fitted jumpsuit, dark red clutch, strappy heels",
     swim: "dark burgundy elegant one-piece swimsuit, classic cut, refined and tasteful",
     intimate: "deep wine lace bralette and matching briefs, refined and elegant, not provocative",
+    bold: "deep wine sheer lace bodysuit with plunging neckline, confident empowered pose, sensual but classy editorial boudoir style, self-love energy",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -112,6 +122,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "lavender blouse, navy tailored trousers, grey suede pumps",
     swim: "soft blue elegant one-piece swimsuit with subtle ruching, tasteful neckline",
     intimate: "powder blue satin bralette and matching briefs, delicate lace trim, elegant",
+    bold: "powder blue sheer lace lingerie set with delicate straps, soft sensual pose, dreamy boudoir editorial, feminine empowerment energy",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -121,6 +132,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "burnt orange knit dress, tan leather belt, brown suede boots",
     swim: "warm terracotta one-piece swimsuit, wrap-style front, elegant beach look",
     intimate: "warm gold satin bralette and matching briefs, refined details",
+    bold: "warm gold sheer bodysuit with lace detailing, joyful confident pose, artistic boudoir editorial, creative self-expression energy",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -130,6 +142,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "brown knit sweater, olive tailored trousers, dark ankle boots",
     swim: "olive green elegant one-piece swimsuit, classic silhouette, modest coverage",
     intimate: "forest green satin bralette with lace details and matching briefs, elegant",
+    bold: "forest green lace lingerie set with garter belt details, grounded confident pose, luxury boudoir editorial, earth goddess energy",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -139,6 +152,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps",
     swim: "cobalt blue one-piece swimsuit, modern sporty-elegant cut, tasteful",
     intimate: "bright blue lace bralette and matching briefs, modern and refined",
+    bold: "electric blue strappy lingerie set with cutout details, dynamic empowered pose, bold boudoir editorial, fearless free-spirit energy",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -148,6 +162,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps",
     swim: "sage green elegant one-piece swimsuit with floral detail, refined",
     intimate: "mint green satin bralette and matching briefs, delicate embroidery, elegant",
+    bold: "emerald green silk and lace lingerie set with ribbon details, graceful sensual pose, romantic boudoir editorial, nurturing goddess energy",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -157,6 +172,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "dark grey wrap dress, navy clutch, black suede ankle boots",
     swim: "dark navy elegant one-piece swimsuit, minimalist design, classic cut",
     intimate: "charcoal grey satin bralette and matching briefs, sleek minimal design, elegant",
+    bold: "midnight blue sheer mesh lingerie set with minimal lace, mysterious alluring pose, dark boudoir editorial, enigmatic seductive energy",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -166,6 +182,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels",
     swim: "black elegant one-piece swimsuit, sculpted design, sophisticated",
     intimate: "black lace bralette and matching briefs, premium design, refined not provocative",
+    bold: "black sheer lace bodysuit with deep V-neckline and subtle straps, powerful commanding pose, luxury boudoir editorial, dominant queen energy",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -175,6 +192,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps",
     swim: "burgundy elegant one-piece swimsuit, wrap detail, tasteful and refined",
     intimate: "wine-red lace bralette and matching briefs, elegant satin details",
+    bold: "deep wine velvet and lace lingerie set with delicate embroidery, warm empowered pose, intimate boudoir editorial, universal love and self-acceptance energy",
     mood: "compassionate, wise, universal",
   },
 };
@@ -655,6 +673,10 @@ JSON schema:
       },
     ];
 
+    const boldRules = isFemale
+      ? `IMPORTANT: This is a BOUDOIR-STYLE empowerment image. The aesthetic must be SENSUAL, CONFIDENT, EMPOWERING — like a luxury fashion/boudoir editorial. The woman should look powerful, alive, fearless, celebrating her body. NOT vulgar, NOT pornographic. Think Victoria's Secret editorial meets fine-art boudoir photography. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
+      : `IMPORTANT: This is a CONFIDENT editorial-style image. The man should look strong, self-assured, comfortable in his own skin. Think premium underwear campaign. NOT provocative. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
     const bonusPrompts = [
       {
         label: "swim",
@@ -663,6 +685,10 @@ JSON schema:
       {
         label: "intimate",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "lingerie" : "underwear"}: ${style.intimate}. Mood: ${style.mood}. Setting: clean, bright bedroom with soft natural light, editorial style. ${swimLingerieRules}`,
+      },
+      {
+        label: "bold",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "bold lingerie" : "bold underwear"}: ${style.bold}. Mood: ${style.mood}, empowered, fearless, alive. Setting: ${isFemale ? "luxury boudoir with warm dramatic lighting, silk sheets, moody atmosphere" : "modern minimalist studio with dramatic side lighting"}. ${boldRules}`,
       },
     ];
 
@@ -806,7 +832,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       }
     };
 
-    // Schedule bonus outfit generation (swim + intimate) after a 2-minute delay
+    // Schedule bonus outfit generation (swim + intimate + bold) after a 2-minute delay
     // These are saved to storage only, NOT returned to the client
     const bonusGenerationPromise = (async () => {
       await new Promise((r) => setTimeout(r, 120_000)); // 2 minutes delay
@@ -817,9 +843,11 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         .list(`${user.id}/outfits`, { search: cachePrefix });
       const hasSwim = existingBonus?.some((f) => f.name.includes("_swim.png"));
       const hasIntimate = existingBonus?.some((f) => f.name.includes("_intimate.png"));
+      const hasBold = existingBonus?.some((f) => f.name.includes("_bold.png"));
       const tasks: Promise<void>[] = [];
       if (!hasSwim) tasks.push(generateBonusToStorage(bonusPrompts[0].prompt, bonusPrompts[0].label));
       if (!hasIntimate) tasks.push(generateBonusToStorage(bonusPrompts[1].prompt, bonusPrompts[1].label));
+      if (!hasBold) tasks.push(generateBonusToStorage(bonusPrompts[2].prompt, bonusPrompts[2].label));
       if (tasks.length > 0) await Promise.all(tasks);
     })();
 
