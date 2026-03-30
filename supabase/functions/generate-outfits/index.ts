@@ -673,6 +673,10 @@ JSON schema:
       },
     ];
 
+    const boldRules = isFemale
+      ? `IMPORTANT: This is a BOUDOIR-STYLE empowerment image. The aesthetic must be SENSUAL, CONFIDENT, EMPOWERING — like a luxury fashion/boudoir editorial. The woman should look powerful, alive, fearless, celebrating her body. NOT vulgar, NOT pornographic. Think Victoria's Secret editorial meets fine-art boudoir photography. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
+      : `IMPORTANT: This is a CONFIDENT editorial-style image. The man should look strong, self-assured, comfortable in his own skin. Think premium underwear campaign. NOT provocative. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
     const bonusPrompts = [
       {
         label: "swim",
@@ -681,6 +685,10 @@ JSON schema:
       {
         label: "intimate",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "lingerie" : "underwear"}: ${style.intimate}. Mood: ${style.mood}. Setting: clean, bright bedroom with soft natural light, editorial style. ${swimLingerieRules}`,
+      },
+      {
+        label: "bold",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "bold lingerie" : "bold underwear"}: ${style.bold}. Mood: ${style.mood}, empowered, fearless, alive. Setting: ${isFemale ? "luxury boudoir with warm dramatic lighting, silk sheets, moody atmosphere" : "modern minimalist studio with dramatic side lighting"}. ${boldRules}`,
       },
     ];
 
