@@ -149,7 +149,7 @@ const DailyOutfits = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {outfits.map((url, index) => {
             const label = labels[index];
             const Icon = label?.icon || Sun;
