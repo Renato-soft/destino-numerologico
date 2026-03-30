@@ -95,12 +95,14 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
 };
 
 // Female outfit styles by vibration number
-const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; mood: string }> = {
   1: {
     day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels",
     day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots",
     eve1: "deep wine wrap dress, delicate gold necklace, black stiletto heels",
     eve2: "black fitted jumpsuit, dark red clutch, strappy heels",
+    swim: "dark burgundy elegant one-piece swimsuit, classic cut, refined and tasteful",
+    intimate: "deep wine lace bralette and matching briefs, refined and elegant, not provocative",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -108,6 +110,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "light grey knit top, powder blue wide-leg pants, white sneakers",
     eve1: "pale blue silk midi dress, silver bracelet, nude heels",
     eve2: "lavender blouse, navy tailored trousers, grey suede pumps",
+    swim: "soft blue elegant one-piece swimsuit with subtle ruching, tasteful neckline",
+    intimate: "powder blue satin bralette and matching briefs, delicate lace trim, elegant",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -115,6 +119,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "terracotta wrap top, dark olive midi skirt, brown ankle boots",
     eve1: "warm gold satin blouse, dark brown fitted pants, cognac heels",
     eve2: "burnt orange knit dress, tan leather belt, brown suede boots",
+    swim: "warm terracotta one-piece swimsuit, wrap-style front, elegant beach look",
+    intimate: "warm gold satin bralette and matching briefs, refined details",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -122,6 +128,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "camel turtleneck, dark green corduroy pants, brown boots",
     eve1: "forest green fitted dress, gold stud earrings, dark leather heels",
     eve2: "brown knit sweater, olive tailored trousers, dark ankle boots",
+    swim: "olive green elegant one-piece swimsuit, classic silhouette, modest coverage",
+    intimate: "forest green satin bralette with lace details and matching briefs, elegant",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -129,6 +137,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "teal wrap top, dark grey tailored pants, navy loafers",
     eve1: "cobalt blue one-shoulder dress, silver earrings, black strappy heels",
     eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps",
+    swim: "cobalt blue one-piece swimsuit, modern sporty-elegant cut, tasteful",
+    intimate: "bright blue lace bralette and matching briefs, modern and refined",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -136,6 +146,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "soft pink knit top, beige midi skirt, white ballet flats",
     eve1: "emerald green wrap dress, gold pendant, nude heels",
     eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps",
+    swim: "sage green elegant one-piece swimsuit with floral detail, refined",
+    intimate: "mint green satin bralette and matching briefs, delicate embroidery, elegant",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -143,6 +155,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "charcoal silk blouse, black tailored trousers, dark loafers",
     eve1: "midnight blue midi dress, subtle silver cuff, black heels",
     eve2: "dark grey wrap dress, navy clutch, black suede ankle boots",
+    swim: "dark navy elegant one-piece swimsuit, minimalist design, classic cut",
+    intimate: "charcoal grey satin bralette and matching briefs, sleek minimal design, elegant",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -150,6 +164,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "dark grey fitted dress, black leather belt, black ankle boots",
     eve1: "black fitted dress, statement silver earrings, black stilettos",
     eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels",
+    swim: "black elegant one-piece swimsuit, sculpted design, sophisticated",
+    intimate: "black lace bralette and matching briefs, premium design, refined not provocative",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -157,6 +173,8 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "wine-red knit dress, dark brown belt, tan ankle boots",
     eve1: "deep wine velvet midi dress, gold earrings, cognac heels",
     eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps",
+    swim: "burgundy elegant one-piece swimsuit, wrap detail, tasteful and refined",
+    intimate: "wine-red lace bralette and matching briefs, elegant satin details",
     mood: "compassionate, wise, universal",
   },
 };
