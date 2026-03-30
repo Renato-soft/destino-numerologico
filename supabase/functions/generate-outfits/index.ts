@@ -572,13 +572,55 @@ Deno.serve(async (req) => {
       },
     ];
 
+    // Use only the first reference photo (face) for lightweight validation
+    const validationRefUrl = userPhotoUrls.length > 0 ? userPhotoUrls[0] : null;
+
+    const validateIdentity = async (generatedImageUrl: string, label: string): Promise<{ pass: boolean; reason: string }> => {
+      if (!validationRefUrl) return { pass: true, reason: "no_ref" };
+      try {
+        // 1-second delay before validation to avoid rate limits
+        await new Promise(r => setTimeout(r, 1000));
+        const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-lite",
+            messages: [{
+              role: "user",
+              content: [
+                { type: "text", text: `Compare these two images. The FIRST is a reference photo of a real person. The SECOND is an AI-generated outfit image that should show THE SAME person. Answer ONLY with JSON: {"same_person": true/false, "reason": "brief explanation"}. Check: face shape, hair length/style/color, skin tone, body build. Be strict.` },
+                { type: "image_url", image_url: { url: validationRefUrl } },
+                { type: "image_url", image_url: { url: generatedImageUrl } },
+              ],
+            }],
+          }),
+        });
+        if (!res.ok) {
+          console.warn(`Validation API error for ${label}: ${res.status}`);
+          return { pass: true, reason: "api_error_skip" }; // Don't block on API errors
+        }
+        const data = await res.json();
+        const raw = data?.choices?.[0]?.message?.content || "";
+        const text = Array.isArray(raw) ? raw.map((p: any) => p?.text || p || "").join("") : String(raw);
+        const parsed = extractJsonObject(text);
+        if (!parsed) return { pass: true, reason: "parse_error_skip" };
+        return { pass: Boolean(parsed.same_person), reason: String(parsed.reason || "") };
+      } catch (e) {
+        console.warn(`Validation exception for ${label}:`, e);
+        return { pass: true, reason: "exception_skip" };
+      }
+    };
+
     const generateImage = async (prompt: string, label: string, maxRetries = 2): Promise<string | null> => {
+      let correctionNote = "";
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           if (attempt > 0) {
             console.log(`Retry ${attempt}/${maxRetries} for ${label}`);
-            // Exponential backoff: 3s, 6s
-            await new Promise(r => setTimeout(r, 3000 * attempt));
+            await new Promise(r => setTimeout(r, 4000 * attempt));
           }
 
           const messages: any[] = [];
@@ -596,6 +638,7 @@ IDENTITY LOCK (MANDATORY):
 - Keep facial identity consistent with reference photos.
 - Keep expression coherent with reference identity (not a different person).
 If identity is not preserved, the image is invalid and must be regenerated.
+${correctionNote ? `CORRECTION FROM PREVIOUS ATTEMPT: ${correctionNote}` : ""}
 The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
               },
             ];
@@ -604,10 +647,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
             }
             messages.push({ role: "user", content: contentParts });
           } else {
-            messages.push({
-              role: "user",
-              content: prompt,
-            });
+            messages.push({ role: "user", content: prompt });
           }
 
           const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -639,8 +679,18 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
             continue;
           }
 
-          // Skip separate validation call — rely on strong identity lock prompt
-          // This halves API calls and avoids rate limiting
+          // Lightweight identity validation with cheapest model
+          const validation = await validateIdentity(imageData, label);
+          if (!validation.pass) {
+            console.warn(`Identity mismatch for ${label} attempt ${attempt}: ${validation.reason}`);
+            correctionNote = `The previous image did NOT match the person. Issue: ${validation.reason}. You MUST generate an image of the EXACT same person shown in the reference photos.`;
+            if (attempt === maxRetries) {
+              console.warn(`${label}: accepting last attempt despite mismatch`);
+              // Still save it on final attempt rather than returning nothing
+            } else {
+              continue;
+            }
+          }
 
           const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
           const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
