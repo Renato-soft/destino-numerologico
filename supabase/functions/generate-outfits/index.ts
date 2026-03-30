@@ -448,7 +448,7 @@ Deno.serve(async (req) => {
 
       if (existingFiles && existingFiles.length >= 1) {
         // Return cached outfits, mapping to the 4 expected slots
-        const slotLabels = ["day1", "day2", "eve1", "eve2"];
+        const slotLabels = ["day1", "day2", "eve1", "eve2", "swim"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
@@ -631,6 +631,10 @@ JSON schema:
         label: "eve2",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
       },
+      {
+        label: "swim",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC swimwear/beachwear: ${style.swim}. Mood: ${style.mood}. Setting: beautiful beach or luxury poolside with natural sunlight, clear water visible. The swimwear colors and style must align with the numerological vibration. Show a confident, natural pose. ${baseRules.replace(/NO suits with ties, /g, "")}`,
+      },
     ];
 
     const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
@@ -736,7 +740,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate outfits in pairs to reduce concurrent load
+    // Generate outfits in batches to reduce concurrent load
     const [day1, day2] = await Promise.all([
       generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
       generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
@@ -745,7 +749,8 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
       generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
     ]);
-    const results = [day1, day2, eve1, eve2];
+    const swim = await generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label);
+    const results = [day1, day2, eve1, eve2, swim];
 
     if (results.some((item) => !item)) {
       return new Response(
