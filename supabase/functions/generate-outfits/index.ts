@@ -466,7 +466,7 @@ Deno.serve(async (req) => {
 
       if (existingFiles && existingFiles.length >= 1) {
         // Return cached outfits, mapping to the 4 expected slots
-        const slotLabels = ["day1", "day2", "eve1", "eve2", "swim"];
+        const slotLabels = ["day1", "day2", "eve1", "eve2", "swim", "lingerie"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
@@ -653,6 +653,10 @@ JSON schema:
         label: "swim",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC swimwear/beachwear: ${style.swim}. Mood: ${style.mood}. Setting: beautiful beach or luxury poolside with natural sunlight, clear water visible. The swimwear colors and style must align with the numerological vibration. Show a confident, natural pose. ${baseRules.replace(/NO suits with ties, /g, "")}`,
       },
+      {
+        label: "lingerie",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "lingerie" : "underwear"}: ${style.lingerie}. Mood: ${style.mood}. Setting: elegant bedroom with soft natural morning light, neutral tones, tasteful and refined atmosphere. Show the ${isFemale ? "lingerie" : "underwear"} clearly with a natural, confident pose. IMPORTANT: Keep the image tasteful, elegant and non-provocative — this is a fashion/style recommendation. ${baseRules.replace(/NO suits with ties, /g, "")}`,
+      },
     ];
 
     const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
@@ -767,8 +771,11 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
       generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
     ]);
-    const swim = await generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label);
-    const results = [day1, day2, eve1, eve2, swim];
+    const [swim, lingerie] = await Promise.all([
+      generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label),
+      generateImage(outfitPrompts[5].prompt, outfitPrompts[5].label),
+    ]);
+    const results = [day1, day2, eve1, eve2, swim, lingerie];
 
     if (results.some((item) => !item)) {
       return new Response(
