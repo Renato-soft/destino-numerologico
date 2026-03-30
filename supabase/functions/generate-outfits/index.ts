@@ -16,6 +16,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers",
     eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes",
     eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots",
+    swim: "dark burgundy fitted swim trunks, mid-thigh length, clean minimal design",
+    intimate: "dark burgundy boxer briefs, fitted, minimal branding",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -23,6 +25,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes",
     eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers",
     eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers",
+    swim: "light blue swim trunks with subtle pattern, mid-thigh length",
+    intimate: "soft blue boxer briefs, comfortable cotton blend",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -30,6 +34,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "warm terracotta henley, dark olive cargo pants, brown boots",
     eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes",
     eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots",
+    swim: "warm terracotta swim trunks, relaxed fit, mid-thigh",
+    intimate: "mustard yellow boxer briefs, modern cut",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -37,6 +43,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "camel crew-neck sweater, dark green corduroy trousers, brown boots",
     eve1: "forest green button-down, charcoal wool blazer, dark trousers, black shoes",
     eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots",
+    swim: "olive green swim trunks, classic cut, mid-thigh length",
+    intimate: "dark green boxer briefs, fitted cotton",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -44,6 +52,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "teal henley shirt, dark grey jogger-chinos, navy blue slip-on sneakers",
     eve1: "cobalt blue fitted shirt, dark grey modern blazer, black trousers, black leather shoes",
     eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers",
+    swim: "cobalt blue swim trunks with dynamic side stripe, mid-thigh",
+    intimate: "bright blue boxer briefs, athletic fit",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -51,6 +61,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "soft mint polo, light beige trousers, white canvas sneakers",
     eve1: "muted green button-down, ivory cotton blazer, beige trousers, cognac loafers",
     eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes",
+    swim: "sage green swim trunks, tailored fit, mid-thigh",
+    intimate: "mint green boxer briefs, soft cotton blend",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -58,6 +70,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "dark grey henley, black slim jeans, navy blue canvas sneakers",
     eve1: "dark navy fitted shirt, anthracite blazer, black trousers, black leather shoes",
     eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots",
+    swim: "dark navy swim trunks, minimalist design, mid-thigh",
+    intimate: "charcoal grey boxer briefs, sleek minimal design",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -65,6 +79,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "dark grey crew-neck sweater, black jeans, black leather sneakers",
     eve1: "dark charcoal button-down shirt, black fitted blazer, dark trousers, polished black shoes",
     eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots",
+    swim: "black swim trunks, sleek fitted cut, mid-thigh",
+    intimate: "black boxer briefs, premium fitted design",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -72,6 +88,8 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots",
     eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes",
     eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers",
+    swim: "burgundy swim trunks, classic fit, mid-thigh",
+    intimate: "wine-red boxer briefs, comfortable fitted cut",
     mood: "compassionate, wise, universal",
   },
 };
