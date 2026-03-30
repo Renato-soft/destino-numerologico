@@ -1,12 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Shirt, Sun, Moon, Loader2, RefreshCw, X, Camera, AlertTriangle, Sparkles, Heart, Flame } from "lucide-react";
+import { Shirt, Sun, Moon, Loader2, RefreshCw, X, Camera, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-/* Extracted card component for reuse */
 const OutfitCard = ({ url, icon: Icon, title, subtitle, index, onLightbox, t }: {
   url: string | null;
   icon: React.ElementType;
@@ -59,45 +58,12 @@ const DailyOutfits = () => {
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
-  const [bonusOutfits, setBonusOutfits] = useState<{ swim: string | null; intimate: string | null; bold: string | null }>({ swim: null, intimate: null, bold: null });
-  const [bonusLoading, setBonusLoading] = useState(false);
   const navigate = useNavigate();
 
   const getCacheKey = () => {
     const today = new Date().toISOString().split("T")[0];
     return `outfits_cache_${today}`;
   };
-
-  const fetchBonusOutfits = useCallback(async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const today = new Date().toISOString().split("T")[0];
-      const { data: files } = await supabase.storage
-        .from("user-photos")
-        .list(`${session.user.id}/outfits`);
-
-      if (!files) return;
-
-      const todayFiles = files.filter((f) => f.name.startsWith(today));
-      const bonus: { swim: string | null; intimate: string | null; bold: string | null } = { swim: null, intimate: null, bold: null };
-
-      for (const label of ["swim", "intimate", "bold"] as const) {
-        const file = todayFiles.find((f) => f.name.includes(`_${label}.png`));
-        if (file) {
-          const { data: signed } = await supabase.storage
-            .from("user-photos")
-            .createSignedUrl(`${session.user.id}/outfits/${file.name}`, 3600);
-          if (signed?.signedUrl) bonus[label] = signed.signedUrl;
-        }
-      }
-
-      setBonusOutfits(bonus);
-    } catch (e) {
-      console.error("Fetch bonus outfits error:", e);
-    }
-  }, []);
 
   const fetchOutfits = async (force = false) => {
     setLoading(true);
@@ -122,7 +88,6 @@ const DailyOutfits = () => {
             if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(Boolean)) {
               setOutfits(parsed);
               setLoading(false);
-              fetchBonusOutfits();
               return;
             }
           } catch { /* invalid cache */ }
@@ -145,11 +110,6 @@ const DailyOutfits = () => {
         setOutfits(data.outfits);
         const cacheKey = getCacheKey();
         sessionStorage.setItem(cacheKey, JSON.stringify(data.outfits));
-        // Start polling for bonus outfits after main ones load
-        setBonusLoading(true);
-        setTimeout(() => {
-          fetchBonusOutfits().finally(() => setBonusLoading(false));
-        }, 5000);
       } else if (data?.error) {
         setError(data.error);
       }
@@ -165,33 +125,12 @@ const DailyOutfits = () => {
     fetchOutfits();
   }, []);
 
-  // Poll for bonus outfits if not yet available
-  useEffect(() => {
-    const hasSomeBonus = bonusOutfits.swim || bonusOutfits.intimate || bonusOutfits.bold;
-    if (!loading && outfits.length > 0 && !hasSomeBonus) {
-      setBonusLoading(true);
-      const interval = setInterval(async () => {
-        await fetchBonusOutfits();
-      }, 30000);
-      fetchBonusOutfits().finally(() => setBonusLoading(false));
-      return () => clearInterval(interval);
-    }
-  }, [loading, outfits.length, bonusOutfits.swim, bonusOutfits.intimate, bonusOutfits.bold, fetchBonusOutfits]);
-
   const labels = [
     { title: t("outfits.look1"), icon: Sun, subtitle: t("outfits.look1Sub") },
     { title: t("outfits.look2"), icon: Sun, subtitle: t("outfits.look2Sub") },
     { title: t("outfits.look3"), icon: Moon, subtitle: t("outfits.look3Sub") },
     { title: t("outfits.look4"), icon: Moon, subtitle: t("outfits.look4Sub") },
   ];
-
-  const bonusLabels = [
-    { key: "swim" as const, title: t("outfits.swimTitle"), icon: Sparkles, subtitle: t("outfits.swimSub") },
-    { key: "intimate" as const, title: t("outfits.intimateTitle"), icon: Heart, subtitle: t("outfits.intimateSub") },
-    { key: "bold" as const, title: t("outfits.boldTitle"), icon: Flame, subtitle: t("outfits.boldSub") },
-  ];
-
-  const hasBonusOutfits = bonusOutfits.swim || bonusOutfits.intimate || bonusOutfits.bold;
 
   return (
     <motion.section
@@ -262,42 +201,6 @@ const DailyOutfits = () => {
             );
           })}
         </div>
-      )}
-
-      {/* Bonus outfits: Costume, Lingerie, Empowerment */}
-      {!loading && !error && outfits.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-              <Flame className="w-5 h-5 text-accent" />
-            </div>
-            <div>
-              <h3 className="font-display text-lg font-semibold">{t("outfits.bonusTitle")}</h3>
-              <p className="text-sm text-muted-foreground">{t("outfits.bonusSubtitle")}</p>
-            </div>
-          </div>
-
-          {hasBonusOutfits ? (
-            <div className="grid grid-cols-3 gap-4">
-              {bonusLabels.map((bonus, index) => (
-                <OutfitCard key={bonus.key} url={bonusOutfits[bonus.key]} icon={bonus.icon} title={bonus.title} subtitle={bonus.subtitle} index={index + 4} onLightbox={setLightboxUrl} t={t} />
-              ))}
-            </div>
-          ) : bonusLoading ? (
-            <div className="glass-cosmic rounded-2xl p-6 flex items-center justify-center gap-3">
-              <Loader2 className="w-5 h-5 text-primary animate-spin" />
-              <p className="text-sm text-muted-foreground">{t("outfits.bonusLoading")}</p>
-            </div>
-          ) : (
-            <div className="glass-cosmic rounded-2xl p-6 text-center">
-              <p className="text-sm text-muted-foreground">{t("outfits.bonusNotReady")}</p>
-              <Button variant="ghost" size="sm" className="mt-2" onClick={() => { setBonusLoading(true); fetchBonusOutfits().finally(() => setBonusLoading(false)); }}>
-                <RefreshCw className="w-4 h-4 mr-1" />
-                {t("common.retry")}
-              </Button>
-            </div>
-          )}
-        </motion.div>
       )}
 
       {lightboxUrl && (
