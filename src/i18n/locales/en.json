@@ -340,7 +340,17 @@
     "look3": "Evening Look 1",
     "look3Sub": "Elegant for going out",
     "look4": "Evening Look 2",
-    "look4Sub": "Evening alternative"
+    "look4Sub": "Evening alternative",
+    "bonusTitle": "Private Collection",
+    "bonusSubtitle": "Exclusive outfits to feel your best",
+    "swimTitle": "Swimwear",
+    "swimSub": "Beach/pool look",
+    "intimateTitle": "Lingerie",
+    "intimateSub": "Refined intimates",
+    "boldTitle": "Empowerment",
+    "boldSub": "Bold and fearless",
+    "bonusLoading": "Bonus outfits are being generated in the background...",
+    "bonusNotReady": "Bonus outfits will be ready in a few minutes"
   },
   "pillars": {
     "title": "The 7 Pillars of Destiny",
