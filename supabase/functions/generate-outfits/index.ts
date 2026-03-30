@@ -832,7 +832,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       }
     };
 
-    // Schedule bonus outfit generation (swim + intimate) after a 2-minute delay
+    // Schedule bonus outfit generation (swim + intimate + bold) after a 2-minute delay
     // These are saved to storage only, NOT returned to the client
     const bonusGenerationPromise = (async () => {
       await new Promise((r) => setTimeout(r, 120_000)); // 2 minutes delay
@@ -843,9 +843,11 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         .list(`${user.id}/outfits`, { search: cachePrefix });
       const hasSwim = existingBonus?.some((f) => f.name.includes("_swim.png"));
       const hasIntimate = existingBonus?.some((f) => f.name.includes("_intimate.png"));
+      const hasBold = existingBonus?.some((f) => f.name.includes("_bold.png"));
       const tasks: Promise<void>[] = [];
       if (!hasSwim) tasks.push(generateBonusToStorage(bonusPrompts[0].prompt, bonusPrompts[0].label));
       if (!hasIntimate) tasks.push(generateBonusToStorage(bonusPrompts[1].prompt, bonusPrompts[1].label));
+      if (!hasBold) tasks.push(generateBonusToStorage(bonusPrompts[2].prompt, bonusPrompts[2].label));
       if (tasks.length > 0) await Promise.all(tasks);
     })();
 
