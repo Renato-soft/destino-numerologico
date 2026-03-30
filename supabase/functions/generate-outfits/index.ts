@@ -659,13 +659,13 @@ JSON schema:
       },
     ];
 
-    const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
-      let correctionNote = "";
+    const generateImage = async (prompt: string, label: string, maxRetries = 2): Promise<string | null> => {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           if (attempt > 0) {
             console.log(`Retry ${attempt}/${maxRetries} for ${label}`);
-            await new Promise(r => setTimeout(r, 1000 * attempt));
+            // Exponential backoff: 3s, 6s
+            await new Promise(r => setTimeout(r, 3000 * attempt));
           }
 
           const messages: any[] = [];
@@ -683,7 +683,6 @@ IDENTITY LOCK (MANDATORY):
 - Keep facial identity consistent with reference photos.
 - Keep expression coherent with reference identity (not a different person).
 If identity is not preserved, the image is invalid and must be regenerated.
-${correctionNote ? `Fix previous mismatch: ${correctionNote}` : ""}
 The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
               },
             ];
@@ -727,16 +726,8 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
             continue;
           }
 
-          const validation = await validateGeneratedIdentity(imageData, label);
-          if (!validation.pass) {
-            console.warn(`Identity mismatch for ${label} on attempt ${attempt}. score=${validation.score}`);
-            correctionNote =
-              validation.mismatches.length > 0
-                ? `Critical mismatches detected: ${validation.mismatches.join(", ")}. Preserve identity traits exactly.`
-                : "Preserve identity traits exactly (face, hair, eyes, expression, skin tone, body build).";
-            if (attempt === maxRetries) return null;
-            continue;
-          }
+          // Skip separate validation call — rely on strong identity lock prompt
+          // This halves API calls and avoids rate limiting
 
           const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
           const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
@@ -762,31 +753,16 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate outfits in batches to reduce concurrent load
-    const [day1, day2] = await Promise.all([
-      generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
-      generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
-    ]);
-    const [eve1, eve2] = await Promise.all([
-      generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
-      generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
-    ]);
-    const [swim, lingerie] = await Promise.all([
-      generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label),
-      generateImage(outfitPrompts[5].prompt, outfitPrompts[5].label),
-    ]);
-    const results = [day1, day2, eve1, eve2, swim, lingerie];
-
-    if (results.some((item) => !item)) {
-      return new Response(
-        JSON.stringify({
-          error:
-            profileLanguage === "en"
-              ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
-              : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // Generate outfits SEQUENTIALLY to avoid rate limiting (429 errors)
+    const results: (string | null)[] = [];
+    for (let i = 0; i < outfitPrompts.length; i++) {
+      if (i > 0) {
+        // 2-second delay between each generation to respect rate limits
+        await new Promise(r => setTimeout(r, 2000));
+      }
+      const result = await generateImage(outfitPrompts[i].prompt, outfitPrompts[i].label);
+      results.push(result);
+      console.log(`Generated ${outfitPrompts[i].label}: ${result ? "OK" : "FAILED"}`);
     }
 
     // Cleanup outfits older than 3 days
