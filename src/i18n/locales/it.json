@@ -340,7 +340,17 @@
     "look3": "Look Sera 1",
     "look3Sub": "Elegante per uscire",
     "look4": "Look Sera 2",
-    "look4Sub": "Alternativa serale"
+    "look4Sub": "Alternativa serale",
+    "bonusTitle": "Collezione Privata",
+    "bonusSubtitle": "Outfit esclusivi per sentirti al meglio",
+    "swimTitle": "Costume",
+    "swimSub": "Look mare/piscina",
+    "intimateTitle": "Lingerie",
+    "intimateSub": "Intimo raffinato",
+    "boldTitle": "Empowerment",
+    "boldSub": "Audace e fiera",
+    "bonusLoading": "Gli outfit bonus vengono generati in background...",
+    "bonusNotReady": "Gli outfit bonus saranno pronti tra qualche minuto"
   },
   "pillars": {
     "title": "I 7 Pilastri del Destino",
