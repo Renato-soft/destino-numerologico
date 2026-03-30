@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 // Male outfit styles by vibration number
-const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; mood: string }> = {
+const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
   1: {
     day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes",
     day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers",
@@ -95,7 +95,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
 };
 
 // Female outfit styles by vibration number
-const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; mood: string }> = {
+const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
   1: {
     day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels",
     day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots",
