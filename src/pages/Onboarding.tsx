@@ -29,6 +29,7 @@ interface FormData {
   cognome: string;
   birthDate: string;
   sesso: string;
+  residenceState: string;
   photos: {
     face: File | null;
     fullFront: File | null;
@@ -52,6 +53,7 @@ const Onboarding = () => {
     cognome: "",
     birthDate: "",
     sesso: "",
+    residenceState: "",
     photos: {
       face: null,
       fullFront: null,
@@ -94,6 +96,7 @@ const Onboarding = () => {
     const cognomeResult = nameSchema.safeParse(formData.cognome);
     if (!cognomeResult.success) newErrors.cognome = t("onboarding.minChars");
     if (!formData.sesso) newErrors.sesso = t("onboarding.selectGender");
+    if (!formData.residenceState.trim()) newErrors.residenceState = t("onboarding.stateRequired");
     const dateResult = dateSchema.safeParse(formData.birthDate);
     if (!dateResult.success) {
       newErrors.birthDate = t("onboarding.dateFormat");
@@ -196,6 +199,7 @@ const Onboarding = () => {
         cognome: formData.cognome,
         birth_date: birthDate.toISOString().split("T")[0],
         sesso: formData.sesso,
+        residence_state: formData.residenceState.trim(),
         onboarding_completed: true,
         language: i18n.language,
       } as any);
@@ -395,6 +399,23 @@ const Onboarding = () => {
                       <p className="text-sm text-destructive">{errors.birthDate}</p>
                     )}
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="residenceState">{t("onboarding.residenceState")}</Label>
+                    <Input
+                      id="residenceState"
+                      placeholder={t("onboarding.residenceStatePlaceholder")}
+                      value={formData.residenceState}
+                      onChange={(e) => {
+                        setFormData({ ...formData, residenceState: e.target.value });
+                        if (errors.residenceState) setErrors({ ...errors, residenceState: "" });
+                      }}
+                      className="input-cosmic"
+                    />
+                    {errors.residenceState && (
+                      <p className="text-sm text-destructive">{errors.residenceState}</p>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -491,6 +512,10 @@ const Onboarding = () => {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">{t("onboarding.birthDate")}</span>
                       <span className="font-medium">{formData.birthDate}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="text-muted-foreground">{t("onboarding.residenceState")}</span>
+                      <span className="font-medium text-right">{formData.residenceState}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">{t("onboarding.confirmPhotos")}</span>
