@@ -476,6 +476,7 @@ Deno.serve(async (req) => {
       .replace(/^-+|-+$/g, "")
       .slice(0, 40);
     const cachePrefix = `${today}_v${vibeKey}_${locationKey || "na"}`;
+    let cachedOutfits: (string | null)[] | null = null;
 
     if (!force) {
       const { data: existingFiles } = await supabase.storage
@@ -483,7 +484,6 @@ Deno.serve(async (req) => {
         .list(`${user.id}/outfits`, { search: cachePrefix });
 
       if (existingFiles && existingFiles.length >= 1) {
-        // Return cached outfits, mapping to the 4 expected slots
         const slotLabels = ["day1", "day2", "eve1", "eve2"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
@@ -495,9 +495,10 @@ Deno.serve(async (req) => {
             return data?.signedUrl || null;
           }),
         );
-        return new Response(JSON.stringify({ outfits: urls }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+
+        if (urls.every(Boolean)) {
+          cachedOutfits = urls;
+        }
       }
     }
 
@@ -795,27 +796,33 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate main 4 outfits in pairs
-    const [day1, day2] = await Promise.all([
-      generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
-      generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
-    ]);
-    const [eve1, eve2] = await Promise.all([
-      generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
-      generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
-    ]);
-    const results = [day1, day2, eve1, eve2];
+    let results: (string | null)[] = [];
 
-    if (results.some((item) => !item)) {
-      return new Response(
-        JSON.stringify({
-          error:
-            profileLanguage === "en"
-              ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
-              : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    if (cachedOutfits) {
+      results = cachedOutfits;
+    } else {
+      // Generate main 4 outfits in pairs
+      const [day1, day2] = await Promise.all([
+        generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
+        generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
+      ]);
+      const [eve1, eve2] = await Promise.all([
+        generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
+        generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
+      ]);
+      results = [day1, day2, eve1, eve2];
+
+      if (results.some((item) => !item)) {
+        return new Response(
+          JSON.stringify({
+            error:
+              profileLanguage === "en"
+                ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
+                : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
     }
 
     // Helper to generate bonus outfits (swim + intimate) and save to storage only
