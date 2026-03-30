@@ -769,7 +769,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate outfits in pairs to reduce concurrent load
+    // Generate main 4 outfits in pairs
     const [day1, day2] = await Promise.all([
       generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
       generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
@@ -792,6 +792,46 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       );
     }
 
+    // Helper to generate bonus outfits (swim + intimate) and save to storage only
+    const generateBonusToStorage = async (prompt: string, label: string) => {
+      try {
+        const imageUrl = await generateImage(prompt, label, 2);
+        if (imageUrl) {
+          console.log(`Bonus outfit ${label} generated and saved to storage for user ${user.id}`);
+        } else {
+          console.warn(`Bonus outfit ${label} failed for user ${user.id}`);
+        }
+      } catch (e) {
+        console.error(`Bonus outfit ${label} error:`, e);
+      }
+    };
+
+    // Schedule bonus outfit generation (swim + intimate) after a 2-minute delay
+    // These are saved to storage only, NOT returned to the client
+    const bonusGenerationPromise = (async () => {
+      await new Promise((r) => setTimeout(r, 120_000)); // 2 minutes delay
+      console.log(`Starting bonus outfit generation for user ${user.id}`);
+      // Check if they already exist for today
+      const { data: existingBonus } = await supabase.storage
+        .from("user-photos")
+        .list(`${user.id}/outfits`, { search: cachePrefix });
+      const hasSwim = existingBonus?.some((f) => f.name.includes("_swim.png"));
+      const hasIntimate = existingBonus?.some((f) => f.name.includes("_intimate.png"));
+      const tasks: Promise<void>[] = [];
+      if (!hasSwim) tasks.push(generateBonusToStorage(bonusPrompts[0].prompt, bonusPrompts[0].label));
+      if (!hasIntimate) tasks.push(generateBonusToStorage(bonusPrompts[1].prompt, bonusPrompts[1].label));
+      if (tasks.length > 0) await Promise.all(tasks);
+    })();
+
+    // Use EdgeRuntime.waitUntil if available (Deno Deploy), otherwise fire-and-forget
+    try {
+      if (typeof (globalThis as any).EdgeRuntime?.waitUntil === "function") {
+        (globalThis as any).EdgeRuntime.waitUntil(bonusGenerationPromise);
+      }
+    } catch {
+      // fire-and-forget is fine
+    }
+
     // Cleanup outfits older than 3 days
     try {
       const { data: allFiles } = await supabase.storage
@@ -804,7 +844,6 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         const cutoffDate = threeDaysAgo.toISOString().split("T")[0];
 
         const oldFiles = allFiles.filter((f) => {
-          // File names are like 2026-03-24_v7_day1.png
           const dateMatch = f.name.match(/^(\d{4}-\d{2}-\d{2})_/);
           return dateMatch && dateMatch[1] < cutoffDate;
         });
