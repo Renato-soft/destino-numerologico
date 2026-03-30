@@ -88,6 +88,7 @@ const DailyOutfits = () => {
     { title: t("outfits.look3"), icon: Moon, subtitle: t("outfits.look3Sub") },
     { title: t("outfits.look4"), icon: Moon, subtitle: t("outfits.look4Sub") },
     { title: t("outfits.look5"), icon: Sun, subtitle: t("outfits.look5Sub") },
+    { title: t("outfits.look6"), icon: Moon, subtitle: t("outfits.look6Sub") },
   ];
 
   return (
@@ -150,7 +151,7 @@ const DailyOutfits = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {outfits.map((url, index) => {
             const label = labels[index];
             const Icon = label?.icon || Sun;
