@@ -10,12 +10,13 @@ const corsHeaders = {
 };
 
 // Male outfit styles by vibration number
-const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; mood: string }> = {
   1: {
     day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes",
     day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers",
     eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes",
     eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots",
+    swim: "solid dark burgundy swim trunks, minimal design, clean cut",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -23,6 +24,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes",
     eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers",
     eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers",
+    swim: "light blue and white patterned board shorts, relaxed fit",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -30,6 +32,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "warm terracotta henley, dark olive cargo pants, brown boots",
     eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes",
     eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots",
+    swim: "warm terracotta swim trunks with subtle geometric pattern",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -37,6 +40,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "camel crew-neck sweater, dark green corduroy trousers, brown boots",
     eve1: "forest green button-down, charcoal wool blazer, dark trousers, black shoes",
     eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots",
+    swim: "olive green solid swim trunks, classic mid-length cut",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -44,6 +48,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "teal henley shirt, dark grey jogger-chinos, navy blue slip-on sneakers",
     eve1: "cobalt blue fitted shirt, dark grey modern blazer, black trousers, black leather shoes",
     eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers",
+    swim: "cobalt blue and teal color-block swim trunks, sporty cut",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -51,6 +56,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "soft mint polo, light beige trousers, white canvas sneakers",
     eve1: "muted green button-down, ivory cotton blazer, beige trousers, cognac loafers",
     eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes",
+    swim: "sage green swim trunks with subtle leaf pattern, relaxed fit",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -58,6 +64,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "dark grey henley, black slim jeans, navy blue canvas sneakers",
     eve1: "dark navy fitted shirt, anthracite blazer, black trousers, black leather shoes",
     eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots",
+    swim: "dark navy solid swim trunks, minimalist design, slim fit",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -65,6 +72,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "dark grey crew-neck sweater, black jeans, black leather sneakers",
     eve1: "dark charcoal button-down shirt, black fitted blazer, dark trousers, polished black shoes",
     eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots",
+    swim: "black swim trunks with subtle charcoal side stripe, tailored fit",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -72,17 +80,19 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots",
     eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes",
     eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers",
+    swim: "burgundy swim trunks with subtle tonal pattern, classic cut",
     mood: "compassionate, wise, universal",
   },
 };
 
 // Female outfit styles by vibration number
-const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; mood: string }> = {
+const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; mood: string }> = {
   1: {
     day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels",
     day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots",
     eve1: "deep wine wrap dress, delicate gold necklace, black stiletto heels",
     eve2: "black fitted jumpsuit, dark red clutch, strappy heels",
+    swim: "dark burgundy one-piece swimsuit with elegant cut-out detail, flattering silhouette",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -90,6 +100,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "light grey knit top, powder blue wide-leg pants, white sneakers",
     eve1: "pale blue silk midi dress, silver bracelet, nude heels",
     eve2: "lavender blouse, navy tailored trousers, grey suede pumps",
+    swim: "light blue bikini with delicate floral pattern, soft feminine design",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -97,6 +108,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "terracotta wrap top, dark olive midi skirt, brown ankle boots",
     eve1: "warm gold satin blouse, dark brown fitted pants, cognac heels",
     eve2: "burnt orange knit dress, tan leather belt, brown suede boots",
+    swim: "warm terracotta wrap bikini with golden accents, boho-chic style",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -104,6 +116,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "camel turtleneck, dark green corduroy pants, brown boots",
     eve1: "forest green fitted dress, gold stud earrings, dark leather heels",
     eve2: "brown knit sweater, olive tailored trousers, dark ankle boots",
+    swim: "olive green one-piece swimsuit, classic sporty design with clean lines",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -111,6 +124,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "teal wrap top, dark grey tailored pants, navy loafers",
     eve1: "cobalt blue one-shoulder dress, silver earrings, black strappy heels",
     eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps",
+    swim: "cobalt blue and teal color-block bikini, sporty-chic cut",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -118,6 +132,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "soft pink knit top, beige midi skirt, white ballet flats",
     eve1: "emerald green wrap dress, gold pendant, nude heels",
     eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps",
+    swim: "sage green bikini with romantic ruffle details, soft elegant design",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -125,6 +140,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "charcoal silk blouse, black tailored trousers, dark loafers",
     eve1: "midnight blue midi dress, subtle silver cuff, black heels",
     eve2: "dark grey wrap dress, navy clutch, black suede ankle boots",
+    swim: "dark navy one-piece swimsuit, minimalist elegant design, clean silhouette",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -132,6 +148,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "dark grey fitted dress, black leather belt, black ankle boots",
     eve1: "black fitted dress, statement silver earrings, black stilettos",
     eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels",
+    swim: "black one-piece swimsuit with subtle mesh panel, sophisticated power look",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -139,6 +156,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     day2: "wine-red knit dress, dark brown belt, tan ankle boots",
     eve1: "deep wine velvet midi dress, gold earrings, cognac heels",
     eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps",
+    swim: "burgundy high-waisted bikini with elegant draping detail, refined style",
     mood: "compassionate, wise, universal",
   },
 };
@@ -430,7 +448,7 @@ Deno.serve(async (req) => {
 
       if (existingFiles && existingFiles.length >= 1) {
         // Return cached outfits, mapping to the 4 expected slots
-        const slotLabels = ["day1", "day2", "eve1", "eve2"];
+        const slotLabels = ["day1", "day2", "eve1", "eve2", "swim"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
@@ -613,6 +631,10 @@ JSON schema:
         label: "eve2",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
       },
+      {
+        label: "swim",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC swimwear/beachwear: ${style.swim}. Mood: ${style.mood}. Setting: beautiful beach or luxury poolside with natural sunlight, clear water visible. The swimwear colors and style must align with the numerological vibration. Show a confident, natural pose. ${baseRules.replace(/NO suits with ties, /g, "")}`,
+      },
     ];
 
     const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
@@ -718,7 +740,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate outfits in pairs to reduce concurrent load
+    // Generate outfits in batches to reduce concurrent load
     const [day1, day2] = await Promise.all([
       generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
       generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
@@ -727,7 +749,8 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
       generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
     ]);
-    const results = [day1, day2, eve1, eve2];
+    const swim = await generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label);
+    const results = [day1, day2, eve1, eve2, swim];
 
     if (results.some((item) => !item)) {
       return new Response(
