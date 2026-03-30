@@ -18,6 +18,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots",
     swim: "dark burgundy fitted swim trunks, mid-thigh length, clean minimal design",
     intimate: "dark burgundy boxer briefs, fitted, minimal branding",
+    bold: "dark burgundy fitted boxer briefs, confident athletic pose, editorial fitness style",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -27,6 +28,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers",
     swim: "light blue swim trunks with subtle pattern, mid-thigh length",
     intimate: "soft blue boxer briefs, comfortable cotton blend",
+    bold: "light blue fitted boxer briefs, relaxed confident pose, modern editorial style",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -36,6 +38,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots",
     swim: "warm terracotta swim trunks, relaxed fit, mid-thigh",
     intimate: "mustard yellow boxer briefs, modern cut",
+    bold: "terracotta fitted boxer briefs, expressive confident pose, editorial style",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -45,6 +48,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots",
     swim: "olive green swim trunks, classic cut, mid-thigh length",
     intimate: "dark green boxer briefs, fitted cotton",
+    bold: "olive green fitted boxer briefs, grounded natural pose, editorial fitness style",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -54,6 +58,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers",
     swim: "cobalt blue swim trunks with dynamic side stripe, mid-thigh",
     intimate: "bright blue boxer briefs, athletic fit",
+    bold: "cobalt blue fitted boxer briefs, dynamic athletic pose, sporty editorial style",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -63,6 +68,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes",
     swim: "sage green swim trunks, tailored fit, mid-thigh",
     intimate: "mint green boxer briefs, soft cotton blend",
+    bold: "sage green fitted boxer briefs, natural relaxed pose, editorial style",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -72,6 +78,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots",
     swim: "dark navy swim trunks, minimalist design, mid-thigh",
     intimate: "charcoal grey boxer briefs, sleek minimal design",
+    bold: "dark navy fitted boxer briefs, minimal confident pose, editorial style",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -81,6 +88,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots",
     swim: "black swim trunks, sleek fitted cut, mid-thigh",
     intimate: "black boxer briefs, premium fitted design",
+    bold: "black fitted boxer briefs, powerful confident pose, premium editorial style",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -90,6 +98,7 @@ const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string;
     eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers",
     swim: "burgundy swim trunks, classic fit, mid-thigh",
     intimate: "wine-red boxer briefs, comfortable fitted cut",
+    bold: "burgundy fitted boxer briefs, warm confident pose, editorial style",
     mood: "compassionate, wise, universal",
   },
 };
