@@ -632,6 +632,10 @@ JSON schema:
       }
     };
 
+    const swimLingerieRules = isFemale
+      ? `IMPORTANT: The image must be ELEGANT, REFINED, TASTEFUL. Absolutely NO provocative poses, NO explicit content, NO revealing angles. The aesthetic must be classy and sophisticated like a luxury fashion catalog. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
+      : `IMPORTANT: The image must be CLEAN, REFINED, TASTEFUL. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
     const outfitPrompts = [
       {
         label: "day1",
@@ -648,6 +652,17 @@ JSON schema:
       {
         label: "eve2",
         prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
+      },
+    ];
+
+    const bonusPrompts = [
+      {
+        label: "swim",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC swimwear: ${style.swim}. Mood: ${style.mood}. Setting: elegant beach or luxury pool area with natural light. ${swimLingerieRules}`,
+      },
+      {
+        label: "intimate",
+        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "lingerie" : "underwear"}: ${style.intimate}. Mood: ${style.mood}. Setting: clean, bright bedroom with soft natural light, editorial style. ${swimLingerieRules}`,
       },
     ];
 
