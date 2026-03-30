@@ -416,7 +416,12 @@ Deno.serve(async (req) => {
 
     // Cache key includes vibration (season changes within a day won't happen, but the season
     // is baked into the prompt so regeneration after season change happens naturally via date change)
-    const cachePrefix = `${today}_v${vibeKey}`;
+    const locationKey = profile.residence_state
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40);
+    const cachePrefix = `${today}_v${vibeKey}_${locationKey || "na"}`;
 
     if (!force) {
       const { data: existingFiles } = await supabase.storage
@@ -723,6 +728,18 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
     ]);
     const results = [day1, day2, eve1, eve2];
+
+    if (results.some((item) => !item)) {
+      return new Response(
+        JSON.stringify({
+          error:
+            profileLanguage === "en"
+              ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
+              : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     // Cleanup outfits older than 3 days
     try {
