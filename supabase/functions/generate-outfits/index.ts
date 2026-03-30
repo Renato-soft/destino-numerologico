@@ -545,93 +545,6 @@ Deno.serve(async (req) => {
     const vibrationEmphasis = `CRITICAL: The outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). The colors, textures and overall feel should channel this specific frequency. This is NOT optional — the numerological alignment is the core purpose of the outfit suggestion.`;
     const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
 
-    const validateGeneratedIdentity = async (candidateImageData: string, label: string) => {
-      if (userPhotoUrls.length === 0) {
-        return { pass: true, score: 100, mismatches: [] as string[] };
-      }
-
-      try {
-        const reviewContent: any[] = [
-          {
-            type: "text",
-            text: `Compare the REFERENCE photos with the GENERATED outfit image and return ONLY JSON. Be extremely strict.
-Required checks: face identity, hair length/style/color, eyes, expression family, skin tone, body build/proportions (including chest/hip silhouette consistency).
-If any critical mismatch exists, pass must be false.
-JSON schema:
-{
-  "pass": boolean,
-  "score": number,
-  "checks": {
-    "face_identity": "match|partial|mismatch",
-    "hair": "match|partial|mismatch",
-    "eyes": "match|partial|mismatch",
-    "expression": "match|partial|mismatch",
-    "skin_tone": "match|partial|mismatch",
-    "body_build": "match|partial|mismatch"
-  },
-  "critical_mismatches": string[],
-  "reason": string
-}`,
-          },
-        ];
-
-        for (const url of userPhotoUrls) {
-          reviewContent.push({ type: "image_url", image_url: { url } });
-        }
-        reviewContent.push({ type: "image_url", image_url: { url: candidateImageData } });
-
-        const reviewRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [{ role: "user", content: reviewContent }],
-          }),
-        });
-
-        if (!reviewRes.ok) {
-          console.error(`Validation request failed for ${label}`);
-          return { pass: false, score: 0, mismatches: ["validation_failed"] };
-        }
-
-        const reviewData = await reviewRes.json();
-        const rawContent = reviewData?.choices?.[0]?.message?.content;
-        const reviewText = Array.isArray(rawContent)
-          ? rawContent.map((part: any) => (typeof part === "string" ? part : part?.text || "")).join("\n")
-          : String(rawContent || "");
-
-        const parsed = extractJsonObject(reviewText);
-        if (!parsed) {
-          return { pass: false, score: 0, mismatches: ["invalid_validation_json"] };
-        }
-
-        const criticalMismatches = Array.isArray(parsed.critical_mismatches)
-          ? parsed.critical_mismatches.map((x: any) => String(x))
-          : [];
-        const checks = parsed.checks || {};
-        const strictMismatchInChecks = ["face_identity", "hair", "eyes", "expression", "skin_tone", "body_build"].some(
-          (key) => String(checks[key] || "").toLowerCase() === "mismatch",
-        );
-
-        const score = Number(parsed.score || 0);
-        const pass = Boolean(parsed.pass) && score >= 90 && criticalMismatches.length === 0 && !strictMismatchInChecks;
-
-        const mismatches = criticalMismatches.length
-          ? criticalMismatches
-          : strictMismatchInChecks
-            ? ["trait_mismatch"]
-            : [];
-
-        return { pass, score, mismatches };
-      } catch (e) {
-        console.error(`Validation error for ${label}:`, e);
-        return { pass: false, score: 0, mismatches: ["validation_exception"] };
-      }
-    };
-
     const outfitPrompts = [
       {
         label: "day1",
@@ -659,13 +572,13 @@ JSON schema:
       },
     ];
 
-    const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
-      let correctionNote = "";
+    const generateImage = async (prompt: string, label: string, maxRetries = 2): Promise<string | null> => {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           if (attempt > 0) {
             console.log(`Retry ${attempt}/${maxRetries} for ${label}`);
-            await new Promise(r => setTimeout(r, 1000 * attempt));
+            // Exponential backoff: 3s, 6s
+            await new Promise(r => setTimeout(r, 3000 * attempt));
           }
 
           const messages: any[] = [];
@@ -683,7 +596,6 @@ IDENTITY LOCK (MANDATORY):
 - Keep facial identity consistent with reference photos.
 - Keep expression coherent with reference identity (not a different person).
 If identity is not preserved, the image is invalid and must be regenerated.
-${correctionNote ? `Fix previous mismatch: ${correctionNote}` : ""}
 The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
               },
             ];
@@ -727,16 +639,8 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
             continue;
           }
 
-          const validation = await validateGeneratedIdentity(imageData, label);
-          if (!validation.pass) {
-            console.warn(`Identity mismatch for ${label} on attempt ${attempt}. score=${validation.score}`);
-            correctionNote =
-              validation.mismatches.length > 0
-                ? `Critical mismatches detected: ${validation.mismatches.join(", ")}. Preserve identity traits exactly.`
-                : "Preserve identity traits exactly (face, hair, eyes, expression, skin tone, body build).";
-            if (attempt === maxRetries) return null;
-            continue;
-          }
+          // Skip separate validation call — rely on strong identity lock prompt
+          // This halves API calls and avoids rate limiting
 
           const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
           const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
@@ -762,31 +666,16 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       return null;
     };
 
-    // Generate outfits in batches to reduce concurrent load
-    const [day1, day2] = await Promise.all([
-      generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
-      generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
-    ]);
-    const [eve1, eve2] = await Promise.all([
-      generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
-      generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
-    ]);
-    const [swim, lingerie] = await Promise.all([
-      generateImage(outfitPrompts[4].prompt, outfitPrompts[4].label),
-      generateImage(outfitPrompts[5].prompt, outfitPrompts[5].label),
-    ]);
-    const results = [day1, day2, eve1, eve2, swim, lingerie];
-
-    if (results.some((item) => !item)) {
-      return new Response(
-        JSON.stringify({
-          error:
-            profileLanguage === "en"
-              ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
-              : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // Generate outfits SEQUENTIALLY to avoid rate limiting (429 errors)
+    const results: (string | null)[] = [];
+    for (let i = 0; i < outfitPrompts.length; i++) {
+      if (i > 0) {
+        // 2-second delay between each generation to respect rate limits
+        await new Promise(r => setTimeout(r, 2000));
+      }
+      const result = await generateImage(outfitPrompts[i].prompt, outfitPrompts[i].label);
+      results.push(result);
+      console.log(`Generated ${outfitPrompts[i].label}: ${result ? "OK" : "FAILED"}`);
     }
 
     // Cleanup outfits older than 3 days
