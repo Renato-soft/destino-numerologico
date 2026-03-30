@@ -526,6 +526,7 @@ export type Database = {
           language: string
           nome: string
           onboarding_completed: boolean | null
+          residence_state: string | null
           sesso: string | null
           timezone: string | null
           updated_at: string
@@ -543,6 +544,7 @@ export type Database = {
           language?: string
           nome: string
           onboarding_completed?: boolean | null
+          residence_state?: string | null
           sesso?: string | null
           timezone?: string | null
           updated_at?: string
@@ -560,6 +562,7 @@ export type Database = {
           language?: string
           nome?: string
           onboarding_completed?: boolean | null
+          residence_state?: string | null
           sesso?: string | null
           timezone?: string | null
           updated_at?: string

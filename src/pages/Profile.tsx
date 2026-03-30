@@ -18,6 +18,7 @@ interface Profile {
   cognome: string;
   birth_date: string;
   sesso: string | null;
+  residence_state: string | null;
   timezone: string | null;
   created_at: string;
   language: string;
@@ -41,6 +42,7 @@ const ProfilePage = () => {
   const [cognome, setCognome] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [sesso, setSesso] = useState("");
+  const [residenceState, setResidenceState] = useState("");
   const [language, setLanguage] = useState("it");
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
   const [disabling, setDisabling] = useState(false);
@@ -61,7 +63,7 @@ const ProfilePage = () => {
     if (!session) { navigate("/auth"); return; }
 
     const [profileResult, photosResult] = await Promise.all([
-      supabase.from("profiles").select("nome, cognome, birth_date, sesso, timezone, created_at, language").eq("user_id", session.user.id).maybeSingle() as any,
+      supabase.from("profiles").select("nome, cognome, birth_date, sesso, residence_state, timezone, created_at, language").eq("user_id", session.user.id).maybeSingle() as any,
       supabase.from("photos").select("id, type, storage_path").eq("user_id", session.user.id),
     ]);
 
@@ -71,6 +73,7 @@ const ProfilePage = () => {
       setCognome(profileResult.data.cognome);
       setBirthDate(profileResult.data.birth_date);
       setSesso(profileResult.data.sesso || "");
+      setResidenceState(profileResult.data.residence_state || "");
       setLanguage(profileResult.data.language || "it");
     }
 
@@ -101,7 +104,7 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
-    if (!nome.trim() || !cognome.trim() || !birthDate) {
+    if (!nome.trim() || !cognome.trim() || !birthDate || !residenceState.trim()) {
       toast({ title: t("profile.requiredFields"), description: t("profile.requiredFieldsDesc"), variant: "destructive" });
       return;
     }
@@ -110,11 +113,11 @@ const ProfilePage = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       const { error } = await supabase.from("profiles").update({
-        nome: nome.trim(), cognome: cognome.trim(), birth_date: birthDate, sesso: sesso || null,
+        nome: nome.trim(), cognome: cognome.trim(), birth_date: birthDate, sesso: sesso || null, residence_state: residenceState.trim(),
       } as any).eq("user_id", session.user.id);
       if (error) throw error;
       toast({ title: t("profile.profileUpdated"), description: t("profile.profileUpdatedDesc") });
-      setProfile({ ...profile!, nome: nome.trim(), cognome: cognome.trim(), birth_date: birthDate });
+      setProfile({ ...profile!, nome: nome.trim(), cognome: cognome.trim(), birth_date: birthDate, residence_state: residenceState.trim() });
     } catch (error) {
       console.error("Error saving:", error);
       toast({ title: t("common.error"), description: t("profile.saveError"), variant: "destructive" });
@@ -264,6 +267,16 @@ const ProfilePage = () => {
                 <Calendar className="w-4 h-4" />{t("profile.birthDate")}
               </Label>
               <Input id="birthDate" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="mt-2" />
+            </div>
+            <div>
+              <Label htmlFor="residenceState">{t("profile.residenceState")}</Label>
+              <Input
+                id="residenceState"
+                value={residenceState}
+                onChange={(e) => setResidenceState(e.target.value)}
+                placeholder={t("profile.residenceStatePlaceholder")}
+                className="mt-2"
+              />
             </div>
 
             <Button variant="cosmic" className="w-full" onClick={handleSave} disabled={saving}>

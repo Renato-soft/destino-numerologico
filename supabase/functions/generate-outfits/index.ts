@@ -201,6 +201,110 @@ function getCurrentSeason(): { name: string; hint: string; fabric: string } {
   }
 }
 
+function getWeatherLabel(code: number): string {
+  if ([0].includes(code)) return "clear sky";
+  if ([1, 2, 3].includes(code)) return "partly cloudy";
+  if ([45, 48].includes(code)) return "foggy";
+  if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "rainy";
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "snowy";
+  if ([95, 96, 99].includes(code)) return "stormy";
+  return "variable";
+}
+
+function getWeatherStyleHints(tempC: number, weatherCode: number): { season: string; fabrics: string; hint: string } {
+  const weather = getWeatherLabel(weatherCode);
+  const cold = tempC <= 8;
+  const cool = tempC > 8 && tempC <= 17;
+  const mild = tempC > 17 && tempC <= 25;
+
+  let season = "summer-like";
+  let fabrics = "linen, breathable cotton, light blends";
+  let thermalHint = "Use lightweight breathable garments, airy layers and open footwear where appropriate.";
+
+  if (cold) {
+    season = "winter-like";
+    fabrics = "wool, cashmere, heavy knits, thermal layers";
+    thermalHint = "Use warm layers, coat-friendly looks, closed shoes/boots and weather-resistant outerwear.";
+  } else if (cool) {
+    season = "autumn/spring-like";
+    fabrics = "medium-weight cotton, denim, merino, soft wool blends";
+    thermalHint = "Use layered outfits: light jacket/cardigan with closed shoes and transitional fabrics.";
+  } else if (mild) {
+    season = "spring-like";
+    fabrics = "cotton, light denim, thin knits, breathable blends";
+    thermalHint = "Use light layers and comfortable fabrics suitable for mild temperatures.";
+  }
+
+  if (weather === "rainy") {
+    thermalHint += " Add rain-friendly details (closed shoes, practical outer layer, avoid delicate fabrics).";
+  }
+  if (weather === "snowy") {
+    thermalHint += " Prioritize insulation and winter-safe footwear (no exposed feet).";
+  }
+  if (weather === "stormy") {
+    thermalHint += " Keep styling practical and protective, with stable footwear and secure layers.";
+  }
+
+  return { season, fabrics, hint: thermalHint };
+}
+
+async function getLocalWeatherContext(
+  residenceState: string,
+): Promise<{ location: string; hint: string; fabrics: string; season: string } | null> {
+  const normalized = residenceState.trim();
+  if (!normalized) return null;
+
+  try {
+    const geocodeRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalized)}&count=1&language=en&format=json`,
+    );
+    if (!geocodeRes.ok) return null;
+
+    const geocode = await geocodeRes.json();
+    const place = geocode?.results?.[0];
+    if (!place?.latitude || !place?.longitude) return null;
+
+    const weatherRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,weather_code&timezone=auto`,
+    );
+    if (!weatherRes.ok) return null;
+
+    const weatherData = await weatherRes.json();
+    const temp = Number(weatherData?.current?.temperature_2m);
+    const code = Number(weatherData?.current?.weather_code);
+    if (Number.isNaN(temp) || Number.isNaN(code)) return null;
+
+    const styleHints = getWeatherStyleHints(temp, code);
+    const weatherLabel = getWeatherLabel(code);
+    const location = [place?.name, place?.admin1, place?.country].filter(Boolean).join(", ");
+
+    return {
+      location,
+      hint: `Current weather is ${weatherLabel} at about ${Math.round(temp)}°C. ${styleHints.hint}`,
+      fabrics: styleHints.fabrics,
+      season: styleHints.season,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function extractJsonObject(text: string): any | null {
+  const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]);
+    } catch {
+      return null;
+    }
+  }
+}
+
 function buildNumerologyContext(map: any, personalDay: number, universalDay: number): string {
   const parts: string[] = [];
   parts.push(
@@ -275,7 +379,7 @@ Deno.serve(async (req) => {
 
     // Fetch profile, numerology map, and photos in parallel
     const [profileResult, mapResult, photosResult] = await Promise.all([
-      supabase.from("profiles").select("birth_date, sesso").eq("user_id", user.id).single(),
+      supabase.from("profiles").select("birth_date, sesso, residence_state, language").eq("user_id", user.id).single(),
       supabase
         .from("numerology_maps")
         .select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference")
@@ -288,6 +392,19 @@ Deno.serve(async (req) => {
 
     const profile = profileResult.data;
     const numMap = mapResult.data;
+    const profileLanguage = profile?.language === "en" ? "en" : "it";
+
+    if (!profile?.residence_state?.trim()) {
+      return new Response(
+        JSON.stringify({
+          error:
+            profileLanguage === "en"
+              ? "Please add your state of residence in your profile to generate weather-adapted outfits."
+              : "Aggiungi lo stato in cui vivi nel profilo per generare outfit adattati al meteo locale.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     // Calculate personal day vibration BEFORE cache check
     const universalDay = getUniversalDayVibration();
@@ -299,7 +416,12 @@ Deno.serve(async (req) => {
 
     // Cache key includes vibration (season changes within a day won't happen, but the season
     // is baked into the prompt so regeneration after season change happens naturally via date change)
-    const cachePrefix = `${today}_v${vibeKey}`;
+    const locationKey = profile.residence_state
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 40);
+    const cachePrefix = `${today}_v${vibeKey}_${locationKey || "na"}`;
 
     if (!force) {
       const { data: existingFiles } = await supabase.storage
@@ -373,9 +495,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Season context
-    const season = getCurrentSeason();
-    const seasonHint = `SEASON: ${season.name}. ${season.hint} Preferred fabrics: ${season.fabric}. Adapt the outfit to be seasonally appropriate — if the described garments are too heavy or too light for the current season, substitute with equivalent items in suitable fabrics while keeping the same color palette and style.`;
+    // Weather + season context from user residence (fallback to calendar season)
+    const localWeather = await getLocalWeatherContext(profile.residence_state);
+    const fallbackSeason = getCurrentSeason();
+    const seasonHint = localWeather
+      ? `LOCATION: ${localWeather.location}. LOCAL CLIMATE: ${localWeather.season}. ${localWeather.hint} Preferred fabrics: ${localWeather.fabrics}. Keep style and numerological colors, but adapt garments to this real local weather.`
+      : `SEASON (fallback): ${fallbackSeason.name}. ${fallbackSeason.hint} Preferred fabrics: ${fallbackSeason.fabric}. Adapt outfit choices to realistic weather comfort.`;
 
     // Build prompts
     const ageHint = userAge
@@ -383,6 +508,93 @@ Deno.serve(async (req) => {
       : "";
     const vibrationEmphasis = `CRITICAL: The outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). The colors, textures and overall feel should channel this specific frequency. This is NOT optional — the numerological alignment is the core purpose of the outfit suggestion.`;
     const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
+    const validateGeneratedIdentity = async (candidateImageData: string, label: string) => {
+      if (userPhotoUrls.length === 0) {
+        return { pass: true, score: 100, mismatches: [] as string[] };
+      }
+
+      try {
+        const reviewContent: any[] = [
+          {
+            type: "text",
+            text: `Compare the REFERENCE photos with the GENERATED outfit image and return ONLY JSON. Be extremely strict.
+Required checks: face identity, hair length/style/color, eyes, expression family, skin tone, body build/proportions (including chest/hip silhouette consistency).
+If any critical mismatch exists, pass must be false.
+JSON schema:
+{
+  "pass": boolean,
+  "score": number,
+  "checks": {
+    "face_identity": "match|partial|mismatch",
+    "hair": "match|partial|mismatch",
+    "eyes": "match|partial|mismatch",
+    "expression": "match|partial|mismatch",
+    "skin_tone": "match|partial|mismatch",
+    "body_build": "match|partial|mismatch"
+  },
+  "critical_mismatches": string[],
+  "reason": string
+}`,
+          },
+        ];
+
+        for (const url of userPhotoUrls) {
+          reviewContent.push({ type: "image_url", image_url: { url } });
+        }
+        reviewContent.push({ type: "image_url", image_url: { url: candidateImageData } });
+
+        const reviewRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [{ role: "user", content: reviewContent }],
+          }),
+        });
+
+        if (!reviewRes.ok) {
+          console.error(`Validation request failed for ${label}`);
+          return { pass: false, score: 0, mismatches: ["validation_failed"] };
+        }
+
+        const reviewData = await reviewRes.json();
+        const rawContent = reviewData?.choices?.[0]?.message?.content;
+        const reviewText = Array.isArray(rawContent)
+          ? rawContent.map((part: any) => (typeof part === "string" ? part : part?.text || "")).join("\n")
+          : String(rawContent || "");
+
+        const parsed = extractJsonObject(reviewText);
+        if (!parsed) {
+          return { pass: false, score: 0, mismatches: ["invalid_validation_json"] };
+        }
+
+        const criticalMismatches = Array.isArray(parsed.critical_mismatches)
+          ? parsed.critical_mismatches.map((x: any) => String(x))
+          : [];
+        const checks = parsed.checks || {};
+        const strictMismatchInChecks = ["face_identity", "hair", "eyes", "expression", "skin_tone", "body_build"].some(
+          (key) => String(checks[key] || "").toLowerCase() === "mismatch",
+        );
+
+        const score = Number(parsed.score || 0);
+        const pass = Boolean(parsed.pass) && score >= 90 && criticalMismatches.length === 0 && !strictMismatchInChecks;
+
+        const mismatches = criticalMismatches.length
+          ? criticalMismatches
+          : strictMismatchInChecks
+            ? ["trait_mismatch"]
+            : [];
+
+        return { pass, score, mismatches };
+      } catch (e) {
+        console.error(`Validation error for ${label}:`, e);
+        return { pass: false, score: 0, mismatches: ["validation_exception"] };
+      }
+    };
 
     const outfitPrompts = [
       {
@@ -403,7 +615,8 @@ Deno.serve(async (req) => {
       },
     ];
 
-    const generateImage = async (prompt: string, label: string, maxRetries = 2): Promise<string | null> => {
+    const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
+      let correctionNote = "";
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           if (attempt > 0) {
@@ -417,7 +630,17 @@ Deno.serve(async (req) => {
             const contentParts: any[] = [
               {
                 type: "text",
-                text: `I'm providing ${userPhotoUrls.length} reference photo(s) of this person. Carefully analyze ALL photos to understand their: exact skin tone/complexion, hair color and style, facial features, body build/shape, and approximate body proportions. Then generate a new full-body image of THIS SAME person wearing the described outfit. You MUST faithfully preserve their skin tone, facial features, hair color, body type and build across all generated images. The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
+                text: `I'm providing ${userPhotoUrls.length} reference photo(s) of this person. Carefully analyze ALL photos to understand their exact: face identity, hair length/style/color, eye characteristics, natural expression family, skin tone/complexion, body build and proportions. Then generate a new full-body image of THIS SAME person wearing the described outfit.
+IDENTITY LOCK (MANDATORY):
+- Do NOT change person identity.
+- Do NOT alter hair length/style/color.
+- Do NOT alter skin tone.
+- Do NOT alter body build/proportions.
+- Keep facial identity consistent with reference photos.
+- Keep expression coherent with reference identity (not a different person).
+If identity is not preserved, the image is invalid and must be regenerated.
+${correctionNote ? `Fix previous mismatch: ${correctionNote}` : ""}
+The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
               },
             ];
             for (const url of userPhotoUrls) {
@@ -460,6 +683,17 @@ Deno.serve(async (req) => {
             continue;
           }
 
+          const validation = await validateGeneratedIdentity(imageData, label);
+          if (!validation.pass) {
+            console.warn(`Identity mismatch for ${label} on attempt ${attempt}. score=${validation.score}`);
+            correctionNote =
+              validation.mismatches.length > 0
+                ? `Critical mismatches detected: ${validation.mismatches.join(", ")}. Preserve identity traits exactly.`
+                : "Preserve identity traits exactly (face, hair, eyes, expression, skin tone, body build).";
+            if (attempt === maxRetries) return null;
+            continue;
+          }
+
           const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
           const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
@@ -494,6 +728,18 @@ Deno.serve(async (req) => {
       generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
     ]);
     const results = [day1, day2, eve1, eve2];
+
+    if (results.some((item) => !item)) {
+      return new Response(
+        JSON.stringify({
+          error:
+            profileLanguage === "en"
+              ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
+              : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     // Cleanup outfits older than 3 days
     try {
