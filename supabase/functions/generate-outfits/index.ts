@@ -465,10 +465,10 @@ Deno.serve(async (req) => {
         .list(`${user.id}/outfits`, { search: cachePrefix });
 
       if (existingFiles && existingFiles.length >= 1) {
-        // Return cached outfits, mapping to the 4 expected slots
-        const slotLabels = ["day1", "day2", "eve1", "eve2", "swim", "lingerie"];
+        // Return only visible outfits (day/eve) — swim/lingerie stay in storage only
+        const visibleLabels = ["day1", "day2", "eve1", "eve2"];
         const urls = await Promise.all(
-          slotLabels.map(async (label) => {
+          visibleLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
             if (!file) return null;
             const { data } = await supabase.storage
@@ -705,7 +705,10 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       console.error("Cleanup error (non-fatal):", cleanupErr);
     }
 
-    return new Response(JSON.stringify({ outfits: results }), {
+    // Return only visible outfits (first 4: day1, day2, eve1, eve2)
+    // swim and lingerie are saved to storage but not shown in the UI
+    const visibleResults = results.slice(0, 4);
+    return new Response(JSON.stringify({ outfits: visibleResults }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
