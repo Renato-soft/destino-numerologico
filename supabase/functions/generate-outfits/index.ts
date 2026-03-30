@@ -112,6 +112,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "black fitted jumpsuit, dark red clutch, strappy heels",
     swim: "dark burgundy elegant one-piece swimsuit, classic cut, refined and tasteful",
     intimate: "deep wine lace bralette and matching briefs, refined and elegant, not provocative",
+    bold: "deep wine sheer lace bodysuit with plunging neckline, confident empowered pose, sensual but classy editorial boudoir style, self-love energy",
     mood: "authoritative, confident, decisive",
   },
   2: {
@@ -121,6 +122,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "lavender blouse, navy tailored trousers, grey suede pumps",
     swim: "soft blue elegant one-piece swimsuit with subtle ruching, tasteful neckline",
     intimate: "powder blue satin bralette and matching briefs, delicate lace trim, elegant",
+    bold: "powder blue sheer lace lingerie set with delicate straps, soft sensual pose, dreamy boudoir editorial, feminine empowerment energy",
     mood: "harmonious, diplomatic, approachable",
   },
   3: {
@@ -130,6 +132,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "burnt orange knit dress, tan leather belt, brown suede boots",
     swim: "warm terracotta one-piece swimsuit, wrap-style front, elegant beach look",
     intimate: "warm gold satin bralette and matching briefs, refined details",
+    bold: "warm gold sheer bodysuit with lace detailing, joyful confident pose, artistic boudoir editorial, creative self-expression energy",
     mood: "creative, joyful, expressive",
   },
   4: {
@@ -139,6 +142,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "brown knit sweater, olive tailored trousers, dark ankle boots",
     swim: "olive green elegant one-piece swimsuit, classic silhouette, modest coverage",
     intimate: "forest green satin bralette with lace details and matching briefs, elegant",
+    bold: "forest green lace lingerie set with garter belt details, grounded confident pose, luxury boudoir editorial, earth goddess energy",
     mood: "stable, grounded, reliable",
   },
   5: {
@@ -148,6 +152,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps",
     swim: "cobalt blue one-piece swimsuit, modern sporty-elegant cut, tasteful",
     intimate: "bright blue lace bralette and matching briefs, modern and refined",
+    bold: "electric blue strappy lingerie set with cutout details, dynamic empowered pose, bold boudoir editorial, fearless free-spirit energy",
     mood: "adventurous, dynamic, free",
   },
   6: {
@@ -157,6 +162,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps",
     swim: "sage green elegant one-piece swimsuit with floral detail, refined",
     intimate: "mint green satin bralette and matching briefs, delicate embroidery, elegant",
+    bold: "emerald green silk and lace lingerie set with ribbon details, graceful sensual pose, romantic boudoir editorial, nurturing goddess energy",
     mood: "caring, elegant, refined",
   },
   7: {
@@ -166,6 +172,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "dark grey wrap dress, navy clutch, black suede ankle boots",
     swim: "dark navy elegant one-piece swimsuit, minimalist design, classic cut",
     intimate: "charcoal grey satin bralette and matching briefs, sleek minimal design, elegant",
+    bold: "midnight blue sheer mesh lingerie set with minimal lace, mysterious alluring pose, dark boudoir editorial, enigmatic seductive energy",
     mood: "intellectual, mysterious, minimal",
   },
   8: {
@@ -175,6 +182,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels",
     swim: "black elegant one-piece swimsuit, sculpted design, sophisticated",
     intimate: "black lace bralette and matching briefs, premium design, refined not provocative",
+    bold: "black sheer lace bodysuit with deep V-neckline and subtle straps, powerful commanding pose, luxury boudoir editorial, dominant queen energy",
     mood: "powerful, sophisticated, commanding",
   },
   9: {
@@ -184,6 +192,7 @@ const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: strin
     eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps",
     swim: "burgundy elegant one-piece swimsuit, wrap detail, tasteful and refined",
     intimate: "wine-red lace bralette and matching briefs, elegant satin details",
+    bold: "deep wine velvet and lace lingerie set with delicate embroidery, warm empowered pose, intimate boudoir editorial, universal love and self-acceptance energy",
     mood: "compassionate, wise, universal",
   },
 };
