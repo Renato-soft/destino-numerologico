@@ -86,9 +86,12 @@ const DailyOutfits = () => {
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (parsed?.outfits && Array.isArray(parsed.outfits) && parsed.outfits.length > 0 && parsed.outfits.some(Boolean)) {
-              setOutfits(parsed.outfits);
-              setDescription(parsed.description || null);
+            // Support both old format (array) and new format ({outfits, description})
+            const outfitUrls = Array.isArray(parsed) ? parsed : parsed?.outfits;
+            const desc = Array.isArray(parsed) ? null : parsed?.description || null;
+            if (Array.isArray(outfitUrls) && outfitUrls.length > 0 && outfitUrls.some(Boolean)) {
+              setOutfits(outfitUrls);
+              setDescription(desc);
               setLoading(false);
               return;
             }
