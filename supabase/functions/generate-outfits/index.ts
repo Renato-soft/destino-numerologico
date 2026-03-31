@@ -356,7 +356,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         const exists = existingBonus?.some((f) => f.name.includes(`_${bp.label}.png`));
         if (!exists) {
           await generateImage(bp.prompt, bp.label);
-          await new Promise((r) => setTimeout(r, 15000));
+          await new Promise((r) => setTimeout(r, 8000));
         }
       }
     })();
