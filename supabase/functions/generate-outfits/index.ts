@@ -353,12 +353,13 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       await new Promise((r) => setTimeout(r, 120_000));
       console.log(`Starting bonus outfit generation for user ${user.id}`);
       const { data: existingBonus } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
-      const tasks: Promise<string | null>[] = [];
       for (const bp of bonusPrompts) {
         const exists = existingBonus?.some((f) => f.name.includes(`_${bp.label}.png`));
-        if (!exists) tasks.push(generateImage(bp.prompt, bp.label));
+        if (!exists) {
+          await generateImage(bp.prompt, bp.label);
+          await new Promise((r) => setTimeout(r, 5000));
+        }
       }
-      if (tasks.length > 0) await Promise.all(tasks);
     })();
 
     try {
