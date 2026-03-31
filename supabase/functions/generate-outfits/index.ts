@@ -337,16 +337,14 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
     if (cachedOutfits) {
       results = cachedOutfits;
     } else {
-      // Generate all 4 in parallel pairs
-      const [day1, day2] = await Promise.all([
-        generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
-        generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
-      ]);
-      const [eve1, eve2] = await Promise.all([
-        generateImage(outfitPrompts[2].prompt, outfitPrompts[2].label),
-        generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
-      ]);
-      results = [day1, day2, eve1, eve2];
+      // Generate sequentially with longer delay to avoid 429 rate limits
+      for (const op of outfitPrompts) {
+        const url = await generateImage(op.prompt, op.label);
+        results.push(url);
+        if (results.length < outfitPrompts.length) {
+          await new Promise((r) => setTimeout(r, 15000));
+        }
+      }
     }
 
     // Schedule bonus generation in background with 2-min delay
@@ -354,12 +352,13 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       await new Promise((r) => setTimeout(r, 120_000));
       console.log(`Starting bonus outfit generation for user ${user.id}`);
       const { data: existingBonus } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
-      const tasks: Promise<string | null>[] = [];
       for (const bp of bonusPrompts) {
         const exists = existingBonus?.some((f) => f.name.includes(`_${bp.label}.png`));
-        if (!exists) tasks.push(generateImage(bp.prompt, bp.label));
+        if (!exists) {
+          await generateImage(bp.prompt, bp.label);
+          await new Promise((r) => setTimeout(r, 15000));
+        }
       }
-      if (tasks.length > 0) await Promise.all(tasks);
     })();
 
     try {
