@@ -381,7 +381,40 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
       }
     } catch { /* non-fatal */ }
 
-    return new Response(JSON.stringify({ outfits: results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    // Build outfit description based on vibration and weather
+    const colorDescriptions: Record<number, { it: string; en: string }> = {
+      1: { it: "rosso borgogna, nero e bianco", en: "burgundy, black and white" },
+      2: { it: "azzurro, grigio chiaro e beige", en: "light blue, soft grey and beige" },
+      3: { it: "giallo senape, terracotta e marrone", en: "mustard yellow, terracotta and brown" },
+      4: { it: "verde oliva, marrone e cammello", en: "olive green, brown and camel" },
+      5: { it: "blu cobalto, grigio e teal", en: "cobalt blue, grey and teal" },
+      6: { it: "verde salvia, crema e menta", en: "sage green, cream and mint" },
+      7: { it: "blu navy, grigio antracite e nero", en: "navy blue, anthracite grey and black" },
+      8: { it: "nero, grigio scuro e carbone", en: "black, dark grey and charcoal" },
+      9: { it: "borgogna, vino e cognac", en: "burgundy, wine and cognac" },
+    };
+
+    const moodTranslations: Record<string, string> = {
+      "authoritative, confident, decisive": "autorevolezza, sicurezza e determinazione",
+      "harmonious, diplomatic, approachable": "armonia, diplomazia e apertura",
+      "creative, joyful, expressive": "creatività, gioia e espressività",
+      "stable, grounded, reliable": "stabilità, radicamento e affidabilità",
+      "adventurous, dynamic, free": "avventura, dinamismo e libertà",
+      "caring, elegant, refined": "cura, eleganza e raffinatezza",
+      "intellectual, mysterious, minimal": "introspezione, mistero e minimalismo",
+      "powerful, sophisticated, commanding": "potere, sofisticatezza e autorità",
+      "compassionate, wise, universal": "compassione, saggezza e universalità",
+    };
+
+    const colors = colorDescriptions[vibeKey] || colorDescriptions[1];
+    const moodIt = moodTranslations[style.mood] || style.mood;
+    const seasonDesc = localWeather ? `${localWeather.season} (${localWeather.location})` : fallbackSeason.name;
+
+    const description = profileLanguage === "en"
+      ? `Today's vibration is ${personalDay} — energy of ${style.mood}. The recommended colors are ${colors.en}, chosen to align with your personal frequency and the current ${seasonDesc} weather. These tones strengthen your energetic field and help you express the best of today's vibration.`
+      : `La vibrazione di oggi è ${personalDay} — energia di ${moodIt}. I colori consigliati sono ${colors.it}, scelti per allinearsi alla tua frequenza personale e al clima ${seasonDesc} attuale. Queste tonalità rafforzano il tuo campo energetico e ti aiutano a esprimere il meglio della vibrazione odierna.`;
+
+    return new Response(JSON.stringify({ outfits: results, description }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-outfits error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Errore sconosciuto" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

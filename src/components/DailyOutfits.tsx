@@ -54,6 +54,7 @@ const OutfitCard = ({ url, icon: Icon, title, subtitle, index, onLightbox, t }: 
 const DailyOutfits = () => {
   const { t } = useTranslation();
   const [outfits, setOutfits] = useState<(string | null)[]>([]);
+  const [description, setDescription] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -85,8 +86,9 @@ const DailyOutfits = () => {
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(Boolean)) {
-              setOutfits(parsed);
+            if (parsed?.outfits && Array.isArray(parsed.outfits) && parsed.outfits.length > 0 && parsed.outfits.some(Boolean)) {
+              setOutfits(parsed.outfits);
+              setDescription(parsed.description || null);
               setLoading(false);
               return;
             }
@@ -108,8 +110,9 @@ const DailyOutfits = () => {
 
       if (data?.outfits) {
         setOutfits(data.outfits);
+        setDescription(data.description || null);
         const cacheKey = getCacheKey();
-        sessionStorage.setItem(cacheKey, JSON.stringify(data.outfits));
+        sessionStorage.setItem(cacheKey, JSON.stringify({ outfits: data.outfits, description: data.description }));
       } else if (data?.error) {
         setError(data.error);
       }
@@ -192,15 +195,29 @@ const DailyOutfits = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {outfits.map((url, index) => {
-            const label = labels[index];
-            const Icon = label?.icon || Sun;
-            return (
-              <OutfitCard key={index} url={url} icon={Icon} title={label?.title} subtitle={label?.subtitle} index={index} onLightbox={setLightboxUrl} t={t} />
-            );
-          })}
-        </div>
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {outfits.map((url, index) => {
+              const label = labels[index];
+              const Icon = label?.icon || Sun;
+              return (
+                <OutfitCard key={index} url={url} icon={Icon} title={label?.title} subtitle={label?.subtitle} index={index} onLightbox={setLightboxUrl} t={t} />
+              );
+            })}
+          </div>
+          {description && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-4 p-4 rounded-xl glass-cosmic border border-border/30"
+            >
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                ✨ {description}
+              </p>
+            </motion.div>
+          )}
+        </>
       )}
 
       {lightboxUrl && (
