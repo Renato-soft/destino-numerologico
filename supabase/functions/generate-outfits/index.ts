@@ -342,7 +342,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         const url = await generateImage(op.prompt, op.label);
         results.push(url);
         if (results.length < outfitPrompts.length) {
-          await new Promise((r) => setTimeout(r, 15000));
+          await new Promise((r) => setTimeout(r, 8000));
         }
       }
     }
