@@ -110,8 +110,9 @@ const DailyOutfits = () => {
 
       if (data?.outfits) {
         setOutfits(data.outfits);
+        setDescription(data.description || null);
         const cacheKey = getCacheKey();
-        sessionStorage.setItem(cacheKey, JSON.stringify(data.outfits));
+        sessionStorage.setItem(cacheKey, JSON.stringify({ outfits: data.outfits, description: data.description }));
       } else if (data?.error) {
         setError(data.error);
       }
