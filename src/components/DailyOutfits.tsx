@@ -195,15 +195,29 @@ const DailyOutfits = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {outfits.map((url, index) => {
-            const label = labels[index];
-            const Icon = label?.icon || Sun;
-            return (
-              <OutfitCard key={index} url={url} icon={Icon} title={label?.title} subtitle={label?.subtitle} index={index} onLightbox={setLightboxUrl} t={t} />
-            );
-          })}
-        </div>
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {outfits.map((url, index) => {
+              const label = labels[index];
+              const Icon = label?.icon || Sun;
+              return (
+                <OutfitCard key={index} url={url} icon={Icon} title={label?.title} subtitle={label?.subtitle} index={index} onLightbox={setLightboxUrl} t={t} />
+              );
+            })}
+          </div>
+          {description && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-4 p-4 rounded-xl glass-cosmic border border-border/30"
+            >
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                ✨ {description}
+              </p>
+            </motion.div>
+          )}
+        </>
       )}
 
       {lightboxUrl && (
