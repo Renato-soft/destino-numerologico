@@ -337,13 +337,12 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
     if (cachedOutfits) {
       results = cachedOutfits;
     } else {
-      // Generate sequentially to avoid 429 rate limits
+      // Generate sequentially with longer delay to avoid 429 rate limits
       for (const op of outfitPrompts) {
         const url = await generateImage(op.prompt, op.label);
         results.push(url);
-        // Small delay between requests to respect rate limits
         if (results.length < outfitPrompts.length) {
-          await new Promise((r) => setTimeout(r, 3000));
+          await new Promise((r) => setTimeout(r, 15000));
         }
       }
     }
