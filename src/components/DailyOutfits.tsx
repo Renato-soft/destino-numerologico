@@ -54,6 +54,7 @@ const OutfitCard = ({ url, icon: Icon, title, subtitle, index, onLightbox, t }: 
 const DailyOutfits = () => {
   const { t } = useTranslation();
   const [outfits, setOutfits] = useState<(string | null)[]>([]);
+  const [description, setDescription] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
