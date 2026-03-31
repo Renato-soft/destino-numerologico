@@ -86,8 +86,9 @@ const DailyOutfits = () => {
         if (cached) {
           try {
             const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length > 0 && parsed.some(Boolean)) {
-              setOutfits(parsed);
+            if (parsed?.outfits && Array.isArray(parsed.outfits) && parsed.outfits.length > 0 && parsed.outfits.some(Boolean)) {
+              setOutfits(parsed.outfits);
+              setDescription(parsed.description || null);
               setLoading(false);
               return;
             }
