@@ -1,8 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-// API key available via Deno.env.get("LOVABLE_API_KEY")
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -11,248 +9,45 @@ const corsHeaders = {
 
 // Male outfit styles by vibration number
 const maleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
-  1: {
-    day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes",
-    day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers",
-    eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes",
-    eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots",
-    swim: "dark burgundy fitted swim trunks, mid-thigh length, clean minimal design",
-    intimate: "dark burgundy boxer briefs, fitted, minimal branding",
-    bold: "dark burgundy fitted boxer briefs, confident athletic pose, editorial fitness style",
-    mood: "authoritative, confident, decisive",
-  },
-  2: {
-    day1: "light blue oxford shirt, beige chinos, white sneakers",
-    day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes",
-    eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers",
-    eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers",
-    swim: "light blue swim trunks with subtle pattern, mid-thigh length",
-    intimate: "soft blue boxer briefs, comfortable cotton blend",
-    bold: "light blue fitted boxer briefs, relaxed confident pose, modern editorial style",
-    mood: "harmonious, diplomatic, approachable",
-  },
-  3: {
-    day1: "mustard yellow polo, beige chinos, brown leather belt, tan shoes",
-    day2: "warm terracotta henley, dark olive cargo pants, brown boots",
-    eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes",
-    eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots",
-    swim: "warm terracotta swim trunks, relaxed fit, mid-thigh",
-    intimate: "mustard yellow boxer briefs, modern cut",
-    bold: "terracotta fitted boxer briefs, expressive confident pose, editorial style",
-    mood: "creative, joyful, expressive",
-  },
-  4: {
-    day1: "olive green polo, khaki trousers, brown leather shoes",
-    day2: "camel crew-neck sweater, dark green corduroy trousers, brown boots",
-    eve1: "forest green button-down, charcoal wool blazer, dark trousers, black shoes",
-    eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots",
-    swim: "olive green swim trunks, classic cut, mid-thigh length",
-    intimate: "dark green boxer briefs, fitted cotton",
-    bold: "olive green fitted boxer briefs, grounded natural pose, editorial fitness style",
-    mood: "stable, grounded, reliable",
-  },
-  5: {
-    day1: "bright blue crew-neck t-shirt, grey casual jacket, dark jeans, white sneakers",
-    day2: "teal henley shirt, dark grey jogger-chinos, navy blue slip-on sneakers",
-    eve1: "cobalt blue fitted shirt, dark grey modern blazer, black trousers, black leather shoes",
-    eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers",
-    swim: "cobalt blue swim trunks with dynamic side stripe, mid-thigh",
-    intimate: "bright blue boxer briefs, athletic fit",
-    bold: "cobalt blue fitted boxer briefs, dynamic athletic pose, sporty editorial style",
-    mood: "adventurous, dynamic, free",
-  },
-  6: {
-    day1: "sage green linen shirt, cream chinos, tan leather shoes",
-    day2: "soft mint polo, light beige trousers, white canvas sneakers",
-    eve1: "muted green button-down, ivory cotton blazer, beige trousers, cognac loafers",
-    eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes",
-    swim: "sage green swim trunks, tailored fit, mid-thigh",
-    intimate: "mint green boxer briefs, soft cotton blend",
-    bold: "sage green fitted boxer briefs, natural relaxed pose, editorial style",
-    mood: "caring, elegant, refined",
-  },
-  7: {
-    day1: "navy blue crew-neck sweater, dark grey trousers, minimalist black watch",
-    day2: "dark grey henley, black slim jeans, navy blue canvas sneakers",
-    eve1: "dark navy fitted shirt, anthracite blazer, black trousers, black leather shoes",
-    eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots",
-    swim: "dark navy swim trunks, minimalist design, mid-thigh",
-    intimate: "charcoal grey boxer briefs, sleek minimal design",
-    bold: "dark navy fitted boxer briefs, minimal confident pose, editorial style",
-    mood: "intellectual, mysterious, minimal",
-  },
-  8: {
-    day1: "black polo shirt, charcoal trousers, dark leather belt and shoes",
-    day2: "dark grey crew-neck sweater, black jeans, black leather sneakers",
-    eve1: "dark charcoal button-down shirt, black fitted blazer, dark trousers, polished black shoes",
-    eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots",
-    swim: "black swim trunks, sleek fitted cut, mid-thigh",
-    intimate: "black boxer briefs, premium fitted design",
-    bold: "black fitted boxer briefs, powerful confident pose, premium editorial style",
-    mood: "powerful, sophisticated, commanding",
-  },
-  9: {
-    day1: "burgundy henley, off-white chinos, brown leather shoes",
-    day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots",
-    eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes",
-    eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers",
-    swim: "burgundy swim trunks, classic fit, mid-thigh",
-    intimate: "wine-red boxer briefs, comfortable fitted cut",
-    bold: "burgundy fitted boxer briefs, warm confident pose, editorial style",
-    mood: "compassionate, wise, universal",
-  },
+  1: { day1: "dark burgundy polo shirt, charcoal chinos, brown leather belt and shoes", day2: "white crew-neck t-shirt under a dark navy zip-up jacket, dark grey jeans, white sneakers", eve1: "deep wine button-down shirt, dark grey fitted blazer, black trousers, dark leather shoes", eve2: "black turtleneck sweater, dark burgundy trousers, suede ankle boots", swim: "dark burgundy fitted swim trunks, mid-thigh length", intimate: "dark burgundy boxer briefs, fitted, minimal branding", bold: "dark burgundy fitted boxer briefs, confident athletic pose, editorial fitness style", mood: "authoritative, confident, decisive" },
+  2: { day1: "light blue oxford shirt, beige chinos, white sneakers", day2: "soft grey V-neck sweater over white t-shirt, navy chinos, grey suede shoes", eve1: "pale blue linen shirt, light grey unstructured blazer, dark navy trousers, loafers", eve2: "navy blue knit polo, stone-grey trousers, brown leather loafers", swim: "light blue swim trunks with subtle pattern, mid-thigh length", intimate: "soft blue boxer briefs, comfortable cotton blend", bold: "light blue fitted boxer briefs, relaxed confident pose, modern editorial style", mood: "harmonious, diplomatic, approachable" },
+  3: { day1: "mustard yellow polo, beige chinos, brown leather belt, tan shoes", day2: "warm terracotta henley, dark olive cargo pants, brown boots", eve1: "warm ochre button-down shirt, tan cotton blazer, dark brown trousers, cognac shoes", eve2: "burnt orange knit sweater, dark indigo jeans, brown suede desert boots", swim: "warm terracotta swim trunks, relaxed fit, mid-thigh", intimate: "mustard yellow boxer briefs, modern cut", bold: "terracotta fitted boxer briefs, expressive confident pose, editorial style", mood: "creative, joyful, expressive" },
+  4: { day1: "olive green polo, khaki trousers, brown leather shoes", day2: "camel crew-neck sweater, dark green corduroy trousers, brown boots", eve1: "forest green button-down, charcoal wool blazer, dark trousers, black shoes", eve2: "dark brown turtleneck, olive green trousers, dark leather ankle boots", swim: "olive green swim trunks, classic cut, mid-thigh length", intimate: "dark green boxer briefs, fitted cotton", bold: "olive green fitted boxer briefs, grounded natural pose, editorial fitness style", mood: "stable, grounded, reliable" },
+  5: { day1: "bright blue crew-neck t-shirt, grey casual jacket, dark jeans, white sneakers", day2: "teal henley shirt, dark grey jogger-chinos, navy blue slip-on sneakers", eve1: "cobalt blue fitted shirt, dark grey modern blazer, black trousers, black leather shoes", eve2: "steel blue knit polo, dark navy trousers, charcoal suede loafers", swim: "cobalt blue swim trunks with dynamic side stripe, mid-thigh", intimate: "bright blue boxer briefs, athletic fit", bold: "cobalt blue fitted boxer briefs, dynamic athletic pose, sporty editorial style", mood: "adventurous, dynamic, free" },
+  6: { day1: "sage green linen shirt, cream chinos, tan leather shoes", day2: "soft mint polo, light beige trousers, white canvas sneakers", eve1: "muted green button-down, ivory cotton blazer, beige trousers, cognac loafers", eve2: "emerald green V-neck sweater, cream chinos, tan suede shoes", swim: "sage green swim trunks, tailored fit, mid-thigh", intimate: "mint green boxer briefs, soft cotton blend", bold: "sage green fitted boxer briefs, natural relaxed pose, editorial style", mood: "caring, elegant, refined" },
+  7: { day1: "navy blue crew-neck sweater, dark grey trousers, minimalist black watch", day2: "dark grey henley, black slim jeans, navy blue canvas sneakers", eve1: "dark navy fitted shirt, anthracite blazer, black trousers, black leather shoes", eve2: "charcoal turtleneck, dark navy trousers, black suede chelsea boots", swim: "dark navy swim trunks, minimalist design, mid-thigh", intimate: "charcoal grey boxer briefs, sleek minimal design", bold: "dark navy fitted boxer briefs, minimal confident pose, editorial style", mood: "intellectual, mysterious, minimal" },
+  8: { day1: "black polo shirt, charcoal trousers, dark leather belt and shoes", day2: "dark grey crew-neck sweater, black jeans, black leather sneakers", eve1: "dark charcoal button-down shirt, black fitted blazer, dark trousers, polished black shoes", eve2: "black V-neck cashmere sweater, dark grey wool trousers, black leather ankle boots", swim: "black swim trunks, sleek fitted cut, mid-thigh", intimate: "black boxer briefs, premium fitted design", bold: "black fitted boxer briefs, powerful confident pose, premium editorial style", mood: "powerful, sophisticated, commanding" },
+  9: { day1: "burgundy henley, off-white chinos, brown leather shoes", day2: "wine-red crew-neck t-shirt, dark khaki trousers, tan suede boots", eve1: "deep wine button-down, cream unstructured blazer, dark burgundy trousers, cognac shoes", eve2: "maroon knit polo, dark charcoal trousers, brown leather loafers", swim: "burgundy swim trunks, classic fit, mid-thigh", intimate: "wine-red boxer briefs, comfortable fitted cut", bold: "burgundy fitted boxer briefs, warm confident pose, editorial style", mood: "compassionate, wise, universal" },
 };
 
-// Female outfit styles by vibration number
 const femaleVibeStyles: Record<number, { day1: string; day2: string; eve1: string; eve2: string; swim: string; intimate: string; bold: string; mood: string }> = {
-  1: {
-    day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels",
-    day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots",
-    eve1: "deep wine wrap dress, delicate gold necklace, black stiletto heels",
-    eve2: "black fitted jumpsuit, dark red clutch, strappy heels",
-    swim: "dark burgundy elegant one-piece swimsuit, classic cut, refined and tasteful",
-    intimate: "deep wine lace bralette and matching briefs, refined and elegant, not provocative",
-    bold: "deep wine sheer lace bodysuit with plunging neckline, confident empowered pose, sensual but classy editorial boudoir style, self-love energy",
-    mood: "authoritative, confident, decisive",
-  },
-  2: {
-    day1: "soft blue cashmere sweater, white midi skirt, nude flats",
-    day2: "light grey knit top, powder blue wide-leg pants, white sneakers",
-    eve1: "pale blue silk midi dress, silver bracelet, nude heels",
-    eve2: "lavender blouse, navy tailored trousers, grey suede pumps",
-    swim: "soft blue elegant one-piece swimsuit with subtle ruching, tasteful neckline",
-    intimate: "powder blue satin bralette and matching briefs, delicate lace trim, elegant",
-    bold: "powder blue sheer lace lingerie set with delicate straps, soft sensual pose, dreamy boudoir editorial, feminine empowerment energy",
-    mood: "harmonious, diplomatic, approachable",
-  },
-  3: {
-    day1: "mustard yellow blouse, camel wide-leg trousers, tan leather sandals",
-    day2: "terracotta wrap top, dark olive midi skirt, brown ankle boots",
-    eve1: "warm gold satin blouse, dark brown fitted pants, cognac heels",
-    eve2: "burnt orange knit dress, tan leather belt, brown suede boots",
-    swim: "warm terracotta one-piece swimsuit, wrap-style front, elegant beach look",
-    intimate: "warm gold satin bralette and matching briefs, refined details",
-    bold: "warm gold sheer bodysuit with lace detailing, joyful confident pose, artistic boudoir editorial, creative self-expression energy",
-    mood: "creative, joyful, expressive",
-  },
-  4: {
-    day1: "olive green linen shirt dress, brown leather belt, tan sandals",
-    day2: "camel turtleneck, dark green corduroy pants, brown boots",
-    eve1: "forest green fitted dress, gold stud earrings, dark leather heels",
-    eve2: "brown knit sweater, olive tailored trousers, dark ankle boots",
-    swim: "olive green elegant one-piece swimsuit, classic silhouette, modest coverage",
-    intimate: "forest green satin bralette with lace details and matching briefs, elegant",
-    bold: "forest green lace lingerie set with garter belt details, grounded confident pose, luxury boudoir editorial, earth goddess energy",
-    mood: "stable, grounded, reliable",
-  },
-  5: {
-    day1: "bright blue silk blouse, white jeans, colorful sneakers",
-    day2: "teal wrap top, dark grey tailored pants, navy loafers",
-    eve1: "cobalt blue one-shoulder dress, silver earrings, black strappy heels",
-    eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps",
-    swim: "cobalt blue one-piece swimsuit, modern sporty-elegant cut, tasteful",
-    intimate: "bright blue lace bralette and matching briefs, modern and refined",
-    bold: "electric blue strappy lingerie set with cutout details, dynamic empowered pose, bold boudoir editorial, fearless free-spirit energy",
-    mood: "adventurous, dynamic, free",
-  },
-  6: {
-    day1: "sage green linen blouse, cream wide-leg pants, woven sandals",
-    day2: "soft pink knit top, beige midi skirt, white ballet flats",
-    eve1: "emerald green wrap dress, gold pendant, nude heels",
-    eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps",
-    swim: "sage green elegant one-piece swimsuit with floral detail, refined",
-    intimate: "mint green satin bralette and matching briefs, delicate embroidery, elegant",
-    bold: "emerald green silk and lace lingerie set with ribbon details, graceful sensual pose, romantic boudoir editorial, nurturing goddess energy",
-    mood: "caring, elegant, refined",
-  },
-  7: {
-    day1: "navy blue cashmere sweater, dark grey slim pants, minimal silver jewelry",
-    day2: "charcoal silk blouse, black tailored trousers, dark loafers",
-    eve1: "midnight blue midi dress, subtle silver cuff, black heels",
-    eve2: "dark grey wrap dress, navy clutch, black suede ankle boots",
-    swim: "dark navy elegant one-piece swimsuit, minimalist design, classic cut",
-    intimate: "charcoal grey satin bralette and matching briefs, sleek minimal design, elegant",
-    bold: "midnight blue sheer mesh lingerie set with minimal lace, mysterious alluring pose, dark boudoir editorial, enigmatic seductive energy",
-    mood: "intellectual, mysterious, minimal",
-  },
-  8: {
-    day1: "black blazer over charcoal top, dark trousers, pointed black heels",
-    day2: "dark grey fitted dress, black leather belt, black ankle boots",
-    eve1: "black fitted dress, statement silver earrings, black stilettos",
-    eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels",
-    swim: "black elegant one-piece swimsuit, sculpted design, sophisticated",
-    intimate: "black lace bralette and matching briefs, premium design, refined not provocative",
-    bold: "black sheer lace bodysuit with deep V-neckline and subtle straps, powerful commanding pose, luxury boudoir editorial, dominant queen energy",
-    mood: "powerful, sophisticated, commanding",
-  },
-  9: {
-    day1: "burgundy wrap blouse, off-white wide-leg pants, brown leather sandals",
-    day2: "wine-red knit dress, dark brown belt, tan ankle boots",
-    eve1: "deep wine velvet midi dress, gold earrings, cognac heels",
-    eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps",
-    swim: "burgundy elegant one-piece swimsuit, wrap detail, tasteful and refined",
-    intimate: "wine-red lace bralette and matching briefs, elegant satin details",
-    bold: "deep wine velvet and lace lingerie set with delicate embroidery, warm empowered pose, intimate boudoir editorial, universal love and self-acceptance energy",
-    mood: "compassionate, wise, universal",
-  },
+  1: { day1: "tailored dark burgundy blazer over white silk blouse, black slim trousers, pointed-toe heels", day2: "fitted black turtleneck, charcoal high-waisted pants, burgundy leather bag, ankle boots", eve1: "deep wine wrap dress, delicate gold necklace, black stiletto heels", eve2: "black fitted jumpsuit, dark red clutch, strappy heels", swim: "dark burgundy elegant one-piece swimsuit, classic cut", intimate: "deep wine lace bralette and matching briefs, refined and elegant", bold: "deep wine sheer lace bodysuit with plunging neckline, confident empowered pose, sensual but classy editorial boudoir style", mood: "authoritative, confident, decisive" },
+  2: { day1: "soft blue cashmere sweater, white midi skirt, nude flats", day2: "light grey knit top, powder blue wide-leg pants, white sneakers", eve1: "pale blue silk midi dress, silver bracelet, nude heels", eve2: "lavender blouse, navy tailored trousers, grey suede pumps", swim: "soft blue elegant one-piece swimsuit with subtle ruching", intimate: "powder blue satin bralette and matching briefs, delicate lace trim", bold: "powder blue sheer lace lingerie set with delicate straps, soft sensual pose, dreamy boudoir editorial", mood: "harmonious, diplomatic, approachable" },
+  3: { day1: "mustard yellow blouse, camel wide-leg trousers, tan leather sandals", day2: "terracotta wrap top, dark olive midi skirt, brown ankle boots", eve1: "warm gold satin blouse, dark brown fitted pants, cognac heels", eve2: "burnt orange knit dress, tan leather belt, brown suede boots", swim: "warm terracotta one-piece swimsuit, wrap-style front", intimate: "warm gold satin bralette and matching briefs, refined details", bold: "warm gold sheer bodysuit with lace detailing, joyful confident pose, artistic boudoir editorial", mood: "creative, joyful, expressive" },
+  4: { day1: "olive green linen shirt dress, brown leather belt, tan sandals", day2: "camel turtleneck, dark green corduroy pants, brown boots", eve1: "forest green fitted dress, gold stud earrings, dark leather heels", eve2: "brown knit sweater, olive tailored trousers, dark ankle boots", swim: "olive green elegant one-piece swimsuit, classic silhouette", intimate: "forest green satin bralette with lace details and matching briefs", bold: "forest green lace lingerie set with garter belt details, grounded confident pose, luxury boudoir editorial", mood: "stable, grounded, reliable" },
+  5: { day1: "bright blue silk blouse, white jeans, colorful sneakers", day2: "teal wrap top, dark grey tailored pants, navy loafers", eve1: "cobalt blue one-shoulder dress, silver earrings, black strappy heels", eve2: "steel blue satin blouse, dark navy skirt, charcoal pumps", swim: "cobalt blue one-piece swimsuit, modern sporty-elegant cut", intimate: "bright blue lace bralette and matching briefs, modern and refined", bold: "electric blue strappy lingerie set with cutout details, dynamic empowered pose, bold boudoir editorial", mood: "adventurous, dynamic, free" },
+  6: { day1: "sage green linen blouse, cream wide-leg pants, woven sandals", day2: "soft pink knit top, beige midi skirt, white ballet flats", eve1: "emerald green wrap dress, gold pendant, nude heels", eve2: "mint green silk blouse, ivory tailored pants, tan leather pumps", swim: "sage green elegant one-piece swimsuit with floral detail", intimate: "mint green satin bralette and matching briefs, delicate embroidery", bold: "emerald green silk and lace lingerie set with ribbon details, graceful sensual pose, romantic boudoir editorial", mood: "caring, elegant, refined" },
+  7: { day1: "navy blue cashmere sweater, dark grey slim pants, minimal silver jewelry", day2: "charcoal silk blouse, black tailored trousers, dark loafers", eve1: "midnight blue midi dress, subtle silver cuff, black heels", eve2: "dark grey wrap dress, navy clutch, black suede ankle boots", swim: "dark navy elegant one-piece swimsuit, minimalist design", intimate: "charcoal grey satin bralette and matching briefs, sleek minimal design", bold: "midnight blue sheer mesh lingerie set with minimal lace, mysterious alluring pose, dark boudoir editorial", mood: "intellectual, mysterious, minimal" },
+  8: { day1: "black blazer over charcoal top, dark trousers, pointed black heels", day2: "dark grey fitted dress, black leather belt, black ankle boots", eve1: "black fitted dress, statement silver earrings, black stilettos", eve2: "charcoal tailored jumpsuit, dark clutch, polished black heels", swim: "black elegant one-piece swimsuit, sculpted design", intimate: "black lace bralette and matching briefs, premium design", bold: "black sheer lace bodysuit with deep V-neckline and subtle straps, powerful commanding pose, luxury boudoir editorial", mood: "powerful, sophisticated, commanding" },
+  9: { day1: "burgundy wrap blouse, off-white wide-leg pants, brown leather sandals", day2: "wine-red knit dress, dark brown belt, tan ankle boots", eve1: "deep wine velvet midi dress, gold earrings, cognac heels", eve2: "maroon silk blouse, dark charcoal skirt, brown leather pumps", swim: "burgundy elegant one-piece swimsuit, wrap detail", intimate: "wine-red lace bralette and matching briefs, elegant satin details", bold: "deep wine velvet and lace lingerie set with delicate embroidery, warm empowered pose, intimate boudoir editorial", mood: "compassionate, wise, universal" },
 };
 
 function reduceNumber(num: number): number {
   while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
-    num = num
-      .toString()
-      .split("")
-      .reduce((sum, digit) => sum + parseInt(digit), 0);
+    num = num.toString().split("").reduce((sum, digit) => sum + parseInt(digit), 0);
   }
   return num;
 }
 
 function getUniversalDayVibration(): number {
   const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const sum = day + month + reduceNumber(year);
-  return reduceNumber(sum);
+  return reduceNumber(today.getDate() + today.getMonth() + 1 + reduceNumber(today.getFullYear()));
 }
 
 function getPersonalDayVibration(personalYear: number): number {
   const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth() + 1;
-  // Personal month = calendar month + personal year (reduced)
-  const personalMonth = reduceNumber(month + personalYear);
-  // Personal day = day + personal month (reduced)
-  return reduceNumber(day + personalMonth);
-}
-
-function getCurrentSeason(): { name: string; hint: string; fabric: string } {
-  const month = new Date().getMonth() + 1; // 1-12
-  if (month >= 3 && month <= 5) {
-    return {
-      name: "spring",
-      hint: "Light layers, breathable fabrics. Mild weather ~15-22°C.",
-      fabric: "cotton, light linen, light knits, denim",
-    };
-  } else if (month >= 6 && month <= 8) {
-    return {
-      name: "summer",
-      hint: "Hot weather ~25-35°C. Lightweight, airy clothing. Short sleeves, open shoes.",
-      fabric: "linen, light cotton, chambray, breathable blends",
-    };
-  } else if (month >= 9 && month <= 11) {
-    return {
-      name: "autumn",
-      hint: "Cool weather ~8-18°C. Layering is key. Warm tones.",
-      fabric: "wool, corduroy, heavier cotton, suede, leather",
-    };
-  } else {
-    return {
-      name: "winter",
-      hint: "Cold weather ~0-10°C. Warm, cozy clothing. Coats, scarves, boots.",
-      fabric: "wool, cashmere, heavy knits, leather, flannel",
-    };
-  }
+  const personalMonth = reduceNumber(today.getMonth() + 1 + personalYear);
+  return reduceNumber(today.getDate() + personalMonth);
 }
 
 function getWeatherLabel(code: number): string {
@@ -268,74 +63,53 @@ function getWeatherLabel(code: number): string {
 
 function getWeatherStyleHints(tempC: number, weatherCode: number): { season: string; fabrics: string; hint: string } {
   const weather = getWeatherLabel(weatherCode);
-  const cold = tempC <= 8;
-  const cool = tempC > 8 && tempC <= 17;
-  const mild = tempC > 17 && tempC <= 25;
-
   let season = "summer-like";
   let fabrics = "linen, breathable cotton, light blends";
   let thermalHint = "Use lightweight breathable garments, airy layers and open footwear where appropriate.";
 
-  if (cold) {
+  if (tempC <= 8) {
     season = "winter-like";
     fabrics = "wool, cashmere, heavy knits, thermal layers";
     thermalHint = "Use warm layers, coat-friendly looks, closed shoes/boots and weather-resistant outerwear.";
-  } else if (cool) {
+  } else if (tempC <= 17) {
     season = "autumn/spring-like";
     fabrics = "medium-weight cotton, denim, merino, soft wool blends";
     thermalHint = "Use layered outfits: light jacket/cardigan with closed shoes and transitional fabrics.";
-  } else if (mild) {
+  } else if (tempC <= 25) {
     season = "spring-like";
     fabrics = "cotton, light denim, thin knits, breathable blends";
     thermalHint = "Use light layers and comfortable fabrics suitable for mild temperatures.";
   }
 
-  if (weather === "rainy") {
-    thermalHint += " Add rain-friendly details (closed shoes, practical outer layer, avoid delicate fabrics).";
-  }
-  if (weather === "snowy") {
-    thermalHint += " Prioritize insulation and winter-safe footwear (no exposed feet).";
-  }
-  if (weather === "stormy") {
-    thermalHint += " Keep styling practical and protective, with stable footwear and secure layers.";
-  }
+  if (weather === "rainy") thermalHint += " Add rain-friendly details.";
+  if (weather === "snowy") thermalHint += " Prioritize insulation and winter-safe footwear.";
+  if (weather === "stormy") thermalHint += " Keep styling practical and protective.";
 
   return { season, fabrics, hint: thermalHint };
 }
 
-async function getLocalWeatherContext(
-  residenceState: string,
-): Promise<{ location: string; hint: string; fabrics: string; season: string } | null> {
+async function getLocalWeatherContext(residenceState: string): Promise<{ location: string; hint: string; fabrics: string; season: string } | null> {
   const normalized = residenceState.trim();
   if (!normalized) return null;
-
   try {
-    const geocodeRes = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalized)}&count=1&language=en&format=json`,
-    );
+    const geocodeRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalized)}&count=1&language=en&format=json`);
     if (!geocodeRes.ok) return null;
-
     const geocode = await geocodeRes.json();
     const place = geocode?.results?.[0];
     if (!place?.latitude || !place?.longitude) return null;
 
-    const weatherRes = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,weather_code&timezone=auto`,
-    );
+    const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,weather_code&timezone=auto`);
     if (!weatherRes.ok) return null;
-
     const weatherData = await weatherRes.json();
     const temp = Number(weatherData?.current?.temperature_2m);
     const code = Number(weatherData?.current?.weather_code);
     if (Number.isNaN(temp) || Number.isNaN(code)) return null;
 
     const styleHints = getWeatherStyleHints(temp, code);
-    const weatherLabel = getWeatherLabel(code);
     const location = [place?.name, place?.admin1, place?.country].filter(Boolean).join(", ");
-
     return {
       location,
-      hint: `Current weather is ${weatherLabel} at about ${Math.round(temp)}°C. ${styleHints.hint}`,
+      hint: `Current weather is ${getWeatherLabel(code)} at about ${Math.round(temp)}°C. ${styleHints.hint}`,
       fabrics: styleHints.fabrics,
       season: styleHints.season,
     };
@@ -344,42 +118,12 @@ async function getLocalWeatherContext(
   }
 }
 
-function extractJsonObject(text: string): any | null {
-  const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) return null;
-    try {
-      return JSON.parse(match[0]);
-    } catch {
-      return null;
-    }
-  }
-}
-
-function buildNumerologyContext(map: any, personalDay: number, universalDay: number): string {
-  const parts: string[] = [];
-  parts.push(
-    `Numerology profile: Life Path ${map.life_path}, Expression ${map.destiny_expression}, Soul ${map.soul}, Personality ${map.personality}.`,
-  );
-  parts.push(
-    `Personal Year: ${map.personal_year}. Personal Day vibration: ${personalDay}. Universal Day vibration: ${universalDay}.`,
-  );
-
-  // Add specific guidance based on life path
-  const lpReduced = map.life_path > 9 ? reduceNumber(map.life_path) : map.life_path;
-  const soulReduced = map.soul > 9 ? reduceNumber(map.soul) : map.soul;
-
-  parts.push(
-    `The outfit should resonate with the energy of Personal Day ${personalDay}, while honoring the person's Life Path ${lpReduced} (their core identity) and Soul number ${soulReduced} (their inner desires).`,
-  );
-  parts.push(
-    `Use colors and styles that align with the vibration of the day (${personalDay}) but also complement the person's numerological essence.`,
-  );
-
-  return parts.join(" ");
+function getCurrentSeasonFallback(): { name: string; hint: string; fabric: string } {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 5) return { name: "spring", hint: "Mild weather ~15-22°C.", fabric: "cotton, light linen, light knits" };
+  if (month >= 6 && month <= 8) return { name: "summer", hint: "Hot weather ~25-35°C.", fabric: "linen, light cotton, breathable blends" };
+  if (month >= 9 && month <= 11) return { name: "autumn", hint: "Cool weather ~8-18°C.", fabric: "wool, corduroy, heavier cotton, suede" };
+  return { name: "winter", hint: "Cold weather ~0-10°C.", fabric: "wool, cashmere, heavy knits, leather" };
 }
 
 Deno.serve(async (req) => {
@@ -390,57 +134,32 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Non autorizzato" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "Non autorizzato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
-
     if (!lovableApiKey) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY non configurata" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY non configurata" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-
     const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser(token);
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Utente non trovato" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({ error: "Utente non trovato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     let force = false;
-    try {
-      const body = await req.json();
-      force = body?.force === true;
-    } catch {
-      /* no body is fine */
-    }
+    try { const body = await req.json(); force = body?.force === true; } catch { /* no body */ }
 
     const today = new Date().toISOString().split("T")[0];
 
-    // Fetch profile, numerology map, and photos in parallel
+    // Fetch profile, map, photos in parallel
     const [profileResult, mapResult, photosResult] = await Promise.all([
       supabase.from("profiles").select("birth_date, sesso, residence_state, language").eq("user_id", user.id).single(),
-      supabase
-        .from("numerology_maps")
-        .select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference")
-        .eq("user_id", user.id)
-        .order("computed_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", user.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("photos").select("type, storage_path").eq("user_id", user.id),
     ]);
 
@@ -449,351 +168,168 @@ Deno.serve(async (req) => {
     const profileLanguage = profile?.language === "en" ? "en" : "it";
 
     if (!profile?.residence_state?.trim()) {
-      return new Response(
-        JSON.stringify({
-          error:
-            profileLanguage === "en"
-              ? "Please add your state of residence in your profile to generate weather-adapted outfits."
-              : "Aggiungi lo stato in cui vivi nel profilo per generare outfit adattati al meteo locale.",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      const msg = profileLanguage === "en"
+        ? "Please add your state of residence in your profile to generate weather-adapted outfits."
+        : "Aggiungi lo stato in cui vivi nel profilo per generare outfit adattati al meteo locale.";
+      return new Response(JSON.stringify({ error: msg }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Calculate personal day vibration BEFORE cache check
+    // Vibration
     const universalDay = getUniversalDayVibration();
     let personalDay = universalDay;
-    if (numMap) {
-      personalDay = getPersonalDayVibration(numMap.personal_year);
-    }
+    if (numMap) personalDay = getPersonalDayVibration(numMap.personal_year);
     const vibeKey = personalDay > 9 ? reduceNumber(personalDay) : personalDay;
 
-    // Cache key includes vibration (season changes within a day won't happen, but the season
-    // is baked into the prompt so regeneration after season change happens naturally via date change)
-    const locationKey = profile.residence_state
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/gi, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 40);
+    // Cache prefix
+    const locationKey = profile.residence_state.toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 40);
     const cachePrefix = `${today}_v${vibeKey}_${locationKey || "na"}`;
+
+    // Check cache
     let cachedOutfits: (string | null)[] | null = null;
-
     if (!force) {
-      const { data: existingFiles } = await supabase.storage
-        .from("user-photos")
-        .list(`${user.id}/outfits`, { search: cachePrefix });
-
+      const { data: existingFiles } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
       if (existingFiles && existingFiles.length >= 1) {
         const slotLabels = ["day1", "day2", "eve1", "eve2"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
             if (!file) return null;
-            const { data } = await supabase.storage
-              .from("user-photos")
-              .createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
+            const { data } = await supabase.storage.from("user-photos").createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
             return data?.signedUrl || null;
           }),
         );
-
-        if (urls.every(Boolean)) {
-          cachedOutfits = urls;
-        }
+        if (urls.every(Boolean)) cachedOutfits = urls;
       }
     }
 
-    // Calculate age
+    // Age
     let userAge: number | null = null;
     if (profile?.birth_date) {
       const birth = new Date(profile.birth_date);
       const now = new Date();
       userAge = now.getFullYear() - birth.getFullYear();
-      const monthDiff = now.getMonth() - birth.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-        userAge--;
-      }
+      if (now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())) userAge--;
     }
 
-    // Determine gender
     const gender = profile?.sesso || "M";
     const isFemale = gender === "F";
     const genderLabel = isFemale ? "woman" : "man";
 
-    // Build numerology context
+    // Numerology context
     let numerologyContext = "";
     if (numMap) {
-      numerologyContext = buildNumerologyContext(numMap, personalDay, universalDay);
+      numerologyContext = `Numerology: Life Path ${numMap.life_path}, Expression ${numMap.destiny_expression}, Soul ${numMap.soul}, Personality ${numMap.personality}. Personal Year: ${numMap.personal_year}. Personal Day: ${personalDay}. Universal Day: ${universalDay}. Outfit must resonate with vibration ${personalDay}.`;
     }
 
-    // Pick style based on personal day vibration
     const vibeStyles = isFemale ? femaleVibeStyles : maleVibeStyles;
     const style = vibeStyles[vibeKey] || vibeStyles[1];
 
-    // Get ALL user photos for comprehensive appearance analysis
+    // Get user photo URLs for appearance reference
     const userPhotoUrls: string[] = [];
     const photos = photosResult.data;
     if (photos && photos.length > 0) {
-      // Prioritize: face first, then full_front, full_side, then extras
       const sortOrder: Record<string, number> = { face: 0, full_front: 1, full_side: 2 };
-      const sorted = [...photos].sort((a, b) => {
-        const oa = sortOrder[a.type] ?? 3;
-        const ob = sortOrder[b.type] ?? 3;
-        return oa - ob;
-      });
-      // Get signed URLs for all photos (max 6 to avoid token limits)
+      const sorted = [...photos].sort((a, b) => (sortOrder[a.type] ?? 3) - (sortOrder[b.type] ?? 3));
       const photosToUse = sorted.slice(0, 6);
       const signedResults = await Promise.all(
-        photosToUse.map((p) => supabase.storage.from("user-photos").createSignedUrl(p.storage_path, 600))
+        photosToUse.map((p) => supabase.storage.from("user-photos").createSignedUrl(p.storage_path, 600)),
       );
       for (const result of signedResults) {
         if (result.data?.signedUrl) userPhotoUrls.push(result.data.signedUrl);
       }
     }
 
-    // Weather + season context from user residence (fallback to calendar season)
+    // Weather context
     const localWeather = await getLocalWeatherContext(profile.residence_state);
-    const fallbackSeason = getCurrentSeason();
+    const fallbackSeason = getCurrentSeasonFallback();
     const seasonHint = localWeather
-      ? `LOCATION: ${localWeather.location}. LOCAL CLIMATE: ${localWeather.season}. ${localWeather.hint} Preferred fabrics: ${localWeather.fabrics}. Keep style and numerological colors, but adapt garments to this real local weather.`
-      : `SEASON (fallback): ${fallbackSeason.name}. ${fallbackSeason.hint} Preferred fabrics: ${fallbackSeason.fabric}. Adapt outfit choices to realistic weather comfort.`;
+      ? `LOCATION: ${localWeather.location}. CLIMATE: ${localWeather.season}. ${localWeather.hint} Fabrics: ${localWeather.fabrics}.`
+      : `SEASON: ${fallbackSeason.name}. ${fallbackSeason.hint} Fabrics: ${fallbackSeason.fabric}.`;
 
-    // Build prompts
-    const ageHint = userAge
-      ? `The person is approximately ${userAge} years old — choose clothing styles, cuts and fits appropriate for this age group.`
-      : "";
-    const vibrationEmphasis = `CRITICAL: The outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). The colors, textures and overall feel should channel this specific frequency. This is NOT optional — the numerological alignment is the core purpose of the outfit suggestion.`;
-    const baseRules = `IMPORTANT: SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins, NO extravagant fashion. Just clean, well-fitted, normal clothes for a regular ${genderLabel} who wants to look good. Show full body from head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+    const ageHint = userAge ? `The person is approximately ${userAge} years old — choose age-appropriate styles.` : "";
+    const vibrationEmphasis = `CRITICAL: Outfit MUST align with Personal Day Vibration ${personalDay} (energy: ${style.mood}). Colors, textures and feel should channel this frequency.`;
+    const baseRules = `SIMPLE, SOBER, EVERYDAY clothing for a ${genderLabel}. ${seasonHint} NO suits with ties, NO flashy accessories, NO gold jewelry, NO ceremonial clothing, NO glitter, NO sequins. Clean, well-fitted, normal clothes. Show full body head to feet in a realistic photo. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
 
-    const validateGeneratedIdentity = async (candidateImageData: string, label: string) => {
-      if (userPhotoUrls.length === 0) {
-        return { pass: true, score: 100, mismatches: [] as string[] };
-      }
+    const outfitPrompts = [
+      { label: "day1", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street, natural daylight. ${baseRules}` },
+      { label: "day2", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.day2}. Mood: ${style.mood}. Setting: bright café terrace. ${baseRules}` },
+      { label: "eve1", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant, warm lighting. ${baseRules}` },
+      { label: "eve2", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar, ambient lighting. ${baseRules}` },
+    ];
 
+    const swimLingerieRules = isFemale
+      ? `ELEGANT, REFINED, TASTEFUL. NO provocative poses, NO explicit content. Classy, sophisticated like a luxury fashion catalog. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
+      : `CLEAN, REFINED, TASTEFUL. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
+    const boldRules = isFemale
+      ? `BOUDOIR-STYLE empowerment image. SENSUAL, CONFIDENT, EMPOWERING — luxury fashion/boudoir editorial. NOT vulgar, NOT pornographic. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
+      : `CONFIDENT editorial-style image. Strong, self-assured. Premium underwear campaign aesthetic. NOT provocative. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
+
+    const bonusPrompts = [
+      { label: "swim", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.swim}. Mood: ${style.mood}. Setting: elegant beach or luxury pool. ${swimLingerieRules}` },
+      { label: "intimate", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.intimate}. Mood: ${style.mood}. Setting: clean bright bedroom, editorial style. ${swimLingerieRules}` },
+      { label: "bold", prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing: ${style.bold}. Mood: ${style.mood}, empowered, fearless. Setting: ${isFemale ? "luxury boudoir with warm dramatic lighting" : "modern minimalist studio with dramatic side lighting"}. ${boldRules}` },
+    ];
+
+    // Simple single-pass image generation — NO validation loop
+    const generateImage = async (prompt: string, label: string): Promise<string | null> => {
       try {
-        const reviewContent: any[] = [
-          {
-            type: "text",
-            text: `Compare the REFERENCE photos with the GENERATED outfit image and return ONLY JSON. Be extremely strict.
-Required checks: face identity, hair length/style/color, eyes, expression family, skin tone, body build/proportions (including chest/hip silhouette consistency).
-If any critical mismatch exists, pass must be false.
-JSON schema:
-{
-  "pass": boolean,
-  "score": number,
-  "checks": {
-    "face_identity": "match|partial|mismatch",
-    "hair": "match|partial|mismatch",
-    "eyes": "match|partial|mismatch",
-    "expression": "match|partial|mismatch",
-    "skin_tone": "match|partial|mismatch",
-    "body_build": "match|partial|mismatch"
-  },
-  "critical_mismatches": string[],
-  "reason": string
-}`,
-          },
-        ];
+        const messages: any[] = [];
 
-        for (const url of userPhotoUrls) {
-          reviewContent.push({ type: "image_url", image_url: { url } });
+        if (userPhotoUrls.length > 0) {
+          const contentParts: any[] = [
+            {
+              type: "text",
+              text: `I'm providing reference photos of this person. Analyze their skin tone, face shape, hair color/length/style, eye color, body build, bust/chest proportions, and height. Then generate a new full-body image of a person with THESE SAME physical characteristics wearing the described outfit. Match the person's appearance closely.
+The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
+            },
+          ];
+          for (const url of userPhotoUrls) {
+            contentParts.push({ type: "image_url", image_url: { url } });
+          }
+          messages.push({ role: "user", content: contentParts });
+        } else {
+          messages.push({ role: "user", content: prompt });
         }
-        reviewContent.push({ type: "image_url", image_url: { url: candidateImageData } });
 
-        const reviewRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${lovableApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${lovableApiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [{ role: "user", content: reviewContent }],
+            model: "google/gemini-3.1-flash-image-preview",
+            messages,
+            modalities: ["image", "text"],
           }),
         });
 
-        if (!reviewRes.ok) {
-          console.error(`Validation request failed for ${label}`);
-          return { pass: false, score: 0, mismatches: ["validation_failed"] };
+        if (!response.ok) {
+          console.error(`AI error for ${label}:`, response.status);
+          return null;
         }
 
-        const reviewData = await reviewRes.json();
-        const rawContent = reviewData?.choices?.[0]?.message?.content;
-        const reviewText = Array.isArray(rawContent)
-          ? rawContent.map((part: any) => (typeof part === "string" ? part : part?.text || "")).join("\n")
-          : String(rawContent || "");
-
-        const parsed = extractJsonObject(reviewText);
-        if (!parsed) {
-          return { pass: false, score: 0, mismatches: ["invalid_validation_json"] };
+        const data = await response.json();
+        const imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        if (!imageData) {
+          console.error(`No image returned for ${label}`);
+          return null;
         }
 
-        const criticalMismatches = Array.isArray(parsed.critical_mismatches)
-          ? parsed.critical_mismatches.map((x: any) => String(x))
-          : [];
-        const checks = parsed.checks || {};
-        const strictMismatchInChecks = ["face_identity", "hair", "eyes", "expression", "skin_tone", "body_build"].some(
-          (key) => String(checks[key] || "").toLowerCase() === "mismatch",
-        );
+        // Upload to storage
+        const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
+        const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+        const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
+        const { error: uploadError } = await supabase.storage.from("user-photos").upload(filePath, binaryData, { contentType: "image/png", upsert: true });
+        if (uploadError) {
+          console.error(`Upload error for ${label}:`, uploadError);
+          return null;
+        }
 
-        const score = Number(parsed.score || 0);
-        const pass = Boolean(parsed.pass) && score >= 90 && criticalMismatches.length === 0 && !strictMismatchInChecks;
-
-        const mismatches = criticalMismatches.length
-          ? criticalMismatches
-          : strictMismatchInChecks
-            ? ["trait_mismatch"]
-            : [];
-
-        return { pass, score, mismatches };
+        const { data: signedData } = await supabase.storage.from("user-photos").createSignedUrl(filePath, 3600);
+        return signedData?.signedUrl || null;
       } catch (e) {
-        console.error(`Validation error for ${label}:`, e);
-        return { pass: false, score: 0, mismatches: ["validation_exception"] };
+        console.error(`Error generating ${label}:`, e);
+        return null;
       }
-    };
-
-    const swimLingerieRules = isFemale
-      ? `IMPORTANT: The image must be ELEGANT, REFINED, TASTEFUL. Absolutely NO provocative poses, NO explicit content, NO revealing angles. The aesthetic must be classy and sophisticated like a luxury fashion catalog. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
-      : `IMPORTANT: The image must be CLEAN, REFINED, TASTEFUL. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
-
-    const outfitPrompts = [
-      {
-        label: "day1",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC daytime outfit: ${style.day1}. Mood: ${style.mood}. Setting: modern urban street with natural daylight. ${baseRules}`,
-      },
-      {
-        label: "day2",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE daytime outfit (COMPLETELY DIFFERENT garments): ${style.day2}. Mood: ${style.mood}. Setting: bright office entrance or café terrace. ${baseRules}`,
-      },
-      {
-        label: "eve1",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC evening outfit for dinner: ${style.eve1}. Mood: ${style.mood}. Setting: upscale restaurant entrance with warm lighting. ${baseRules}`,
-      },
-      {
-        label: "eve2",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ALTERNATIVE evening outfit (COMPLETELY DIFFERENT garments from the first evening look): ${style.eve2}. Mood: ${style.mood}. Setting: stylish lounge bar with ambient lighting. ${baseRules}`,
-      },
-    ];
-
-    const boldRules = isFemale
-      ? `IMPORTANT: This is a BOUDOIR-STYLE empowerment image. The aesthetic must be SENSUAL, CONFIDENT, EMPOWERING — like a luxury fashion/boudoir editorial. The woman should look powerful, alive, fearless, celebrating her body. NOT vulgar, NOT pornographic. Think Victoria's Secret editorial meets fine-art boudoir photography. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`
-      : `IMPORTANT: This is a CONFIDENT editorial-style image. The man should look strong, self-assured, comfortable in his own skin. Think premium underwear campaign. NOT provocative. Show full body. ${ageHint} ${vibrationEmphasis} ${numerologyContext}`;
-
-    const bonusPrompts = [
-      {
-        label: "swim",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC swimwear: ${style.swim}. Mood: ${style.mood}. Setting: elegant beach or luxury pool area with natural light. ${swimLingerieRules}`,
-      },
-      {
-        label: "intimate",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "lingerie" : "underwear"}: ${style.intimate}. Mood: ${style.mood}. Setting: clean, bright bedroom with soft natural light, editorial style. ${swimLingerieRules}`,
-      },
-      {
-        label: "bold",
-        prompt: `Generate a realistic full-body photo of a ${genderLabel} wearing this SPECIFIC ${isFemale ? "bold lingerie" : "bold underwear"}: ${style.bold}. Mood: ${style.mood}, empowered, fearless, alive. Setting: ${isFemale ? "luxury boudoir with warm dramatic lighting, silk sheets, moody atmosphere" : "modern minimalist studio with dramatic side lighting"}. ${boldRules}`,
-      },
-    ];
-
-    const generateImage = async (prompt: string, label: string, maxRetries = 3): Promise<string | null> => {
-      let correctionNote = "";
-      for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        try {
-          if (attempt > 0) {
-            console.log(`Retry ${attempt}/${maxRetries} for ${label}`);
-            await new Promise(r => setTimeout(r, 1000 * attempt));
-          }
-
-          const messages: any[] = [];
-
-          if (userPhotoUrls.length > 0) {
-            const contentParts: any[] = [
-              {
-                type: "text",
-                text: `I'm providing ${userPhotoUrls.length} reference photo(s) of this person. Carefully analyze ALL photos to understand their exact: face identity, hair length/style/color, eye characteristics, natural expression family, skin tone/complexion, body build and proportions. Then generate a new full-body image of THIS SAME person wearing the described outfit.
-IDENTITY LOCK (MANDATORY):
-- Do NOT change person identity.
-- Do NOT alter hair length/style/color.
-- Do NOT alter skin tone.
-- Do NOT alter body build/proportions.
-- Keep facial identity consistent with reference photos.
-- Keep expression coherent with reference identity (not a different person).
-If identity is not preserved, the image is invalid and must be regenerated.
-${correctionNote ? `Fix previous mismatch: ${correctionNote}` : ""}
-The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
-              },
-            ];
-            for (const url of userPhotoUrls) {
-              contentParts.push({ type: "image_url", image_url: { url } });
-            }
-            messages.push({ role: "user", content: contentParts });
-          } else {
-            messages.push({
-              role: "user",
-              content: prompt,
-            });
-          }
-
-          const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${lovableApiKey}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-3.1-flash-image-preview",
-              messages,
-              modalities: ["image", "text"],
-            }),
-          });
-
-          if (!response.ok) {
-            const errText = await response.text();
-            console.error(`AI error for ${label} (attempt ${attempt}):`, response.status, errText);
-            if (attempt === maxRetries) return null;
-            continue;
-          }
-
-          const data = await response.json();
-          const imageData = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-          if (!imageData) {
-            console.error(`No image returned for ${label} (attempt ${attempt})`);
-            if (attempt === maxRetries) return null;
-            continue;
-          }
-
-          const validation = await validateGeneratedIdentity(imageData, label);
-          if (!validation.pass) {
-            console.warn(`Identity mismatch for ${label} on attempt ${attempt}. score=${validation.score}`);
-            correctionNote =
-              validation.mismatches.length > 0
-                ? `Critical mismatches detected: ${validation.mismatches.join(", ")}. Preserve identity traits exactly.`
-                : "Preserve identity traits exactly (face, hair, eyes, expression, skin tone, body build).";
-            if (attempt === maxRetries) return null;
-            continue;
-          }
-
-          const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
-          const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-
-          const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
-          const { error: uploadError } = await supabase.storage.from("user-photos").upload(filePath, binaryData, {
-            contentType: "image/png",
-            upsert: true,
-          });
-
-          if (uploadError) {
-            console.error(`Upload error for ${label}:`, uploadError);
-            return null;
-          }
-
-          const { data: signedData } = await supabase.storage.from("user-photos").createSignedUrl(filePath, 3600);
-          return signedData?.signedUrl || null;
-        } catch (e) {
-          console.error(`Error generating ${label} (attempt ${attempt}):`, e);
-          if (attempt === maxRetries) return null;
-        }
-      }
-      return null;
     };
 
     let results: (string | null)[] = [];
@@ -801,7 +337,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
     if (cachedOutfits) {
       results = cachedOutfits;
     } else {
-      // Generate main 4 outfits in pairs
+      // Generate all 4 in parallel pairs
       const [day1, day2] = await Promise.all([
         generateImage(outfitPrompts[0].prompt, outfitPrompts[0].label),
         generateImage(outfitPrompts[1].prompt, outfitPrompts[1].label),
@@ -811,96 +347,44 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         generateImage(outfitPrompts[3].prompt, outfitPrompts[3].label),
       ]);
       results = [day1, day2, eve1, eve2];
-
-      if (results.some((item) => !item)) {
-        return new Response(
-          JSON.stringify({
-            error:
-              profileLanguage === "en"
-                ? "Unable to guarantee a fully consistent identity in all outfits. Please try regenerate."
-                : "Non sono riuscito a garantire una coerenza visiva totale in tutti gli outfit. Riprova con rigenera.",
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
     }
 
-    // Helper to generate bonus outfits (swim + intimate) and save to storage only
-    const generateBonusToStorage = async (prompt: string, label: string) => {
-      try {
-        const imageUrl = await generateImage(prompt, label, 2);
-        if (imageUrl) {
-          console.log(`Bonus outfit ${label} generated and saved to storage for user ${user.id}`);
-        } else {
-          console.warn(`Bonus outfit ${label} failed for user ${user.id}`);
-        }
-      } catch (e) {
-        console.error(`Bonus outfit ${label} error:`, e);
-      }
-    };
-
-    // Schedule bonus outfit generation (swim + intimate + bold) after a 2-minute delay
-    // These are saved to storage only, NOT returned to the client
+    // Schedule bonus generation in background with 2-min delay
     const bonusGenerationPromise = (async () => {
-      await new Promise((r) => setTimeout(r, 120_000)); // 2 minutes delay
+      await new Promise((r) => setTimeout(r, 120_000));
       console.log(`Starting bonus outfit generation for user ${user.id}`);
-      // Check if they already exist for today
-      const { data: existingBonus } = await supabase.storage
-        .from("user-photos")
-        .list(`${user.id}/outfits`, { search: cachePrefix });
-      const hasSwim = existingBonus?.some((f) => f.name.includes("_swim.png"));
-      const hasIntimate = existingBonus?.some((f) => f.name.includes("_intimate.png"));
-      const hasBold = existingBonus?.some((f) => f.name.includes("_bold.png"));
-      const tasks: Promise<void>[] = [];
-      if (!hasSwim) tasks.push(generateBonusToStorage(bonusPrompts[0].prompt, bonusPrompts[0].label));
-      if (!hasIntimate) tasks.push(generateBonusToStorage(bonusPrompts[1].prompt, bonusPrompts[1].label));
-      if (!hasBold) tasks.push(generateBonusToStorage(bonusPrompts[2].prompt, bonusPrompts[2].label));
+      const { data: existingBonus } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
+      const tasks: Promise<string | null>[] = [];
+      for (const bp of bonusPrompts) {
+        const exists = existingBonus?.some((f) => f.name.includes(`_${bp.label}.png`));
+        if (!exists) tasks.push(generateImage(bp.prompt, bp.label));
+      }
       if (tasks.length > 0) await Promise.all(tasks);
     })();
 
-    // Use EdgeRuntime.waitUntil if available (Deno Deploy), otherwise fire-and-forget
     try {
       if (typeof (globalThis as any).EdgeRuntime?.waitUntil === "function") {
         (globalThis as any).EdgeRuntime.waitUntil(bonusGenerationPromise);
       }
-    } catch {
-      // fire-and-forget is fine
-    }
+    } catch { /* fire-and-forget */ }
 
-    // Cleanup outfits older than 3 days
+    // Cleanup old files (>3 days)
     try {
-      const { data: allFiles } = await supabase.storage
-        .from("user-photos")
-        .list(`${user.id}/outfits`);
-
+      const { data: allFiles } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`);
       if (allFiles && allFiles.length > 0) {
-        const threeDaysAgo = new Date();
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        const cutoffDate = threeDaysAgo.toISOString().split("T")[0];
-
-        const oldFiles = allFiles.filter((f) => {
-          const dateMatch = f.name.match(/^(\d{4}-\d{2}-\d{2})_/);
-          return dateMatch && dateMatch[1] < cutoffDate;
-        });
-
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - 3);
+        const cutoffDate = cutoff.toISOString().split("T")[0];
+        const oldFiles = allFiles.filter((f) => { const m = f.name.match(/^(\d{4}-\d{2}-\d{2})_/); return m && m[1] < cutoffDate; });
         if (oldFiles.length > 0) {
-          const pathsToDelete = oldFiles.map((f) => `${user.id}/outfits/${f.name}`);
-          await supabase.storage.from("user-photos").remove(pathsToDelete);
-          console.log(`Cleaned up ${oldFiles.length} old outfit files for user ${user.id}`);
+          await supabase.storage.from("user-photos").remove(oldFiles.map((f) => `${user.id}/outfits/${f.name}`));
         }
       }
-    } catch (cleanupErr) {
-      console.error("Cleanup error (non-fatal):", cleanupErr);
-    }
+    } catch { /* non-fatal */ }
 
-    return new Response(JSON.stringify({ outfits: results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ outfits: results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("generate-outfits error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Errore sconosciuto" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Errore sconosciuto" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
