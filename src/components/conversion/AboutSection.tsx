@@ -20,7 +20,7 @@ const AboutSection = () => {
 
             <div className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Mi chiamo Renato R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
+                Mi chiamo Luca R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 Negli anni ho sviluppato questo sistema per rendere la numerologia più chiara, accessibile e concreta: non teoria astratta, ma indicazioni pratiche che puoi usare ogni giorno.
