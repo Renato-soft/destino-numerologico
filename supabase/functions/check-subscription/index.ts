@@ -11,7 +11,7 @@ const corsHeaders = {
 const SUBSCRIPTION_PRODUCT_ID = "prod_UC8lYk5YrO4Yqs";
 
 // Manual overrides: emails that get full access without payment
-const OVERRIDES: string[] = ["regnew01@gmail.com", "maria732008@live.it"];
+const OVERRIDES: string[] = ["regnew01@gmail.com", "maria732008@live.it", "realerenato@gmail.com"];
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
