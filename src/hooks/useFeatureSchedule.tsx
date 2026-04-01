@@ -39,7 +39,7 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   const [userCreatedAt, setUserCreatedAt] = useState<string | null>(null);
   const [bypassSchedule, setBypassSchedule] = useState(false);
 
-  const BYPASS_EMAILS = ["regnew01@gmail.com", "maria732008@live.it"];
+  const BYPASS_EMAILS = ["regnew01@gmail.com", "maria732008@live.it", "realerenato@gmail.com"];
 
   const loadSchedule = useCallback(async () => {
     try {
