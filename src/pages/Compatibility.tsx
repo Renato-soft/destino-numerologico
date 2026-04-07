@@ -159,9 +159,11 @@ const Compatibility = () => {
 
     addSection("Punteggi di Compatibilità");
     addText(`Compatibilità Generale: ${result.overall}%`);
-    addText(`Compatibilità Emotiva: ${result.emotional}%`);
-    addText(`Compatibilità Comunicativa: ${result.communicative}%`);
-    addText(`Compatibilità Professionale: ${result.professional}%`);
+    addText(`Amore: ${result.emotional}%`);
+    addText(`Comunicazione: ${result.communicative}%`);
+    addText(`Lavoro: ${result.professional}%`);
+    addText(`Sfide: ${result.challenges}%`);
+    addText(`Crescita: ${result.growth}%`);
 
     addSection("Confronto Numeri");
     addText(`Destino: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
@@ -182,12 +184,11 @@ const Compatibility = () => {
   };
 
   const radarData = result ? [
-    { subject: "Destino", A: result.details.lifePath.score, B: 100 },
-    { subject: "Anima", A: result.details.soul.score, B: 100 },
-    { subject: "Io", A: result.details.expression.score, B: 100 },
-    { subject: "Personalità", A: result.details.personality.score, B: 100 },
-    { subject: "Emotiva", A: result.emotional, B: 100 },
-    { subject: "Professionale", A: result.professional, B: 100 },
+    { subject: "Amore", A: result.emotional, B: 100 },
+    { subject: "Comunicazione", A: result.communicative, B: 100 },
+    { subject: "Lavoro", A: result.professional, B: 100 },
+    { subject: "Sfide", A: result.challenges, B: 100 },
+    { subject: "Crescita", A: result.growth, B: 100 },
   ] : [];
 
   if (loading) {
@@ -281,11 +282,13 @@ const Compatibility = () => {
                 </div>
 
                 {/* Sub-scores */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   {[
-                    { label: "Emotiva", value: result.emotional, icon: Heart, color: "from-rose-500 to-pink-500" },
-                    { label: "Comunicativa", value: result.communicative, icon: MessageCircle, color: "from-blue-500 to-cyan-500" },
-                    { label: "Professionale", value: result.professional, icon: Briefcase, color: "from-amber-500 to-orange-500" },
+                    { label: "Amore", value: result.emotional, icon: Heart, color: "from-rose-500 to-pink-500" },
+                    { label: "Comunicazione", value: result.communicative, icon: MessageCircle, color: "from-blue-500 to-cyan-500" },
+                    { label: "Lavoro", value: result.professional, icon: Briefcase, color: "from-amber-500 to-orange-500" },
+                    { label: "Sfide", value: result.challenges, icon: AlertTriangle, color: "from-purple-500 to-violet-500" },
+                    { label: "Crescita", value: result.growth, icon: Lightbulb, color: "from-emerald-500 to-teal-500" },
                   ].map(item => (
                     <div key={item.label} className="glass-cosmic rounded-xl p-6 text-center">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-3`}>
@@ -340,18 +343,14 @@ const Compatibility = () => {
                   </div>
                 </div>
 
-                {/* Dinamica della relazione */}
-                <div className="glass-cosmic rounded-2xl p-8">
-                  <h2 className="font-display text-xl font-bold mb-4">Dinamica della Relazione</h2>
-                  <p className="text-foreground/90 leading-relaxed">{result.dynamicDescription}</p>
-                </div>
 
-                {/* Friction points - preview */}
+                {/* Sfide */}
                 <div className="glass-cosmic rounded-2xl p-8">
                   <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-400" />
-                    Punti di Attrito
+                    <AlertTriangle className="w-5 h-5 text-purple-400" />
+                    Sfide della Relazione
                   </h2>
+                  <p className="text-foreground/90 leading-relaxed mb-4">{result.challengeDescription}</p>
                   {result.frictionPoints.slice(0, isPremium ? undefined : 1).map((point, i) => (
                     <p key={i} className="text-foreground/90 mb-3">• {point}</p>
                   ))}
@@ -359,18 +358,19 @@ const Compatibility = () => {
                     <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
                       <Lock className="w-5 h-5 text-primary shrink-0" />
                       <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Sblocca tutti i {result.frictionPoints.length} punti di attrito e i suggerimenti completi.
+                        <span className="text-primary font-semibold">Premium:</span> Sblocca tutti i {result.frictionPoints.length} punti di attrito.
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* Suggestions - preview */}
+                {/* Crescita */}
                 <div className="glass-cosmic rounded-2xl p-8">
                   <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
-                    <Lightbulb className="w-5 h-5 text-primary" />
-                    Suggerimenti Pratici
+                    <Lightbulb className="w-5 h-5 text-emerald-400" />
+                    Potenziale di Crescita
                   </h2>
+                  <p className="text-foreground/90 leading-relaxed mb-4">{result.growthDescription}</p>
                   {result.suggestions.slice(0, isPremium ? undefined : 1).map((s, i) => (
                     <p key={i} className="text-foreground/90 mb-3">• {s}</p>
                   ))}
@@ -378,10 +378,16 @@ const Compatibility = () => {
                     <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
                       <Lock className="w-5 h-5 text-primary shrink-0" />
                       <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Accedi a tutti i suggerimenti personalizzati per comunicare al meglio.
+                        <span className="text-primary font-semibold">Premium:</span> Accedi a tutti i suggerimenti personalizzati.
                       </p>
                     </div>
                   )}
+                </div>
+
+                {/* Dinamica della relazione */}
+                <div className="glass-cosmic rounded-2xl p-8">
+                  <h2 className="font-display text-xl font-bold mb-4">Dinamica della Relazione</h2>
+                  <p className="text-foreground/90 leading-relaxed">{result.dynamicDescription}</p>
                 </div>
               </motion.div>
             )}

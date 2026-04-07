@@ -19,6 +19,8 @@ export interface CompatibilityResult {
   emotional: number;
   communicative: number;
   professional: number;
+  challenges: number;
+  growth: number;
   details: {
     lifePath: NumberComparison;
     soul: NumberComparison;
@@ -28,6 +30,8 @@ export interface CompatibilityResult {
   frictionPoints: string[];
   suggestions: string[];
   dynamicDescription: string;
+  challengeDescription: string;
+  growthDescription: string;
 }
 
 export interface NumberComparison {
@@ -119,7 +123,6 @@ function generateSuggestions(a: PersonNumbers, b: PersonNumbers): string[] {
   const mA = numberMeanings[getBaseNumber(a.lifePath)];
   const mB = numberMeanings[getBaseNumber(b.lifePath)];
 
-  // Life path based
   if (getBaseNumber(b.lifePath) === 1) {
     suggestions.push(`Il suo ${b.lifePath} vibra con leadership. Evita scontri diretti, meglio un approccio collaborativo.`);
   }
@@ -134,7 +137,6 @@ function generateSuggestions(a: PersonNumbers, b: PersonNumbers): string[] {
     suggestions.push(`Ricorda che la prima impressione può ingannare: il modo in cui vi mostrate al mondo è diverso da ciò che siete dentro.`);
   }
 
-  // Generic wisdom
   suggestions.push(`Comunicate apertamente le vostre esigenze: il tuo Destino ${a.lifePath} e il suo ${b.lifePath} hanno bisogni diversi che vanno riconosciuti.`);
 
   return suggestions.slice(0, 4);
@@ -153,24 +155,66 @@ function generateDynamic(a: PersonNumbers, b: PersonNumbers, overall: number): s
   }
 }
 
+function generateChallengeDescription(a: PersonNumbers, b: PersonNumbers, challengeScore: number): string {
+  const mA = numberMeanings[getBaseNumber(a.lifePath)];
+  const mB = numberMeanings[getBaseNumber(b.lifePath)];
+
+  if (challengeScore >= 70) {
+    return `Le sfide tra voi sono gestibili e costruttive. Le differenze tra il ${a.lifePath} (${mA?.keywords[0]}) e il ${b.lifePath} (${mB?.keywords[0]}) si trasformano facilmente in opportunità di crescita. Pochi ostacoli importanti si frappongono tra voi.`;
+  } else if (challengeScore >= 45) {
+    return `Ci sono sfide moderate da affrontare. Le differenze nella visione del mondo (${mA?.keywords[0]} vs ${mB?.keywords[0]}) possono creare tensioni, ma con dialogo e comprensione reciproca potete superarle e rafforzare il legame.`;
+  } else {
+    return `Le sfide sono significative e richiedono impegno consapevole. Le energie del ${a.lifePath} e del ${b.lifePath} tendono a scontrarsi. Servono pazienza, compromesso e una comunicazione molto aperta per navigare le differenze.`;
+  }
+}
+
+function generateGrowthDescription(a: PersonNumbers, b: PersonNumbers, growthScore: number): string {
+  const mA = numberMeanings[getBaseNumber(a.lifePath)];
+  const mB = numberMeanings[getBaseNumber(b.lifePath)];
+
+  if (growthScore >= 70) {
+    return `Questa relazione offre un enorme potenziale di crescita reciproca. Il ${a.lifePath} impara ${mB?.keywords[1] || mB?.keywords[0]} dall'altro, mentre il ${b.lifePath} sviluppa ${mA?.keywords[1] || mA?.keywords[0]} grazie a te. Insieme evolverete più velocemente che da soli.`;
+  } else if (growthScore >= 45) {
+    return `C'è un buon potenziale di crescita, soprattutto nelle aree in cui siete diversi. Il contrasto tra ${mA?.keywords[0]} e ${mB?.keywords[0]} vi spinge fuori dalla zona di comfort, stimolando l'evoluzione personale di entrambi.`;
+  } else {
+    return `La crescita reciproca richiede uno sforzo intenzionale. Le vostre energie sono molto simili o molto distanti, il che può limitare lo stimolo alla crescita. Cercate attività e interessi nuovi da esplorare insieme per sbloccare il potenziale evolutivo.`;
+  }
+}
+
 export function calculateCompatibility(a: PersonNumbers, b: PersonNumbers): CompatibilityResult {
-  // Calculate sub-scores (0-100)
   const lifePathScore = getPairScore(a.lifePath, b.lifePath);
   const soulScore = getPairScore(a.soul, b.soul);
   const expressionScore = getPairScore(a.expression, b.expression);
   const personalityScore = getPairScore(a.personality, b.personality);
 
-  // Weighted scores for different categories
+  // 5 dimensions
   const emotional = Math.round(((soulScore * 5 + lifePathScore * 3 + personalityScore * 2) / 10) * 10);
   const communicative = Math.round(((expressionScore * 5 + personalityScore * 3 + soulScore * 2) / 10) * 10);
   const professional = Math.round(((expressionScore * 4 + lifePathScore * 3 + personalityScore * 2 + soulScore * 1) / 10) * 10);
-  const overall = Math.round((emotional * 0.35 + communicative * 0.30 + professional * 0.35));
+  
+  // Challenges: inverse of friction — lower friction scores = higher challenge score means easier
+  const avgDiff = (lifePathScore + soulScore + expressionScore + personalityScore) / 4;
+  const challenges = Math.round(avgDiff * 10);
+  
+  // Growth: based on diversity (different numbers = more growth potential)
+  const diversityBonus = (getBaseNumber(a.lifePath) !== getBaseNumber(b.lifePath) ? 2 : 0)
+    + (getBaseNumber(a.soul) !== getBaseNumber(b.soul) ? 2 : 0)
+    + (getBaseNumber(a.expression) !== getBaseNumber(b.expression) ? 1 : 0)
+    + (getBaseNumber(a.personality) !== getBaseNumber(b.personality) ? 1 : 0);
+  const growth = Math.min(100, Math.round((avgDiff * 8) + (diversityBonus * 5)));
+
+  const overall = Math.round(emotional * 0.25 + communicative * 0.20 + professional * 0.20 + challenges * 0.15 + growth * 0.20);
+
+  const challengeDescription = generateChallengeDescription(a, b, challenges);
+  const growthDescription = generateGrowthDescription(a, b, growth);
 
   return {
     overall,
     emotional,
     communicative,
     professional,
+    challenges,
+    growth,
     details: {
       lifePath: { a: a.lifePath, b: b.lifePath, score: lifePathScore * 10, note: getComparisonNote(a.lifePath, b.lifePath, "Life Path") },
       soul: { a: a.soul, b: b.soul, score: soulScore * 10, note: getComparisonNote(a.soul, b.soul, "Anima") },
@@ -180,6 +224,8 @@ export function calculateCompatibility(a: PersonNumbers, b: PersonNumbers): Comp
     frictionPoints: generateFrictionPoints(a, b),
     suggestions: generateSuggestions(a, b),
     dynamicDescription: generateDynamic(a, b, overall),
+    challengeDescription,
+    growthDescription,
   };
 }
 

@@ -69,9 +69,9 @@ const SERVICE_INFO: Record<string, ServiceInfo> = {
     description: "Analizza la compatibilità tra due persone su più livelli: sentimentale, comunicativo, lavorativo e spirituale. Ottieni un quadro completo della dinamica di coppia con grafici radar e consigli personalizzati per rafforzare il legame.",
     benefits: [
       "Analisi su 5 dimensioni: amore, comunicazione, lavoro, sfide, crescita",
-      "Grafico radar della compatibilità complessiva",
-      "Punti di forza e aree di attenzione della coppia",
-      "Scarica il report completo in PDF",
+      "Grafico radar della compatibilità su tutte le dimensioni",
+      "Descrizione dettagliata di sfide, potenziale di crescita e dinamica",
+      "Confronto numero a numero con spiegazioni + Report PDF",
     ],
   },
   "/dates": {
@@ -81,9 +81,9 @@ const SERVICE_INFO: Record<string, ServiceInfo> = {
     description: "Non tutti i giorni hanno la stessa energia per te. Questo strumento analizza le vibrazioni dei prossimi giorni in base al tuo anno personale, indicandoti le date più favorevoli per decisioni importanti, incontri, viaggi o nuovi inizi.",
     benefits: [
       "Analisi vibrazionale dei prossimi 30 giorni",
-      "Indicazione delle giornate più favorevoli per te",
-      "Filtro per tipo di attività (lavoro, amore, creatività)",
-      "Pianificazione consapevole degli impegni importanti",
+      "Filtro per tipo di attività (lavoro, amore, creatività, viaggi, studio, casa, relazioni)",
+      "Spiegazione dettagliata della vibrazione di ogni giornata",
+      "Indicazione delle attività ideali e da evitare per ogni data",
     ],
   },
 };
