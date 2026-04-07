@@ -7,6 +7,7 @@ import { Lock, Crown, ShoppingCart, Clock, Timer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import DashboardLayout from "@/components/DashboardLayout";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,6 +16,20 @@ interface ProtectedRouteProps {
 
 // Routes that use the 24h access model
 const PPU_24H_ROUTES = ["/brand", "/house", "/compatibility", "/dates"];
+
+// Route titles for DashboardLayout
+const ROUTE_TITLES: Record<string, string> = {
+  "/brand": "Analizzatore Brand",
+  "/house": "Vibrazione Casa",
+  "/compatibility": "Compatibilità",
+  "/dates": "Date Favorevoli",
+  "/map": "Mappa Numerologica",
+  "/chat": "Chat con l'Esperto",
+  "/personal-year": "Anno Personale",
+  "/pillars": "Pilastri della Crescita",
+  "/community": "Community",
+  "/profile": "Profilo",
+};
 
 function CountdownTimer({ expiryDate }: { expiryDate: Date }) {
   const [remaining, setRemaining] = useState("");
@@ -57,11 +72,15 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
   const { toast } = useToast();
   const [purchasing, setPurchasing] = useState(false);
 
+  const pageTitle = ROUTE_TITLES[route] || "";
+
   if (loading || scheduleLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-      </div>
+      <DashboardLayout title={pageTitle}>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
+      </DashboardLayout>
     );
   }
 
@@ -73,20 +92,22 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
   if (!isFreeInTrial && featureKey && !isFeatureUnlocked(featureKey)) {
     const daysLeft = getDaysRemaining(featureKey);
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="max-w-md text-center space-y-6">
-          <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
-            <Clock className="w-8 h-8 text-primary" />
+      <DashboardLayout title={pageTitle}>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-md text-center space-y-6">
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+              <Clock className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
+            <p className="text-muted-foreground">
+              Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
+            </p>
+            <Button variant="outline" onClick={() => navigate("/dashboard")}>
+              Torna alla dashboard
+            </Button>
           </div>
-          <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
-          <p className="text-muted-foreground">
-            Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
-          </p>
-          <Button variant="outline" onClick={() => navigate("/dashboard")}>
-            Torna alla dashboard
-          </Button>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
@@ -99,12 +120,9 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
       if (expiry) {
         // Active purchase — render children with countdown banner
         return (
-          <div className="flex flex-col min-h-screen">
-            <div className="flex justify-center p-3 border-b border-border/50 bg-background/80 backdrop-blur">
-              <CountdownTimer expiryDate={expiry} />
-            </div>
-            <div className="flex-1">{children}</div>
-          </div>
+          <>
+            {children}
+          </>
         );
       }
 
@@ -126,29 +144,31 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
       };
 
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <div className="max-w-md text-center space-y-6">
-            <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/20 flex items-center justify-center">
-              <ShoppingCart className="w-8 h-8 text-amber-500" />
-            </div>
-            <h2 className="font-display text-2xl font-bold">Servizio a pagamento</h2>
-            <p className="text-muted-foreground">
-              Acquista l'accesso per 24 ore a questo servizio
-            </p>
-            <p className="text-3xl font-bold text-primary">€1,99</p>
-            <p className="text-xs text-muted-foreground">
-              L'accesso sarà attivo per 24 ore dal momento del pagamento
-            </p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing} className="min-w-[160px]">
-                {purchasing ? t("common.loading") : "Paga €1,99"}
-              </Button>
-              <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                {t("common.back")}
-              </Button>
+        <DashboardLayout title={pageTitle}>
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="max-w-md text-center space-y-6">
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <ShoppingCart className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="font-display text-2xl font-bold">Servizio a pagamento</h2>
+              <p className="text-muted-foreground">
+                Acquista l'accesso per 24 ore a questo servizio
+              </p>
+              <p className="text-3xl font-bold text-primary">€1,99</p>
+              <p className="text-xs text-muted-foreground">
+                L'accesso sarà attivo per 24 ore dal momento del pagamento
+              </p>
+              <div className="flex gap-3 justify-center flex-wrap">
+                <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing} className="min-w-[160px]">
+                  {purchasing ? t("common.loading") : "Paga €1,99"}
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                  {t("common.back")}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </DashboardLayout>
       );
     }
   }
@@ -181,17 +201,49 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
     };
 
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="max-w-md text-center space-y-6">
-          <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/20 flex items-center justify-center">
-            <ShoppingCart className="w-8 h-8 text-amber-500" />
+      <DashboardLayout title={pageTitle}>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-md text-center space-y-6">
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+              <ShoppingCart className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="font-display text-2xl font-bold">Sblocca questo servizio</h2>
+            <p className="text-muted-foreground">Acquista l'accesso a questo servizio per €{featureInfo.price.toFixed(2)}</p>
+            <p className="text-2xl font-bold">€{featureInfo.price.toFixed(2)}</p>
+            <div className="flex gap-3 justify-center flex-wrap">
+              <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing}>
+                {purchasing ? t("common.loading") : "Acquista ora"}
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                {t("common.back")}
+              </Button>
+            </div>
           </div>
-          <h2 className="font-display text-2xl font-bold">Sblocca questo servizio</h2>
-          <p className="text-muted-foreground">Acquista l'accesso a questo servizio per €{featureInfo.price.toFixed(2)}</p>
-          <p className="text-2xl font-bold">€{featureInfo.price.toFixed(2)}</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Trial expired or not subscribed: prompt subscription
+  return (
+    <DashboardLayout title={pageTitle}>
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="max-w-md text-center space-y-6">
+          <div className="w-16 h-16 mx-auto rounded-full bg-destructive/20 flex items-center justify-center">
+            <Lock className="w-8 h-8 text-destructive" />
+          </div>
+          <h2 className="font-display text-2xl font-bold">
+            {isTrialExpired() ? "Prova gratuita scaduta" : "Abbonamento richiesto"}
+          </h2>
+          <p className="text-muted-foreground">
+            {isTrialExpired()
+              ? "La tua prova gratuita di 24 ore è terminata. Abbonati per continuare ad accedere a tutti i servizi!"
+              : "Questo servizio richiede un abbonamento attivo."}
+          </p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing}>
-              {purchasing ? t("common.loading") : "Acquista ora"}
+            <Button variant="cosmic" onClick={() => navigate("/pricing")}>
+              <Crown className="w-4 h-4 mr-2" />
+              Vedi i piani
             </Button>
             <Button variant="outline" onClick={() => navigate("/dashboard")}>
               {t("common.back")}
@@ -199,35 +251,7 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
           </div>
         </div>
       </div>
-    );
-  }
-
-  // Trial expired or not subscribed: prompt subscription
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md text-center space-y-6">
-        <div className="w-16 h-16 mx-auto rounded-full bg-destructive/20 flex items-center justify-center">
-          <Lock className="w-8 h-8 text-destructive" />
-        </div>
-        <h2 className="font-display text-2xl font-bold">
-          {isTrialExpired() ? "Prova gratuita scaduta" : "Abbonamento richiesto"}
-        </h2>
-        <p className="text-muted-foreground">
-          {isTrialExpired()
-            ? "La tua prova gratuita di 24 ore è terminata. Abbonati per continuare ad accedere a tutti i servizi!"
-            : "Questo servizio richiede un abbonamento attivo."}
-        </p>
-        <div className="flex gap-3 justify-center flex-wrap">
-          <Button variant="cosmic" onClick={() => navigate("/pricing")}>
-            <Crown className="w-4 h-4 mr-2" />
-            Vedi i piani
-          </Button>
-          <Button variant="outline" onClick={() => navigate("/dashboard")}>
-            {t("common.back")}
-          </Button>
-        </div>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
