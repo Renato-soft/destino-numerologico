@@ -352,7 +352,7 @@ export default function Pillars() {
             );
           })}
         </div>
-      </main>
+      </div>
 
       {/* Detail modal */}
       <AnimatePresence>
