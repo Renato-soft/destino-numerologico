@@ -193,27 +193,33 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
     );
   }
 
-  const isFreeInTrial = isInTrial() && ["/chat"].includes(route);
-
-  const featureKey = ROUTE_TO_FEATURE[route];
-  if (!isFreeInTrial && featureKey && !isFeatureUnlocked(featureKey)) {
-    const daysLeft = getDaysRemaining(featureKey);
-    return (
-      <DashboardLayout title={pageTitle}>
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="max-w-md text-center space-y-6">
-            <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
-              <Clock className="w-8 h-8 text-primary" />
+  // Admin full access or service overrides — skip all checks
+  if (fullAccess || canAccess(route)) {
+    // For feature schedule, still check unless fullAccess
+    const isFreeInTrial = isInTrial() && ["/chat"].includes(route);
+    const featureKey = ROUTE_TO_FEATURE[route];
+    if (!fullAccess && !isFreeInTrial && featureKey && !isFeatureUnlocked(featureKey)) {
+      const daysLeft = getDaysRemaining(featureKey);
+      return (
+        <DashboardLayout title={pageTitle}>
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="max-w-md text-center space-y-6">
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+                <Clock className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
+              <p className="text-muted-foreground">
+                Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
+              </p>
             </div>
-            <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
-            <p className="text-muted-foreground">
-              Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
-            </p>
           </div>
-        </div>
-      </DashboardLayout>
-    );
+        </DashboardLayout>
+      );
+    }
+    return <>{children}</>;
   }
+
+  const isFreeInTrial = isInTrial() && ["/chat"].includes(route);
 
   // For 24h PPU routes
   if (PPU_24H_ROUTES.includes(route)) {
@@ -249,8 +255,25 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
     }
   }
 
-  if (canAccess(route)) {
-    return <>{children}</>;
+  // Feature schedule check for non-access users
+  const featureKey2 = ROUTE_TO_FEATURE[route];
+  if (!isFreeInTrial && featureKey2 && !isFeatureUnlocked(featureKey2)) {
+    const daysLeft = getDaysRemaining(featureKey2);
+    return (
+      <DashboardLayout title={pageTitle}>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-md text-center space-y-6">
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+              <Clock className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="font-display text-2xl font-bold">Disponibile tra {daysLeft} giorn{daysLeft === 1 ? "o" : "i"}</h2>
+            <p className="text-muted-foreground">
+              Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
+            </p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   // PPU feature (non-24h, like map)
