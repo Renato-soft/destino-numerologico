@@ -218,12 +218,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    // Trial-only PPU routes (e.g. advanced-report during trial)
-    if (route in TRIAL_PPU_ROUTES && isInTrial()) {
-      const feature = TRIAL_PPU_ROUTES[route];
-      const productId = TRIAL_PPU[feature].product_id;
-      return state.payPerUsePurchases.includes(productId);
-    }
 
     // During trial, free routes
     if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;
