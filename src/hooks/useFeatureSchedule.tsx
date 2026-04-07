@@ -44,10 +44,22 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setLoading(false); return; }
 
-      const [scheduleResult, profileResult, overridesResult] = await Promise.all([
+      const [scheduleResult, profileResult] = await Promise.all([
         supabase.from("feature_schedule" as any).select("feature_key, feature_label, unlock_after_days, enabled"),
         supabase.from("profiles").select("created_at").eq("user_id", session.user.id).maybeSingle(),
       ]);
+
+      // Check if user has "subscription" override (bypass schedule)
+      const { data: overridesData } = await supabase
+        .from("user_service_overrides")
+        .select("service_key")
+        .eq("user_id", session.user.id);
+      
+      if (overridesData && overridesData.some(o => o.service_key === "subscription")) {
+        setBypassSchedule(true);
+      } else {
+        setBypassSchedule(false);
+      }
 
       if (scheduleResult.data) {
         setSchedule(scheduleResult.data as any[]);
