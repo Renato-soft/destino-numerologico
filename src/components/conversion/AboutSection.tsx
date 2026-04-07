@@ -14,25 +14,25 @@ const AboutSection = () => {
           </div>
 
           <div className="grid md:grid-cols-[2fr_3fr] gap-8 items-start">
-            <div className="rounded-2xl border border-border/50 overflow-hidden">
+            <div className="rounded-2xl border border-primary/20 overflow-hidden shadow-lg shadow-primary/5">
               <img src={founderPhoto} alt="Fondatore di Destino Numerologico" className="w-full h-auto object-cover" loading="lazy" decoding="async" />
             </div>
 
-            <div className="space-y-6">
-              <p className="text-muted-foreground leading-relaxed">
+            <div className="space-y-6 rounded-2xl bg-gradient-to-br from-primary/5 via-accent/5 to-transparent border border-primary/10 p-6 md:p-8">
+              <p className="text-foreground/80 leading-relaxed">
                 Mi chiamo Luca R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
               </p>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-foreground/80 leading-relaxed">
                 Negli anni ho sviluppato questo sistema per rendere la numerologia più chiara, accessibile e concreta: non teoria astratta, ma indicazioni pratiche che puoi usare ogni giorno.
               </p>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-foreground/80 leading-relaxed">
                 A differenza degli oroscopi generici, ogni analisi è calcolata sulla tua data di nascita e sul tuo nome completo, seguendo i principi della tradizione pitagorica. Questo permette di ottenere risultati personalizzati, coerenti e basati su schemi numerici precisi.
               </p>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-foreground/80 leading-relaxed">
                 Il risultato? Una lettura che non si limita a descriverti, ma ti aiuta a capire come agire, scegliere e interpretare ciò che stai vivendo.
               </p>
 
-              <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-primary/10">
                 {[
                   { icon: BookOpen, label: "Numerologia Pitagorica", value: "Autentica" },
                   { icon: Award, label: "Analisi", value: "Personalizzate" },
