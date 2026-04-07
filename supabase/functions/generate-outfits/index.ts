@@ -170,7 +170,7 @@ Deno.serve(async (req) => {
     if (!profile?.residence_state?.trim()) {
       const msg = profileLanguage === "en"
         ? "Please add your state of residence in your profile to generate weather-adapted outfits."
-        : "Aggiungi lo stato in cui vivi nel profilo per generare outfit adattati al meteo locale.";
+        : "Aggiungi la regione o città in cui vivi nel profilo per generare outfit adattati al meteo locale.";
       return new Response(JSON.stringify({ error: msg }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
