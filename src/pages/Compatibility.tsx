@@ -159,9 +159,11 @@ const Compatibility = () => {
 
     addSection("Punteggi di Compatibilità");
     addText(`Compatibilità Generale: ${result.overall}%`);
-    addText(`Compatibilità Emotiva: ${result.emotional}%`);
-    addText(`Compatibilità Comunicativa: ${result.communicative}%`);
-    addText(`Compatibilità Professionale: ${result.professional}%`);
+    addText(`Amore: ${result.emotional}%`);
+    addText(`Comunicazione: ${result.communicative}%`);
+    addText(`Lavoro: ${result.professional}%`);
+    addText(`Sfide: ${result.challenges}%`);
+    addText(`Crescita: ${result.growth}%`);
 
     addSection("Confronto Numeri");
     addText(`Destino: ${myNumbers.lifePath} vs ${personBNumbers.lifePath} — ${result.details.lifePath.note}`);
@@ -341,11 +343,6 @@ const Compatibility = () => {
                   </div>
                 </div>
 
-                {/* Dinamica della relazione */}
-                <div className="glass-cosmic rounded-2xl p-8">
-                  <h2 className="font-display text-xl font-bold mb-4">Dinamica della Relazione</h2>
-                  <p className="text-foreground/90 leading-relaxed">{result.dynamicDescription}</p>
-                </div>
 
                 {/* Sfide */}
                 <div className="glass-cosmic rounded-2xl p-8">
