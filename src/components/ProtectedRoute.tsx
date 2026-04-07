@@ -3,7 +3,7 @@ import { useFeatureSchedule, ROUTE_TO_FEATURE } from "@/hooks/useFeatureSchedule
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Lock, Crown, ShoppingCart, Clock, Timer } from "lucide-react";
+import { Lock, Crown, ShoppingCart, Clock, Timer, Target, Home, Users, Calendar, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,10 +14,8 @@ interface ProtectedRouteProps {
   route: string;
 }
 
-// Routes that use the 24h access model
 const PPU_24H_ROUTES = ["/brand", "/house", "/compatibility", "/dates"];
 
-// Route titles for DashboardLayout
 const ROUTE_TITLES: Record<string, string> = {
   "/brand": "Analizzatore Brand",
   "/house": "Vibrazione Casa",
@@ -29,6 +27,65 @@ const ROUTE_TITLES: Record<string, string> = {
   "/pillars": "Pilastri della Crescita",
   "/community": "Community",
   "/profile": "Profilo",
+};
+
+interface ServiceInfo {
+  icon: React.ElementType;
+  title: string;
+  subtitle: string;
+  description: string;
+  benefits: string[];
+}
+
+const SERVICE_INFO: Record<string, ServiceInfo> = {
+  "/brand": {
+    icon: Target,
+    title: "Analizzatore Vibrazione Brand",
+    subtitle: "Scopri l'energia nascosta nel nome del tuo brand",
+    description: "Analizza la vibrazione numerologica di nomi aziendali, progetti o prodotti. Calcola il numero principale e verifica la compatibilità con il tuo numero del Destino e con obiettivi specifici come Successo Economico, Innovazione e Leadership.",
+    benefits: [
+      "Calcolo della vibrazione numerologica del nome",
+      "Compatibilità con il tuo numero del Destino",
+      "Analisi per obiettivi strategici (successo, creatività, stabilità)",
+      "Suggerimenti di nomi alternativi più allineati",
+    ],
+  },
+  "/house": {
+    icon: Home,
+    title: "Vibrazione Casa",
+    subtitle: "L'energia del luogo in cui vivi influenza la tua vita",
+    description: "Ogni indirizzo possiede una vibrazione unica che influenza chi lo abita. Scopri se la tua casa è in armonia con la tua energia personale, analizzando il numero civico, il piano e la compatibilità con il tuo percorso di vita.",
+    benefits: [
+      "Calcolo della vibrazione del tuo indirizzo",
+      "Analisi dell'influenza del piano in cui vivi",
+      "Compatibilità tra la casa e il tuo numero del Destino",
+      "Consigli per armonizzare l'energia del tuo spazio",
+    ],
+  },
+  "/compatibility": {
+    icon: Users,
+    title: "Compatibilità Numerologica",
+    subtitle: "Quanto siete allineati? Scoprilo con i numeri",
+    description: "Analizza la compatibilità tra due persone su più livelli: sentimentale, comunicativo, lavorativo e spirituale. Ottieni un quadro completo della dinamica di coppia con grafici radar e consigli personalizzati per rafforzare il legame.",
+    benefits: [
+      "Analisi su 5 dimensioni: amore, comunicazione, lavoro, sfide, crescita",
+      "Grafico radar della compatibilità complessiva",
+      "Punti di forza e aree di attenzione della coppia",
+      "Scarica il report completo in PDF",
+    ],
+  },
+  "/dates": {
+    icon: Calendar,
+    title: "Date Favorevoli",
+    subtitle: "Pianifica le tue giornate in armonia con i numeri",
+    description: "Non tutti i giorni hanno la stessa energia per te. Questo strumento analizza le vibrazioni dei prossimi giorni in base al tuo anno personale, indicandoti le date più favorevoli per decisioni importanti, incontri, viaggi o nuovi inizi.",
+    benefits: [
+      "Analisi vibrazionale dei prossimi 30 giorni",
+      "Indicazione delle giornate più favorevoli per te",
+      "Filtro per tipo di attività (lavoro, amore, creatività)",
+      "Pianificazione consapevole degli impegni importanti",
+    ],
+  },
 };
 
 function CountdownTimer({ expiryDate }: { expiryDate: Date }) {
@@ -60,6 +117,58 @@ function CountdownTimer({ expiryDate }: { expiryDate: Date }) {
   );
 }
 
+function ServicePreview({ route, onPurchase, purchasing }: { route: string; onPurchase: () => void; purchasing: boolean }) {
+  const { t } = useTranslation();
+  const info = SERVICE_INFO[route];
+  if (!info) return null;
+
+  const Icon = info.icon;
+
+  return (
+    <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+      <div className="max-w-2xl w-full space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+            <Icon className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="font-display text-3xl font-bold">{info.title}</h2>
+          <p className="text-lg text-muted-foreground">{info.subtitle}</p>
+        </div>
+
+        {/* Description */}
+        <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur p-6 space-y-4">
+          <p className="text-foreground/90 leading-relaxed">{info.description}</p>
+          
+          <div className="space-y-2 pt-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Cosa include</h3>
+            <ul className="space-y-2">
+              {info.benefits.map((benefit, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <span className="text-sm text-foreground/80">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-6">
+          <p className="text-sm text-muted-foreground">Accesso per 24 ore</p>
+          <p className="text-4xl font-bold text-primary">€1,99</p>
+          <p className="text-xs text-muted-foreground">
+            L'accesso sarà attivo per 24 ore dal momento del pagamento
+          </p>
+          <Button variant="cosmic" onClick={onPurchase} disabled={purchasing} className="min-w-[200px] mt-2">
+            {purchasing ? t("common.loading") : "Sblocca per €1,99"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
   const {
     canAccess, subscribed, loading, isInTrial, isTrialExpired,
@@ -84,10 +193,8 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
     );
   }
 
-  // During trial, free routes bypass feature schedule
   const isFreeInTrial = isInTrial() && ["/chat"].includes(route);
 
-  // Check feature schedule (time-based unlock) — skip for trial free routes
   const featureKey = ROUTE_TO_FEATURE[route];
   if (!isFreeInTrial && featureKey && !isFeatureUnlocked(featureKey)) {
     const daysLeft = getDaysRemaining(featureKey);
@@ -102,31 +209,22 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
             <p className="text-muted-foreground">
               Questa funzionalità si sbloccherà automaticamente. Continua a esplorare le altre sezioni nel frattempo!
             </p>
-            <Button variant="outline" onClick={() => navigate("/dashboard")}>
-              Torna alla dashboard
-            </Button>
           </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  // For 24h PPU routes, check if there's an active purchase and show countdown
+  // For 24h PPU routes
   if (PPU_24H_ROUTES.includes(route)) {
     const feature = getPayPerUseFeature(route);
     if (feature) {
       const expiry = getActivePurchaseExpiry(feature);
       
       if (expiry) {
-        // Active purchase — render children with countdown banner
-        return (
-          <>
-            {children}
-          </>
-        );
+        return <>{children}</>;
       }
 
-      // No active purchase — show payment wall
       const featureInfo = PAY_PER_USE[feature];
       const handlePurchase = async () => {
         setPurchasing(true);
@@ -145,40 +243,17 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
 
       return (
         <DashboardLayout title={pageTitle}>
-          <div className="flex-1 flex items-center justify-center p-4">
-            <div className="max-w-md text-center space-y-6">
-              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <ShoppingCart className="w-8 h-8 text-primary" />
-              </div>
-              <h2 className="font-display text-2xl font-bold">Servizio a pagamento</h2>
-              <p className="text-muted-foreground">
-                Acquista l'accesso per 24 ore a questo servizio
-              </p>
-              <p className="text-3xl font-bold text-primary">€1,99</p>
-              <p className="text-xs text-muted-foreground">
-                L'accesso sarà attivo per 24 ore dal momento del pagamento
-              </p>
-              <div className="flex gap-3 justify-center flex-wrap">
-                <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing} className="min-w-[160px]">
-                  {purchasing ? t("common.loading") : "Paga €1,99"}
-                </Button>
-                <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                  {t("common.back")}
-                </Button>
-              </div>
-            </div>
-          </div>
+          <ServicePreview route={route} onPurchase={handlePurchase} purchasing={purchasing} />
         </DashboardLayout>
       );
     }
   }
 
-  // Full access or already purchased
   if (canAccess(route)) {
     return <>{children}</>;
   }
 
-  // PPU feature (non-24h, like map): offer purchase
+  // PPU feature (non-24h, like map)
   const ppuFeature = getPayPerUseFeature(route);
   const trialPpuFeature = getTrialPPUFeature(route);
   const featureToSell = ppuFeature || trialPpuFeature;
@@ -210,21 +285,16 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
             <h2 className="font-display text-2xl font-bold">Sblocca questo servizio</h2>
             <p className="text-muted-foreground">Acquista l'accesso a questo servizio per €{featureInfo.price.toFixed(2)}</p>
             <p className="text-2xl font-bold">€{featureInfo.price.toFixed(2)}</p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing}>
-                {purchasing ? t("common.loading") : "Acquista ora"}
-              </Button>
-              <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                {t("common.back")}
-              </Button>
-            </div>
+            <Button variant="cosmic" onClick={handlePurchase} disabled={purchasing}>
+              {purchasing ? t("common.loading") : "Acquista ora"}
+            </Button>
           </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  // Trial expired or not subscribed: prompt subscription
+  // Trial expired or not subscribed
   return (
     <DashboardLayout title={pageTitle}>
       <div className="flex-1 flex items-center justify-center p-4">
@@ -240,15 +310,10 @@ const ProtectedRoute = ({ children, route }: ProtectedRouteProps) => {
               ? "La tua prova gratuita di 24 ore è terminata. Abbonati per continuare ad accedere a tutti i servizi!"
               : "Questo servizio richiede un abbonamento attivo."}
           </p>
-          <div className="flex gap-3 justify-center flex-wrap">
-            <Button variant="cosmic" onClick={() => navigate("/pricing")}>
-              <Crown className="w-4 h-4 mr-2" />
-              Vedi i piani
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/dashboard")}>
-              {t("common.back")}
-            </Button>
-          </div>
+          <Button variant="cosmic" onClick={() => navigate("/pricing")}>
+            <Crown className="w-4 h-4 mr-2" />
+            Vedi i piani
+          </Button>
         </div>
       </div>
     </DashboardLayout>
