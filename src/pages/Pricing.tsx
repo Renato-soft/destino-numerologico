@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import { useSubscription, PLAN, PAY_PER_USE, UNLOCK_ALL } from "@/hooks/useSubscription";
+import { useSubscription, PLAN, PAY_PER_USE } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -14,7 +14,7 @@ import {
 
 const Pricing = () => {
   const { t } = useTranslation();
-  const { subscribed, checkSubscription, hasPayPerUsePurchase, hasUnlockAll } = useSubscription();
+  const { subscribed, checkSubscription, hasPayPerUsePurchase } = useSubscription();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -145,55 +145,6 @@ const Pricing = () => {
               </Button>
             </motion.div>
 
-            {/* Unlock All */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className={`relative rounded-2xl border p-6 border-amber-500/50 bg-gradient-to-b from-amber-500/10 to-transparent ${hasUnlockAll ? "ring-2 ring-green-500" : ""}`}
-            >
-              {hasUnlockAll && (
-                <div className="absolute -top-3 right-4 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-semibold">
-                  Sbloccato
-                </div>
-              )}
-
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-display text-xl font-bold">Sblocca Tutto</h3>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">€9,99</span>
-                    <span className="text-muted-foreground">una tantum</span>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-sm text-muted-foreground mb-4">
-                Sblocca permanentemente tutti i servizi pay-per-use. Poi continua con l'abbonamento mensile a €4,99.
-              </p>
-
-              <div className="space-y-2.5 mb-6">
-                {ppuFeatures.map((f) => (
-                  <div key={f.key} className="flex items-center gap-3 text-sm">
-                    <Check className="w-4 h-4 text-amber-500 shrink-0" />
-                    <f.icon className="w-4 h-4 shrink-0 text-muted-foreground" />
-                    <span>{f.label} — <span className="text-muted-foreground">{f.desc}</span></span>
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                variant="outline"
-                className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
-                disabled={hasUnlockAll || !!loadingPlan}
-                onClick={() => handleSubscribe(UNLOCK_ALL.price_id, "payment")}
-              >
-                {loadingPlan === UNLOCK_ALL.price_id ? "Caricamento..." : hasUnlockAll ? "Già sbloccato" : "Sblocca tutto a €9,99"}
-              </Button>
-            </motion.div>
           </div>
 
           {/* Individual PPU */}

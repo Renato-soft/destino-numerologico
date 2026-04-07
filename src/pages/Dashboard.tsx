@@ -172,7 +172,7 @@ const Dashboard = () => {
               <Crown className="w-5 h-5 mr-2" />
               Abbonati a €4,99/mese
             </Button>
-            <p className="text-xs text-muted-foreground">oppure sblocca tutto a €9,99 una tantum</p>
+            
           </div>
           <div className="flex items-center justify-center gap-4 pt-2">
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
