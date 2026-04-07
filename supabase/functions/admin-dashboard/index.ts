@@ -80,6 +80,66 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ===== GET USER SERVICE OVERRIDES =====
+    if (action === "get-user-overrides") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const targetUserId = url.searchParams.get("user_id") || body?.user_id;
+      if (!targetUserId) {
+        return new Response(JSON.stringify({ error: "user_id richiesto" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: overrides } = await supabase
+        .from("user_service_overrides")
+        .select("service_key")
+        .eq("user_id", targetUserId);
+      return new Response(JSON.stringify({ overrides: (overrides || []).map((o: any) => o.service_key) }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ===== UPDATE USER SERVICE OVERRIDES =====
+    if (action === "update-user-overrides") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const targetUserId = body?.user_id;
+      const services = body?.services as string[];
+      if (!targetUserId || !Array.isArray(services)) {
+        return new Response(JSON.stringify({ error: "Dati mancanti" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      // Delete all existing overrides for the user
+      await supabase
+        .from("user_service_overrides")
+        .delete()
+        .eq("user_id", targetUserId);
+      // Insert new overrides
+      if (services.length > 0) {
+        await supabase
+          .from("user_service_overrides")
+          .insert(services.map(s => ({
+            user_id: targetUserId,
+            service_key: s,
+            granted_by: user.id,
+          })));
+      }
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (action === "overview") {
       // Get all users from auth
       const { data: authUsers } = await supabase.auth.admin.listUsers({ perPage: 1000 });
