@@ -19,7 +19,7 @@ import ProfilePage from "./pages/Profile";
 import Compatibility from "./pages/Compatibility";
 import BrandAnalyzer from "./pages/BrandAnalyzer";
 import Pillars from "./pages/Pillars";
-import AdvancedReport from "./pages/AdvancedReport";
+
 import HouseAnalyzer from "./pages/HouseAnalyzer";
 import Community from "./pages/Community";
 import Pricing from "./pages/Pricing";
@@ -55,7 +55,7 @@ const App = () => (
             <Route path="/compatibility" element={<ProtectedRoute route="/compatibility"><Compatibility /></ProtectedRoute>} />
             <Route path="/brand" element={<ProtectedRoute route="/brand"><BrandAnalyzer /></ProtectedRoute>} />
             <Route path="/pillars" element={<ProtectedRoute route="/pillars"><Pillars /></ProtectedRoute>} />
-            <Route path="/advanced-report" element={<ProtectedRoute route="/advanced-report"><AdvancedReport /></ProtectedRoute>} />
+            
             <Route path="/house" element={<ProtectedRoute route="/house"><HouseAnalyzer /></ProtectedRoute>} />
             <Route path="/community" element={<Community />} />
             <Route path="/privacy" element={<Privacy />} />

@@ -31,7 +31,7 @@ const menuItems = [
   { title: "Date Favorevoli", icon: Calendar, href: "/dates" },
   { title: "Anno Personale", icon: Calendar, href: "/personal-year" },
   { title: "Pilastri della Crescita", icon: Compass, href: "/pillars" },
-  { title: "Report Avanzato", icon: ScrollText, href: "/advanced-report" },
+  
   { title: "Analizzatore Brand", icon: Target, href: "/brand" },
   { title: "Vibrazione Casa", icon: Home, href: "/house" },
   { title: "Compatibilità", icon: Users, href: "/compatibility" },
