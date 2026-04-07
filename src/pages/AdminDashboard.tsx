@@ -64,6 +64,11 @@ const AdminDashboard = () => {
   const [scheduleEdits, setScheduleEdits] = useState<Record<string, number>>({});
   const [savingSchedule, setSavingSchedule] = useState(false);
 
+  // Service overrides state
+  const [userOverrides, setUserOverrides] = useState<string[]>([]);
+  const [overridesLoading, setOverridesLoading] = useState(false);
+  const [savingOverrides, setSavingOverrides] = useState(false);
+
   useEffect(() => {
     fetchOverview();
     fetchFeatureSchedule();
