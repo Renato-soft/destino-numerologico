@@ -315,94 +315,74 @@ export default function Community() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to={userId ? "/dashboard" : "/"}><ArrowLeft className="w-5 h-5" /></Link>
-          </Button>
-          <div className="flex items-center gap-3 flex-1">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Users className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-lg font-semibold">Community</h1>
-              <p className="text-xs text-muted-foreground">Condividi il tuo viaggio numerologico</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAllRead(); }}
-              >
-                <Bell className="w-5 h-5" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-destructive text-destructive-foreground rounded-full text-[10px] flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </Button>
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute right-0 top-12 w-80 max-h-96 overflow-y-auto rounded-xl border border-border bg-background shadow-2xl z-[9999]"
-                  >
-                    <div className="p-3 border-b border-border flex items-center justify-between">
-                      <h3 className="font-semibold text-sm">Notifiche</h3>
-                      <Button variant="ghost" size="icon" className="w-6 h-6" onClick={() => setShowNotifications(false)}>
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    {notifications.length === 0 ? (
-                      <p className="p-4 text-sm text-muted-foreground text-center">Nessuna notifica</p>
-                    ) : (
-                      <div className="divide-y divide-border">
-                        {notifications.map((n: any) => (
-                          <div
-                            key={n.id}
-                            className={`p-3 text-sm hover:bg-muted/50 cursor-pointer transition-colors ${!n.read ? "bg-primary/5" : ""}`}
-                            onClick={() => {
-                              setShowNotifications(false);
-                              // Scroll to post area
-                            }}
-                          >
-                            <p className="font-medium">
-                              {n.type === "reaction"
-                                ? `${n.actor_name} ha reagito ${vibrationEmojis[n.vibration]?.emoji || "✨"} al tuo post`
-                                : `${n.actor_name} ha commentato il tuo post`}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5 truncate">"{n.post_preview}"</p>
-                            <p className="text-xs text-muted-foreground mt-1">{formatTime(n.created_at)}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowGuidelines(!showGuidelines)}
-              className="text-xs text-muted-foreground"
+  const communityHeaderActions = (
+    <div className="flex items-center gap-1">
+      <div className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) markAllRead(); }}
+        >
+          <Bell className="w-5 h-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-destructive text-destructive-foreground rounded-full text-[10px] flex items-center justify-center font-bold">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </Button>
+        <AnimatePresence>
+          {showNotifications && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="absolute right-0 top-12 w-80 max-h-96 overflow-y-auto rounded-xl border border-border bg-background shadow-2xl z-[9999]"
             >
-              Linee guida
-            </Button>
-          </div>
-        </div>
-      </header>
+              <div className="p-3 border-b border-border flex items-center justify-between">
+                <h3 className="font-semibold text-sm">Notifiche</h3>
+                <Button variant="ghost" size="icon" className="w-6 h-6" onClick={() => setShowNotifications(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              {notifications.length === 0 ? (
+                <p className="p-4 text-sm text-muted-foreground text-center">Nessuna notifica</p>
+              ) : (
+                <div className="divide-y divide-border">
+                  {notifications.map((n: any) => (
+                    <div
+                      key={n.id}
+                      className={`p-3 text-sm hover:bg-muted/50 cursor-pointer transition-colors ${!n.read ? "bg-primary/5" : ""}`}
+                      onClick={() => setShowNotifications(false)}
+                    >
+                      <p className="font-medium">
+                        {n.type === "reaction"
+                          ? `${n.actor_name} ha reagito ${vibrationEmojis[n.vibration]?.emoji || "✨"} al tuo post`
+                          : `${n.actor_name} ha commentato il tuo post`}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">"{n.post_preview}"</p>
+                      <p className="text-xs text-muted-foreground mt-1">{formatTime(n.created_at)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowGuidelines(!showGuidelines)}
+        className="text-xs text-muted-foreground"
+      >
+        Linee guida
+      </Button>
+    </div>
+  );
 
-      <main className="relative z-10 container mx-auto px-4 py-6 max-w-2xl space-y-5">
+  return (
+    <DashboardLayout title="Community" headerActions={communityHeaderActions}>
+      <div className="container mx-auto px-4 py-6 max-w-2xl space-y-5">
         {/* Guidelines */}
         <AnimatePresence>
           {showGuidelines && (
@@ -739,7 +719,7 @@ export default function Community() {
             </motion.div>
           );
         })}
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
