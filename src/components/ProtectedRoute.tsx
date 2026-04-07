@@ -41,7 +41,7 @@ const SERVICE_INFO: Record<string, ServiceInfo> = {
   "/brand": {
     icon: Target,
     title: "Analizzatore Vibrazione Brand",
-    subtitle: "Scopri l'energia nascosta nel nome del tuo brand",
+    subtitle: "Scopri l'energia nascosta nel nome del tuo futuro brand",
     description: "Analizza la vibrazione numerologica di nomi aziendali, progetti o prodotti. Calcola il numero principale e verifica la compatibilità con il tuo numero del Destino e con obiettivi specifici come Successo Economico, Innovazione e Leadership.",
     benefits: [
       "Calcolo della vibrazione numerologica del nome",
