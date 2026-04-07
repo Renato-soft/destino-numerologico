@@ -36,7 +36,7 @@ const menuItems = [
   { title: "Vibrazione Casa", icon: Home, href: "/house" },
   { title: "Compatibilità", icon: Users, href: "/compatibility" },
   { title: "Community", icon: MessageCircle, href: "/community" },
-  { title: "Storico", icon: ScrollText, href: "/history" },
+  
 ];
 
 interface DashboardLayoutProps {
