@@ -350,7 +350,10 @@
     "boldTitle": "Empowerment",
     "boldSub": "Bold and fearless",
     "bonusLoading": "Bonus outfits are being generated in the background...",
-    "bonusNotReady": "Bonus outfits will be ready in a few minutes"
+    "bonusNotReady": "Bonus outfits will be ready in a few minutes",
+    "noPhotosTitle": "No photos uploaded",
+    "noPhotosDesc": "We need at least one photo of you to generate personalized outfits. Upload more personal photos, including swimwear shots, so the AI can analyze your body type and create outfits tailored to you.",
+    "goUploadPhotos": "Upload your photos"
   },
   "pillars": {
     "title": "The 7 Pillars of Destiny",
