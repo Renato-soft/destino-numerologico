@@ -211,9 +211,7 @@ const Auth = () => {
 
           {!isLogin && (
             <div className="mt-6 p-4 rounded-xl bg-accent/10 border border-accent/20">
-              <p className="text-sm text-foreground font-medium mb-1">{t("auth.photoNotice")}</p>
-              <p className="text-xs text-muted-foreground">{t("auth.photoNoticeDesc")}</p>
-              <p className="text-xs text-muted-foreground mt-2">{t("auth.emailConfirmNotice")}</p>
+              <p className="text-xs text-muted-foreground">{t("auth.emailConfirmNotice")}</p>
             </div>
           )}
         </div>
