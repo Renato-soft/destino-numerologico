@@ -245,8 +245,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return state.payPerUsePurchases.some(p => p.product_id === ppu.product_id);
   }, [state.payPerUsePurchases, state.hasUnlockAll, getActivePurchaseExpiry]);
 
+  // Map routes to service keys for override check
+  const routeToServiceKey = (route: string): string | null => {
+    const map: Record<string, string> = {
+      "/map": "map", "/brand": "brand", "/house": "house",
+      "/compatibility": "compatibility", "/dates": "dates",
+      "/chat": "chat", "/personal-year": "personal-year",
+      "/pillars": "pillars", "/community": "community",
+    };
+    return map[route] || null;
+  };
+
   const canAccess = useCallback((route: string): boolean => {
     if (state.fullAccess) return true;
+
+    // Check admin-granted overrides
+    const serviceKey = routeToServiceKey(route);
+    if (serviceKey && state.serviceOverrides.includes(serviceKey)) return true;
 
     // 24h PPU routes: always require active (non-expired) purchase
     if (PPU_24H_ROUTES.includes(route)) {
@@ -275,7 +290,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, isInTrial, getActivePurchaseExpiry]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
