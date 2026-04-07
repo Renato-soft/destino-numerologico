@@ -43,7 +43,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const {
     subscribed, loading: subLoading, refreshPayPerUsePurchases, checkSubscription,
-    isInTrial, isTrialExpired, trialRemainingMs, hasUnlockAll
+    isInTrial, isTrialExpired, trialRemainingMs
   } = useSubscription();
   const { isFeatureUnlocked } = useFeatureSchedule();
   const [searchParams, setSearchParams] = useSearchParams();

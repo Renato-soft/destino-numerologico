@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Check, Sparkles, ArrowLeft, Crown, Star,
   Map, Calendar, Users, Target, MessageCircle, ScrollText,
-  Home, Compass, Shirt, BarChart3, Settings, ShoppingCart, Zap
+  } from "lucide-react";
 } from "lucide-react";
 
 const Pricing = () => {
