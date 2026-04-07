@@ -390,40 +390,8 @@ const Compatibility = () => {
 
                 {/* Dinamica della relazione */}
                 <div className="glass-cosmic rounded-2xl p-8">
-                  <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-400" />
-                    Punti di Attrito
-                  </h2>
-                  {result.frictionPoints.slice(0, isPremium ? undefined : 1).map((point, i) => (
-                    <p key={i} className="text-foreground/90 mb-3">• {point}</p>
-                  ))}
-                  {!isPremium && result.frictionPoints.length > 1 && (
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
-                      <Lock className="w-5 h-5 text-primary shrink-0" />
-                      <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Sblocca tutti i {result.frictionPoints.length} punti di attrito e i suggerimenti completi.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Suggestions - preview */}
-                <div className="glass-cosmic rounded-2xl p-8">
-                  <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-3">
-                    <Lightbulb className="w-5 h-5 text-primary" />
-                    Suggerimenti Pratici
-                  </h2>
-                  {result.suggestions.slice(0, isPremium ? undefined : 1).map((s, i) => (
-                    <p key={i} className="text-foreground/90 mb-3">• {s}</p>
-                  ))}
-                  {!isPremium && result.suggestions.length > 1 && (
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
-                      <Lock className="w-5 h-5 text-primary shrink-0" />
-                      <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Accedi a tutti i suggerimenti personalizzati per comunicare al meglio.
-                      </p>
-                    </div>
-                  )}
+                  <h2 className="font-display text-xl font-bold mb-4">Dinamica della Relazione</h2>
+                  <p className="text-foreground/90 leading-relaxed">{result.dynamicDescription}</p>
                 </div>
               </motion.div>
             )}
