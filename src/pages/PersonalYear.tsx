@@ -3,11 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ChevronDown, ChevronUp, Calendar, Lock } from "lucide-react";
+import { ChevronDown, ChevronUp, Calendar, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { calculatePersonalYear } from "@/lib/numerology";
 import { personalYearSectors, sectorMeta, SectorKey } from "@/lib/personalYearSectors";
 import { useSubscription } from "@/hooks/useSubscription";
+import DashboardLayout from "@/components/DashboardLayout";
 
 const sectorKeys: SectorKey[] = ['lavoro', 'amore', 'denaro', 'benessere', 'crescita'];
 
@@ -54,22 +55,8 @@ const PersonalYear = () => {
   const sectors = personalYear ? personalYearSectors[personalYear] : null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="font-display text-xl font-semibold">
-            {t("dashboard.personalYear", { year: new Date().getFullYear() })}
-          </h1>
-        </div>
-      </header>
-
-      <main className="relative z-10 container mx-auto px-4 py-8 max-w-3xl">
+    <DashboardLayout title={t("dashboard.personalYear", { year: new Date().getFullYear() })}>
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
         {personalYear && sectors ? (
           <>
             <motion.div
@@ -174,8 +161,8 @@ const PersonalYear = () => {
             </Button>
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
