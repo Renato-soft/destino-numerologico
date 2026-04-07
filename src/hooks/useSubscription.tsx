@@ -92,6 +92,7 @@ interface SubscriptionState {
   payPerUsePurchases: PurchaseRecord[];
   profileCreatedAt: string | null;
   hasUnlockAll: boolean;
+  serviceOverrides: string[];
 }
 
 interface SubscriptionContextType extends SubscriptionState {
@@ -119,6 +120,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     payPerUsePurchases: [],
     profileCreatedAt: null,
     hasUnlockAll: false,
+    serviceOverrides: [],
   });
 
   const refreshPayPerUsePurchases = useCallback(async () => {
@@ -142,35 +144,32 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [] }));
         return;
       }
 
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("created_at")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+      const [{ data: profileData }, { data, error }, { data: ppuData }, { data: overridesData }] = await Promise.all([
+        supabase.from("profiles").select("created_at").eq("user_id", session.user.id).maybeSingle(),
+        supabase.functions.invoke("check-subscription"),
+        supabase.from("pay_per_use_purchases").select("product_id, created_at").eq("user_id", session.user.id),
+        supabase.from("user_service_overrides").select("service_key").eq("user_id", session.user.id),
+      ]);
 
-      const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
 
-      const { data: ppuData } = await supabase
-        .from("pay_per_use_purchases")
-        .select("product_id, created_at")
-        .eq("user_id", session.user.id);
-
       const purchases = (ppuData || []) as PurchaseRecord[];
+      const overrides = ((overridesData || []) as any[]).map((o: any) => o.service_key as string);
 
       setState(prev => ({
         ...prev,
-        subscribed: data.subscribed,
+        subscribed: data.subscribed || overrides.includes("subscription"),
         fullAccess: !!data.full_access,
         subscriptionEnd: data.subscription_end,
         loading: false,
         profileCreatedAt: profileData?.created_at || null,
         payPerUsePurchases: purchases,
         hasUnlockAll: purchases.some(p => p.product_id === UNLOCK_ALL.product_id),
+        serviceOverrides: overrides,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
@@ -246,8 +245,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return state.payPerUsePurchases.some(p => p.product_id === ppu.product_id);
   }, [state.payPerUsePurchases, state.hasUnlockAll, getActivePurchaseExpiry]);
 
+  // Map routes to service keys for override check
+  const routeToServiceKey = (route: string): string | null => {
+    const map: Record<string, string> = {
+      "/map": "map", "/brand": "brand", "/house": "house",
+      "/compatibility": "compatibility", "/dates": "dates",
+      "/chat": "chat", "/personal-year": "personal-year",
+      "/pillars": "pillars", "/community": "community",
+    };
+    return map[route] || null;
+  };
+
   const canAccess = useCallback((route: string): boolean => {
     if (state.fullAccess) return true;
+
+    // Check admin-granted overrides
+    const serviceKey = routeToServiceKey(route);
+    if (serviceKey && state.serviceOverrides.includes(serviceKey)) return true;
 
     // 24h PPU routes: always require active (non-expired) purchase
     if (PPU_24H_ROUTES.includes(route)) {
@@ -276,7 +290,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, isInTrial, getActivePurchaseExpiry]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
@@ -318,6 +332,7 @@ const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
   payPerUsePurchases: [],
   profileCreatedAt: null,
   hasUnlockAll: false,
+  serviceOverrides: [],
   checkSubscription: async () => {},
   canAccess: () => false,
   isInTrial: () => false,

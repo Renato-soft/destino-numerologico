@@ -5,10 +5,11 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn,
+  LogIn, KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
@@ -62,6 +63,11 @@ const AdminDashboard = () => {
   const [featureSchedule, setFeatureSchedule] = useState<FeatureScheduleItem[]>([]);
   const [scheduleEdits, setScheduleEdits] = useState<Record<string, number>>({});
   const [savingSchedule, setSavingSchedule] = useState(false);
+
+  // Service overrides state
+  const [userOverrides, setUserOverrides] = useState<string[]>([]);
+  const [overridesLoading, setOverridesLoading] = useState(false);
+  const [savingOverrides, setSavingOverrides] = useState(false);
 
   useEffect(() => {
     fetchOverview();
@@ -121,10 +127,70 @@ const AdminDashboard = () => {
     setSavingSchedule(false);
   };
 
+  const ALL_SERVICES = [
+    { key: "map", label: "Mappa Numerologica" },
+    { key: "brand", label: "Analizzatore Brand" },
+    { key: "house", label: "Vibrazione Casa" },
+    { key: "compatibility", label: "Compatibilità" },
+    { key: "dates", label: "Date Favorevoli" },
+    { key: "chat", label: "Chat AI" },
+    { key: "personal-year", label: "Anno Personale" },
+    { key: "pillars", label: "Pilastri della Crescita" },
+    { key: "community", label: "Community" },
+    { key: "subscription", label: "Abbonamento completo" },
+  ];
+
+  const fetchUserOverrides = async (userId: string) => {
+    setOverridesLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data, error } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "get-user-overrides", user_id: userId },
+      });
+      if (!error && data?.overrides) {
+        setUserOverrides(data.overrides);
+      }
+    } catch {
+      setUserOverrides([]);
+    }
+    setOverridesLoading(false);
+  };
+
+  const handleSaveOverrides = async () => {
+    if (!selectedUser) return;
+    setSavingOverrides(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "update-user-overrides", user_id: selectedUser, services: userOverrides },
+      });
+    } catch (err) {
+      console.error("Save overrides error:", err);
+    }
+    setSavingOverrides(false);
+  };
+
+  const toggleOverride = (key: string) => {
+    setUserOverrides(prev =>
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  const toggleAllOverrides = (checked: boolean) => {
+    setUserOverrides(checked ? ALL_SERVICES.map(s => s.key) : []);
+  };
+
   const fetchUserDetail = async (userId: string) => {
     setSelectedUser(userId);
     setDetailLoading(true);
     setUserDetail(null);
+    setUserOverrides([]);
+
+    fetchUserOverrides(userId);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -358,7 +424,49 @@ const AdminDashboard = () => {
                     {selectedUserData?.nome} {selectedUserData?.cognome}
                   </h2>
 
-                  {/* Profile photos */}
+                  {/* Service overrides */}
+                  <div className="mb-6 p-4 rounded-lg border border-border/30 bg-card/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <KeyRound className="w-4 h-4 text-primary" />
+                        <h3 className="text-sm font-medium text-foreground">Servizi abilitati</h3>
+                      </div>
+                      <Button
+                        variant="cosmic"
+                        size="sm"
+                        onClick={handleSaveOverrides}
+                        disabled={savingOverrides}
+                      >
+                        {savingOverrides ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
+                        Salva
+                      </Button>
+                    </div>
+                    {overridesLoading ? (
+                      <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-primary" /></div>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/20">
+                          <Checkbox
+                            checked={userOverrides.length === ALL_SERVICES.length}
+                            onCheckedChange={(checked) => toggleAllOverrides(!!checked)}
+                          />
+                          <span className="text-xs font-semibold text-foreground">Seleziona tutti</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {ALL_SERVICES.map(s => (
+                            <label key={s.key} className="flex items-center gap-2 cursor-pointer py-1">
+                              <Checkbox
+                                checked={userOverrides.includes(s.key)}
+                                onCheckedChange={() => toggleOverride(s.key)}
+                              />
+                              <span className="text-xs text-foreground">{s.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
                   {userDetail.photos.length > 0 && (
                     <div className="mb-6">
                       <h3 className="text-sm font-medium text-muted-foreground mb-2">Foto profilo</h3>
