@@ -54,14 +54,7 @@ export const PAY_PER_USE = {
 export type PayPerUseFeature = keyof typeof PAY_PER_USE;
 
 // Trial PPU: services available once at €1.99 during 24h trial
-export const TRIAL_PPU = {
-  advancedReport: {
-    product_id: "prod_UDOJVMKudX9Jxx",
-    price_id: "price_1TExWeAD91QoshNxLtKcy1bd",
-    price: 1.99,
-    route: "/advanced-report",
-  },
-} as const;
+export const TRIAL_PPU = {} as const;
 
 export type TrialPPUFeature = keyof typeof TRIAL_PPU;
 
@@ -69,7 +62,7 @@ export type TrialPPUFeature = keyof typeof TRIAL_PPU;
 const TRIAL_FREE_ROUTES = ["/chat", "/dates"];
 
 // Routes included in subscription (post-trial)
-const SUBSCRIPTION_ROUTES = ["/map", "/personal-year", "/pillars", "/chat", "/community", "/profile", "/advanced-report"];
+const SUBSCRIPTION_ROUTES = ["/map", "/personal-year", "/pillars", "/chat", "/community", "/profile"];
 
 // Routes always pay-per-use (post-trial)
 const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
@@ -81,9 +74,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
 };
 
 // Routes that are PPU only during trial
-const TRIAL_PPU_ROUTES: Record<string, TrialPPUFeature> = {
-  "/advanced-report": "advancedReport",
-};
+const TRIAL_PPU_ROUTES: Record<string, TrialPPUFeature> = {};
 
 const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -227,12 +218,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    // Trial-only PPU routes (e.g. advanced-report during trial)
-    if (route in TRIAL_PPU_ROUTES && isInTrial()) {
-      const feature = TRIAL_PPU_ROUTES[route];
-      const productId = TRIAL_PPU[feature].product_id;
-      return state.payPerUsePurchases.includes(productId);
-    }
 
     // During trial, free routes
     if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;

@@ -27,7 +27,7 @@ const ROUTE_TO_FEATURE: Record<string, string> = {
   "/brand": "brand",
   "/house": "house",
   "/compatibility": "compatibility",
-  "/advanced-report": "advanced_report",
+  
   "/map": "map",
 };
 
