@@ -200,36 +200,16 @@ const Compatibility = () => {
       </div>
     );
   }
+  const compatHeaderActions = result ? (
+    <Button variant="cosmic-outline" size="sm" onClick={handleDownloadPdf}>
+      <Download className="w-4 h-4 mr-2" />
+      Scarica PDF
+    </Button>
+  ) : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard"><ArrowLeft className="w-5 h-5" /></Link>
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-display text-xl font-semibold">Compatibilità</span>
-            </div>
-          </div>
-          {result && (
-            <Button variant="cosmic-outline" size="sm" onClick={handleDownloadPdf}>
-              <Download className="w-4 h-4 mr-2" />
-              Scarica PDF
-            </Button>
-          )}
-        </div>
-      </header>
-
-      <main className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
+    <DashboardLayout title="Compatibilità" headerActions={compatHeaderActions}>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* My numbers */}
         {!myNumbers ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16">
