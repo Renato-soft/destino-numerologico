@@ -20,7 +20,7 @@ const PricingSection = () => {
     t("pricing.featureBrand"),
     t("pricing.featureHouse"),
     t("pricing.featureCompatibility"),
-    t("pricing.featureAdvancedReport"),
+    
   ];
 
   return (
