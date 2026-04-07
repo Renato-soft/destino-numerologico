@@ -144,35 +144,32 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [] }));
         return;
       }
 
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("created_at")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+      const [{ data: profileData }, { data, error }, { data: ppuData }, { data: overridesData }] = await Promise.all([
+        supabase.from("profiles").select("created_at").eq("user_id", session.user.id).maybeSingle(),
+        supabase.functions.invoke("check-subscription"),
+        supabase.from("pay_per_use_purchases").select("product_id, created_at").eq("user_id", session.user.id),
+        supabase.from("user_service_overrides").select("service_key").eq("user_id", session.user.id),
+      ]);
 
-      const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
 
-      const { data: ppuData } = await supabase
-        .from("pay_per_use_purchases")
-        .select("product_id, created_at")
-        .eq("user_id", session.user.id);
-
       const purchases = (ppuData || []) as PurchaseRecord[];
+      const overrides = ((overridesData || []) as any[]).map((o: any) => o.service_key as string);
 
       setState(prev => ({
         ...prev,
-        subscribed: data.subscribed,
+        subscribed: data.subscribed || overrides.includes("subscription"),
         fullAccess: !!data.full_access,
         subscriptionEnd: data.subscription_end,
         loading: false,
         profileCreatedAt: profileData?.created_at || null,
         payPerUsePurchases: purchases,
         hasUnlockAll: purchases.some(p => p.product_id === UNLOCK_ALL.product_id),
+        serviceOverrides: overrides,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
