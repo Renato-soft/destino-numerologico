@@ -120,6 +120,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     payPerUsePurchases: [],
     profileCreatedAt: null,
     hasUnlockAll: false,
+    serviceOverrides: [],
   });
 
   const refreshPayPerUsePurchases = useCallback(async () => {
@@ -319,6 +320,7 @@ const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
   payPerUsePurchases: [],
   profileCreatedAt: null,
   hasUnlockAll: false,
+  serviceOverrides: [],
   checkSubscription: async () => {},
   canAccess: () => false,
   isInTrial: () => false,
