@@ -314,7 +314,6 @@ export default function Community() {
     );
   }
 
-  return (
   const communityHeaderActions = (
     <div className="flex items-center gap-1">
       <div className="relative">
