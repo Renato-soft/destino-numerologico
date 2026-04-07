@@ -175,7 +175,7 @@
     "maxChars": "Maximum 50 characters",
     "dateFormat": "Format: dd/mm/yyyy",
     "invalidDate": "Invalid date",
-    "stateRequired": "Enter the state where you live",
+    "stateRequired": "Enter the region or city where you live",
     "selectGender": "Select your gender",
     "notAuthenticated": "Not authenticated"
   },
