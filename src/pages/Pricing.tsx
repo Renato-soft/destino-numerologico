@@ -99,7 +99,7 @@ const Pricing = () => {
 
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Two plans side by side */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="max-w-lg mx-auto">
             {/* Monthly subscription */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
