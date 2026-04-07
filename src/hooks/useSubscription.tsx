@@ -92,6 +92,7 @@ interface SubscriptionState {
   payPerUsePurchases: PurchaseRecord[];
   profileCreatedAt: string | null;
   hasUnlockAll: boolean;
+  serviceOverrides: string[];
 }
 
 interface SubscriptionContextType extends SubscriptionState {
