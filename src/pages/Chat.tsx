@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import DashboardLayout from "@/components/DashboardLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -295,41 +296,18 @@ const Chat = () => {
     );
   }
 
+  const chatHeaderActions = (
+    <Button variant="ghost" size="sm" onClick={startNewChat}>
+      <Plus className="w-4 h-4 mr-2" />
+      Nuova Chat
+    </Button>
+  );
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Background */}
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-secondary to-purple-500 flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="font-display text-lg font-semibold block">Esperto Numerologico</span>
-                <span className="text-xs text-muted-foreground">Consulente AI</span>
-              </div>
-            </div>
-          </div>
-
-          <Button variant="ghost" size="sm" onClick={startNewChat}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nuova Chat
-          </Button>
-        </div>
-      </header>
-
+    <DashboardLayout title="Esperto Numerologico" headerActions={chatHeaderActions}>
+      <div className="flex flex-col flex-1 h-[calc(100vh-73px)]">
       {/* Messages */}
-      <main className="relative z-10 flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-6 max-w-3xl">
           {messages.length === 0 ? (
             <motion.div
@@ -438,7 +416,7 @@ const Chat = () => {
           )}
           <div ref={messagesEndRef} />
         </div>
-      </main>
+      </div>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -479,7 +457,7 @@ const Chat = () => {
       </AnimatePresence>
 
       {/* Input */}
-      <footer className="relative z-10 border-t border-border/50 bg-background/80 backdrop-blur-xl">
+      <footer className="border-t border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 max-w-3xl">
           <div className="flex gap-3">
             <Input
@@ -505,7 +483,8 @@ const Chat = () => {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

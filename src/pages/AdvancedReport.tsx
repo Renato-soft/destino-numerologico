@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import DashboardLayout from "@/components/DashboardLayout";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -200,28 +201,8 @@ export default function AdvancedReport() {
   const hasReport = report && report.status !== "generating" && Object.keys(report.sections).length > 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/dashboard"><ArrowLeft className="w-5 h-5" /></Link>
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <FileText className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-lg font-semibold">Report Avanzato</h1>
-              <p className="text-xs text-muted-foreground">Analisi numerologica completa con AI</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative z-10 container mx-auto px-4 py-8 max-w-3xl space-y-6">
+    <DashboardLayout title="Report Avanzato">
+      <div className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
         {!hasReport && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -370,7 +351,7 @@ export default function AdvancedReport() {
             })}
           </>
         )}
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
