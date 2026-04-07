@@ -238,7 +238,7 @@
     "male": "Uomo",
     "female": "Donna",
     "birthDate": "Data di nascita",
-    "residenceState": "Stato di residenza",
+    "residenceState": "Regione o città in cui vivi",
     "residenceStatePlaceholder": "Es. Lombardia",
     "saveChanges": "Salva Modifiche",
     "saving": "Salvataggio...",
