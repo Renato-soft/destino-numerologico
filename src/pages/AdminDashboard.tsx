@@ -127,10 +127,70 @@ const AdminDashboard = () => {
     setSavingSchedule(false);
   };
 
+  const ALL_SERVICES = [
+    { key: "map", label: "Mappa Numerologica" },
+    { key: "brand", label: "Analizzatore Brand" },
+    { key: "house", label: "Vibrazione Casa" },
+    { key: "compatibility", label: "Compatibilità" },
+    { key: "dates", label: "Date Favorevoli" },
+    { key: "chat", label: "Chat AI" },
+    { key: "personal-year", label: "Anno Personale" },
+    { key: "pillars", label: "Pilastri della Crescita" },
+    { key: "community", label: "Community" },
+    { key: "subscription", label: "Abbonamento completo" },
+  ];
+
+  const fetchUserOverrides = async (userId: string) => {
+    setOverridesLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data, error } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "get-user-overrides", user_id: userId },
+      });
+      if (!error && data?.overrides) {
+        setUserOverrides(data.overrides);
+      }
+    } catch {
+      setUserOverrides([]);
+    }
+    setOverridesLoading(false);
+  };
+
+  const handleSaveOverrides = async () => {
+    if (!selectedUser) return;
+    setSavingOverrides(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "update-user-overrides", user_id: selectedUser, services: userOverrides },
+      });
+    } catch (err) {
+      console.error("Save overrides error:", err);
+    }
+    setSavingOverrides(false);
+  };
+
+  const toggleOverride = (key: string) => {
+    setUserOverrides(prev =>
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  const toggleAllOverrides = (checked: boolean) => {
+    setUserOverrides(checked ? ALL_SERVICES.map(s => s.key) : []);
+  };
+
   const fetchUserDetail = async (userId: string) => {
     setSelectedUser(userId);
     setDetailLoading(true);
     setUserDetail(null);
+    setUserOverrides([]);
+
+    fetchUserOverrides(userId);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
