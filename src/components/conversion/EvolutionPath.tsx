@@ -62,29 +62,29 @@ const EvolutionPath = () => {
             </div>
           </div>
 
-          {/* Instant Unlock - sticky sidebar */}
+          {/* CTA sidebar */}
           <div className="lg:sticky lg:top-24">
             <div className="text-center rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 via-card to-card p-8 md:p-10 shadow-glow-gold">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 text-primary text-sm font-bold mb-6">
                 <Zap className="w-4 h-4" />
-                Non vuoi aspettare?
+                Inizia il tuo percorso
               </div>
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">
-                Sblocca tutto <span className="text-gradient-gold">subito</span>
+                Scopri il tuo <span className="text-gradient-gold">destino</span>
               </h3>
               <p className="text-muted-foreground text-base mb-6">
-                Accedi immediatamente a tutte le analisi e scopri il tuo percorso completo senza attese.
+                Accedi alla tua mappa numerologica completa e inizia il percorso di crescita personale.
               </p>
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-4xl font-bold text-primary">€9,99</span>
-                <span className="text-muted-foreground">oggi</span>
+                <span className="text-4xl font-bold text-primary">€4,99</span>
+                <span className="text-muted-foreground">/mese</span>
               </div>
               <p className="text-xs text-muted-foreground mb-8">
-                Poi €4,99/mese per continuare ad accedere ai contenuti giornalieri
+                Prova gratuita di 24 ore inclusa
               </p>
               <Button asChild variant="cosmic" size="xl" className="group w-full">
                 <Link to="/auth">
-                  Sblocca tutto ora
+                  Inizia gratis
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>

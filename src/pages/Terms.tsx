@@ -95,10 +95,9 @@ const Terms = () => {
               Il Servizio offre diversi livelli di accesso:
             </p>
             <ul className="list-disc list-inside text-muted-foreground leading-relaxed space-y-2">
-              <li><strong className="text-foreground">Piano Gratuito:</strong> accesso limitato con un massimo di 2 richieste gratuite di prova.</li>
-              <li><strong className="text-foreground">Piano Base (€4,99 — pagamento una tantum):</strong> accesso alla Mappa Numerologica completa e all'analisi dell'Anno Personale.</li>
-              <li><strong className="text-foreground">Piano Pro (€9,99/mese):</strong> include il piano Base più il percorso "I 7 Pilastri del Destino", analisi di Compatibilità, Date Favorevoli e Outfit Giornaliero.</li>
-              <li><strong className="text-foreground">Piano Gold (€14,99/mese):</strong> include il piano Pro più Report Avanzato PDF, Chat con esperto AI, Analizzatore Brand e Vibrazione Casa/Ufficio.</li>
+              <li><strong className="text-foreground">Prova Gratuita (24 ore):</strong> accesso limitato alla Mini-Mappa, Analisi del Giorno, Chat e Date Favorevoli.</li>
+              <li><strong className="text-foreground">Abbonamento Mensile (€4,99/mese):</strong> accesso completo a Mappa Numerologica, Anno Personale, Pilastri della Crescita, Chat AI, Report Avanzato, Outfit del Giorno e Community.</li>
+              <li><strong className="text-foreground">Servizi Pay-Per-Use (€1,99 ciascuno):</strong> Analizzatore Brand, Vibrazione Casa, Compatibilità e Date Favorevoli — acquistabili singolarmente con accesso di 24 ore.</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed">
               I pagamenti sono gestiti tramite la piattaforma sicura <strong className="text-foreground">Stripe</strong>,
