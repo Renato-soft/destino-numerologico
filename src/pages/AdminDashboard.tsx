@@ -424,7 +424,49 @@ const AdminDashboard = () => {
                     {selectedUserData?.nome} {selectedUserData?.cognome}
                   </h2>
 
-                  {/* Profile photos */}
+                  {/* Service overrides */}
+                  <div className="mb-6 p-4 rounded-lg border border-border/30 bg-card/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <KeyRound className="w-4 h-4 text-primary" />
+                        <h3 className="text-sm font-medium text-foreground">Servizi abilitati</h3>
+                      </div>
+                      <Button
+                        variant="cosmic"
+                        size="sm"
+                        onClick={handleSaveOverrides}
+                        disabled={savingOverrides}
+                      >
+                        {savingOverrides ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
+                        Salva
+                      </Button>
+                    </div>
+                    {overridesLoading ? (
+                      <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-primary" /></div>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/20">
+                          <Checkbox
+                            checked={userOverrides.length === ALL_SERVICES.length}
+                            onCheckedChange={(checked) => toggleAllOverrides(!!checked)}
+                          />
+                          <span className="text-xs font-semibold text-foreground">Seleziona tutti</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {ALL_SERVICES.map(s => (
+                            <label key={s.key} className="flex items-center gap-2 cursor-pointer py-1">
+                              <Checkbox
+                                checked={userOverrides.includes(s.key)}
+                                onCheckedChange={() => toggleOverride(s.key)}
+                              />
+                              <span className="text-xs text-foreground">{s.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
                   {userDetail.photos.length > 0 && (
                     <div className="mb-6">
                       <h3 className="text-sm font-medium text-muted-foreground mb-2">Foto profilo</h3>
