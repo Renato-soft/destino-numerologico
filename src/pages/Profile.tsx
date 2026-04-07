@@ -52,7 +52,7 @@ const ProfilePage = () => {
   const { toast } = useToast();
 
   const basePhotoTypes = [
-    { key: "face", label: t("profile.face"), required: true },
+    { key: "face", label: t("profile.face"), required: false },
     { key: "full_front", label: t("profile.frontFull"), required: false },
     { key: "full_side", label: t("profile.sideFull"), required: false },
   ];
