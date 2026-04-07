@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
   Sparkles, Map, MessageCircle, Calendar,
-  User, Users, Target, Compass, ScrollText, LogOut, ChevronRight, Home, Crown, Lock, ShoppingCart, Shield, Clock, Check
+  User, Users, Target, Compass, ScrollText, LogOut, Home, Crown, Lock, ShoppingCart, Shield, Clock, Check, ChevronRight, Menu
 } from "lucide-react";
 import DailyAnalysis from "@/components/DailyAnalysis";
 import DailyOutfits from "@/components/DailyOutfits";
@@ -16,6 +16,18 @@ import { calculateLifePath, calculatePersonalYear } from "@/lib/numerology";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 interface Profile {
   nome: string;
@@ -157,7 +169,6 @@ const Dashboard = () => {
     );
   }
 
-  // Trial expired and not subscribed: show upgrade screen
   if (isTrialExpired() && !subscribed) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -206,9 +217,7 @@ const Dashboard = () => {
     "/map": "map",
   };
 
-  // Service cards with marketing descriptions
   const quickActions = [
-    // Pricing CTA
     ...(!subscribed ? [{
       title: "Scegli il tuo piano",
       description: "Sblocca tutto il potere della numerologia",
@@ -218,10 +227,9 @@ const Dashboard = () => {
       primary: true,
       badge: null as string | null,
     }] : []),
-    // Map
     ...(latestMap ? [] : [{
       title: "Mappa Numerologica",
-      description: "Il tuo profilo numerologico completo in un'unica mappa personalizzata",
+      description: "Il tuo profilo numerologico completo",
       icon: Map,
       href: "/map",
       color: "from-primary to-accent",
@@ -229,19 +237,17 @@ const Dashboard = () => {
       payPerUse: true,
       payPerUsePrice: "€1,99",
     }]),
-    // Chat
     {
       title: "Chat con l'Esperto",
-      description: "Fai domande e ricevi risposte personalizzate dalla tua guida numerologica AI",
+      description: "Risposte personalizzate dalla guida AI",
       icon: MessageCircle,
       href: "/chat",
       color: "from-secondary to-purple-500",
       badge: trialActive && !subscribed ? "GRATIS" : subscribed ? "INCLUSO" : null,
     },
-    // Date Favorevoli
     {
       title: "Date Favorevoli",
-      description: "Scopri i giorni migliori per decisioni importanti, incontri e nuovi inizi",
+      description: "I giorni migliori per le tue decisioni",
       icon: Calendar,
       href: "/dates",
       color: "from-amber-500 to-orange-500",
@@ -250,40 +256,36 @@ const Dashboard = () => {
       payPerUsePrice: "€1,99",
       isAlwaysPPU: true,
     },
-    // Anno Personale
     {
       title: "Anno Personale " + new Date().getFullYear(),
-      description: "Le energie e le opportunità che ti aspettano quest'anno",
+      description: "Energie e opportunità dell'anno",
       icon: Calendar,
       href: "/personal-year",
       color: "from-orange-500 to-amber-500",
       badge: subscribed ? "INCLUSO" : trialActive ? "€1,99" : null,
       trialPPU: true,
     },
-    // Pilastri
     {
-      title: "I Pilastri della Crescita",
-      description: "Un percorso guidato per la tua evoluzione personale",
+      title: "Pilastri della Crescita",
+      description: "Percorso guidato di evoluzione",
       icon: Compass,
       href: "/pillars",
       color: "from-fuchsia-500 to-purple-600",
       badge: subscribed ? "INCLUSO" : trialActive ? "€1,99" : null,
       trialPPU: true,
     },
-    // Report Avanzato
     {
       title: "Report Avanzato",
-      description: "Un'analisi approfondita generata dall'AI su misura per te",
+      description: "Analisi approfondita generata dall'AI",
       icon: ScrollText,
       href: "/advanced-report",
       color: "from-amber-600 to-yellow-700",
       badge: subscribed ? "INCLUSO" : "€1,99",
       trialPPU: !subscribed,
     },
-    // Brand Analyzer
     {
       title: "Analizzatore Brand",
-      description: "Scopri la vibrazione energetica del tuo brand o progetto",
+      description: "Vibrazione energetica del tuo brand",
       icon: Target,
       href: "/brand",
       color: "from-violet-500 to-fuchsia-500",
@@ -291,10 +293,9 @@ const Dashboard = () => {
       payPerUse: true,
       payPerUsePrice: "€1,99",
     },
-    // Vibrazione Casa
     {
       title: "Vibrazione Casa",
-      description: "Analizza l'energia del tuo indirizzo e scopri come influenza la tua vita",
+      description: "Energia del tuo indirizzo",
       icon: Home,
       href: "/house",
       color: "from-cyan-500 to-sky-500",
@@ -302,10 +303,9 @@ const Dashboard = () => {
       payPerUse: true,
       payPerUsePrice: "€1,99",
     },
-    // Compatibilità
     {
       title: "Compatibilità",
-      description: "Scopri l'affinità numerologica con il tuo partner, amico o collega",
+      description: "Affinità numerologica con gli altri",
       icon: Users,
       href: "/compatibility",
       color: "from-pink-500 to-rose-500",
@@ -313,10 +313,9 @@ const Dashboard = () => {
       payPerUse: true,
       payPerUsePrice: "€1,99",
     },
-    // Community
     {
       title: "Community",
-      description: "Condividi esperienze e scoperte con altri appassionati di numerologia",
+      description: "Condividi con altri appassionati",
       icon: MessageCircle,
       href: "/community",
       color: "from-indigo-500 to-purple-500",
@@ -328,205 +327,257 @@ const Dashboard = () => {
   const outfitsUnlocked = isFeatureUnlocked("outfits");
   const showDailyContent = subscribed || trialActive;
 
+  const getBadgeElement = (action: typeof quickActions[0], isScheduleLocked: boolean, daysLeft: number) => {
+    if (isScheduleLocked) {
+      return (
+        <Badge className="bg-muted text-muted-foreground border-border border text-[10px] px-1.5 py-0 gap-0.5 ml-auto shrink-0">
+          <Clock className="w-2.5 h-2.5" />
+          {daysLeft}{i18n.language?.startsWith("en") ? "d" : "g"}
+        </Badge>
+      );
+    }
+    if (action.badge === "GRATIS") return <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-1.5 py-0 ml-auto shrink-0">GRATIS</Badge>;
+    if (action.badge === "INCLUSO") return <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-1.5 py-0 gap-0.5 ml-auto shrink-0"><Check className="w-2.5 h-2.5" />INCLUSO</Badge>;
+    if (action.badge === "SBLOCCATO") return <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-1.5 py-0 gap-0.5 ml-auto shrink-0"><Check className="w-2.5 h-2.5" />SBLOCCATO</Badge>;
+    if (action.badge === "€1,99") return <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-1.5 py-0 gap-0.5 ml-auto shrink-0"><ShoppingCart className="w-2.5 h-2.5" />€1,99</Badge>;
+    if (!subscribed && !(action as any).primary) return <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-1.5 py-0 gap-0.5 ml-auto shrink-0"><Lock className="w-2.5 h-2.5" />PRO</Badge>;
+    return null;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none z-0" />
+        <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none z-0" />
 
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-display text-xl font-semibold hidden sm:block">{t("common.appName")}</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-muted-foreground hidden md:block">
-              {t("dashboard.hello")} <span className="text-foreground font-medium">{profile?.nome}</span>
-            </span>
-            {latestMap && (
-              <Button variant="cosmic-outline" size="sm" asChild>
-                <Link to="/map">
-                  <Map className="w-4 h-4 mr-2" />
-                  {t("dashboard.yourMap")}
-                </Link>
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={() => navigate("/community")} title="Community" className="relative">
-              <Users className="w-5 h-5" />
-              {todayPostCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
-                  {todayPostCount > 99 ? "99+" : todayPostCount}
-                </span>
-              )}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} title={t("dashboard.profile")}>
-              <User className="w-5 h-5" />
-            </Button>
-            {(userEmail === "regnew01@gmail.com" || userEmail === "maria732008@live.it" || userEmail === "realerenato@gmail.com") && (
-              <Button variant="ghost" size="icon" onClick={() => navigate("/admin")} title={t("dashboard.controlPanel")}>
-                <Shield className="w-5 h-5" />
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="relative z-10 container mx-auto px-4 py-8">
-        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-            {t("dashboard.welcome").split("<1>")[0]}
-            <span className="text-gradient-gold">{profile?.nome}</span>
-            {t("dashboard.welcome").split("</1>")[1] || ""}
-          </h1>
-          <p className="text-muted-foreground text-lg">{t("dashboard.explore")}</p>
-        </motion.section>
-
-        {/* Trial banner */}
-        {trialActive && !subscribed && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center justify-between flex-wrap gap-3"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-primary" />
+        {/* Sidebar with services */}
+        <Sidebar collapsible="icon" className="z-20 border-r border-border/50">
+          <SidebarContent className="pt-4">
+            {/* Logo in sidebar */}
+            <div className="px-4 pb-4 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4 text-primary-foreground" />
               </div>
-              <div>
-                <p className="font-semibold text-sm">Prova gratuita attiva</p>
-                <p className="text-xs text-muted-foreground">
-                  Scade tra {trialHours} or{trialHours === 1 ? "a" : "e"} — Esplora i servizi gratuiti!
-                </p>
-              </div>
+              <span className="font-display text-sm font-semibold truncate group-data-[collapsible=icon]:hidden">
+                {t("common.appName")}
+              </span>
             </div>
-            <Button variant="cosmic" size="sm" onClick={() => navigate("/pricing")}>
-              Abbonati ora
-            </Button>
-          </motion.div>
-        )}
 
-        {/* Daily Analysis */}
-        {latestMap && showDailyContent && dailyAnalysisUnlocked && <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />}
+            {/* Pricing CTA for non-subscribers */}
+            {!subscribed && (
+              <SidebarGroup>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className="bg-gradient-to-r from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30 border border-primary/30 rounded-lg">
+                        <Link to="/pricing" className="flex items-center gap-2">
+                          <Crown className="w-4 h-4 text-primary shrink-0" />
+                          <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">Scegli il tuo piano</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
 
-        {/* Simplified mini-map + analysis for trial users without full map */}
-        {trialActive && !subscribed && !latestMap && profile && (() => {
-          const [y, m, d] = profile.birth_date.split("-").map(Number);
-          const trialLifePath = calculateLifePath(d, m, y);
-          const trialPersonalYear = calculatePersonalYear(d, m, new Date().getFullYear());
-          return (
-            <>
-              <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
-              {dailyAnalysisUnlocked && <DailyAnalysis personalYear={trialPersonalYear} lifePath={trialLifePath} />}
-            </>
-          );
-        })()}
+            {/* Map link if not created yet */}
+            {!latestMap && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Inizia</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link to="/map" className="flex items-center gap-2">
+                          <Map className="w-4 h-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">Mappa Numerologica</span>
+                          {getBadgeElement({ title: "", description: "", icon: Map, href: "/map", color: "", badge: hasUnlockAll ? "SBLOCCATO" : subscribed ? "INCLUSO" : "€1,99" }, false, 0)}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
 
-        {/* Outfits (after analysis) */}
-        {showDailyContent && outfitsUnlocked && <DailyOutfits />}
+            <SidebarGroup defaultOpen>
+              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Servizi</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {quickActions.filter(a => !(a as any).primary && a.href !== "/map").map((action) => {
+                    const featureKey = FEATURE_KEY_MAP[action.href];
+                    const isFreeInTrial = trialActive && ["/chat", "/dates"].includes(action.href);
+                    const isScheduleLocked = featureKey && !isFreeInTrial && !isFeatureUnlocked(featureKey);
+                    const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
 
-        {/* Numbers */}
-        {latestMap && (
-          <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-12">
-            <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.yourNumbers")}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {[
-                { label: t("dashboard.destiny"), value: latestMap.life_path },
-                { label: t("dashboard.self"), value: latestMap.destiny_expression },
-                { label: t("dashboard.soul"), value: latestMap.soul },
-                { label: t("dashboard.personality"), value: latestMap.personality },
-                { label: t("dashboard.quintessence"), value: (() => { const s = latestMap.destiny_expression + latestMap.life_path; let r = s; while (r > 9 && r !== 11 && r !== 22) { r = r.toString().split('').reduce((a, d) => a + parseInt(d), 0); } return r; })() },
-              ].map((item) => (
-                <div key={item.label} className="glass-cosmic rounded-xl p-4 text-center">
-                  <div className="number-circle mx-auto mb-2 w-12 h-12 text-xl">{item.value}</div>
-                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                    return (
+                      <SidebarMenuItem key={action.href}>
+                        <SidebarMenuButton
+                          asChild
+                          className={isScheduleLocked ? "opacity-50 cursor-not-allowed" : ""}
+                        >
+                          <Link
+                            to={isScheduleLocked ? "#" : action.href}
+                            onClick={(e) => { if (isScheduleLocked) e.preventDefault(); }}
+                            className="flex items-center gap-2"
+                          >
+                            <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${action.color} flex items-center justify-center shrink-0 ${isScheduleLocked ? "grayscale" : ""}`}>
+                              <action.icon className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <span className="truncate text-sm group-data-[collapsible=icon]:hidden">{action.title}</span>
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              {getBadgeElement(action, !!isScheduleLocked, daysLeft)}
+                            </span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Bottom actions */}
+            <SidebarGroup className="mt-auto">
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {latestMap && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link to="/map" className="flex items-center gap-2">
+                          <Map className="w-4 h-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">{t("dashboard.yourMap")}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/profile" className="flex items-center gap-2">
+                        <User className="w-4 h-4 shrink-0" />
+                        <span className="truncate group-data-[collapsible=icon]:hidden">{t("dashboard.profile")}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  {(userEmail === "regnew01@gmail.com" || userEmail === "maria732008@live.it" || userEmail === "realerenato@gmail.com") && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link to="/admin" className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">{t("dashboard.controlPanel")}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton onClick={handleLogout} className="flex items-center gap-2 text-destructive hover:text-destructive">
+                      <LogOut className="w-4 h-4 shrink-0" />
+                      <span className="truncate group-data-[collapsible=icon]:hidden">Logout</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col relative z-10">
+          <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl">
+            <div className="px-4 md:px-8 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="shrink-0" />
+                <div>
+                  <h1 className="font-display text-xl md:text-2xl font-bold">
+                    {t("dashboard.hello")} <span className="text-gradient-gold">{profile?.nome}</span> ✨
+                  </h1>
+                  <p className="text-sm text-muted-foreground hidden sm:block">{t("dashboard.explore")}</p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={() => navigate("/community")} title="Community" className="relative">
+                  <Users className="w-5 h-5" />
+                  {todayPostCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+                      {todayPostCount > 99 ? "99+" : todayPostCount}
+                    </span>
+                  )}
+                </Button>
+              </div>
             </div>
-          </motion.section>
-        )}
+          </header>
 
-        {/* Service cards */}
-        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="font-display text-xl font-semibold mb-4">I tuoi servizi</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quickActions.map((action, index) => {
-              const featureKey = FEATURE_KEY_MAP[action.href];
-              const isFreeInTrial = trialActive && ["/chat", "/dates"].includes(action.href);
-              const isScheduleLocked = featureKey && !isFreeInTrial && !isFeatureUnlocked(featureKey);
-              const daysLeft = featureKey ? getDaysRemaining(featureKey) : 0;
+          <main className="flex-1 overflow-auto px-4 md:px-8 py-6 space-y-6">
+            {/* Trial banner */}
+            {trialActive && !subscribed && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-accent/10 p-4 flex items-center justify-between flex-wrap gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Prova gratuita attiva</p>
+                    <p className="text-xs text-muted-foreground">
+                      Scade tra {trialHours} or{trialHours === 1 ? "a" : "e"} — Esplora i servizi gratuiti!
+                    </p>
+                  </div>
+                </div>
+                <Button variant="cosmic" size="sm" onClick={() => navigate("/pricing")}>
+                  Abbonati ora
+                </Button>
+              </motion.div>
+            )}
 
+            {/* Daily Analysis */}
+            {latestMap && showDailyContent && dailyAnalysisUnlocked && (
+              <DailyAnalysis personalYear={latestMap.personal_year} lifePath={latestMap.life_path} />
+            )}
+
+            {/* Simplified mini-map + analysis for trial users without full map */}
+            {trialActive && !subscribed && !latestMap && profile && (() => {
+              const [y, m, d] = profile.birth_date.split("-").map(Number);
+              const trialLifePath = calculateLifePath(d, m, y);
+              const trialPersonalYear = calculatePersonalYear(d, m, new Date().getFullYear());
               return (
-                <motion.div key={action.title || action.href} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + index * 0.03 }}>
-                  <Link to={isScheduleLocked ? "#" : action.href} onClick={(e) => { if (isScheduleLocked) e.preventDefault(); }}>
-                    <div className={`group relative p-5 rounded-2xl border transition-all duration-300 ${isScheduleLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-cosmic"} ${(action as any).primary ? "bg-gradient-to-br from-primary/20 to-accent/20 border-primary/30 hover:border-primary/50" : "bg-card/50 border-border/50 hover:border-primary/30"}`}>
-                      {/* Badge */}
-                      {isScheduleLocked ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-muted text-muted-foreground border-border border text-[10px] px-2 py-0.5 gap-1">
-                            <Clock className="w-3 h-3" />
-                            {daysLeft}{i18n.language?.startsWith("en") ? "d" : "g"}
-                          </Badge>
-                        </div>
-                      ) : action.badge === "GRATIS" ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-2 py-0.5">
-                            GRATIS
-                          </Badge>
-                        </div>
-                      ) : action.badge === "INCLUSO" ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
-                            <Check className="w-3 h-3" />
-                            INCLUSO
-                          </Badge>
-                        </div>
-                      ) : action.badge === "SBLOCCATO" ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 border text-[10px] px-2 py-0.5 gap-1">
-                            <Check className="w-3 h-3" />
-                            SBLOCCATO
-                          </Badge>
-                        </div>
-                      ) : action.badge === "€1,99" ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 border text-[10px] px-2 py-0.5 gap-1">
-                            <ShoppingCart className="w-3 h-3" />
-                            €1,99
-                          </Badge>
-                        </div>
-                      ) : !subscribed && !(action as any).primary ? (
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] px-2 py-0.5 gap-1">
-                            <Lock className="w-3 h-3" />
-                            PRO
-                          </Badge>
-                        </div>
-                      ) : null}
-
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-3 ${isScheduleLocked ? "grayscale" : ""}`}>
-                        <action.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="font-display text-base font-semibold mb-1 flex items-center gap-2">
-                        {action.title}
-                        {!isScheduleLocked && <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />}
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {isScheduleLocked ? `Disponibile tra ${daysLeft} giorn${daysLeft === 1 ? "o" : "i"}` : action.description}
-                      </p>
-                    </div>
-                  </Link>
-                </motion.div>
+                <>
+                  <SimplifiedMiniMap nome={profile.nome} cognome={profile.cognome} birthDate={profile.birth_date} />
+                  {dailyAnalysisUnlocked && <DailyAnalysis personalYear={trialPersonalYear} lifePath={trialLifePath} />}
+                </>
               );
-            })}
-          </div>
-        </motion.section>
-      </main>
-    </div>
+            })()}
+
+            {/* Outfits */}
+            {showDailyContent && outfitsUnlocked && <DailyOutfits />}
+
+            {/* Numbers */}
+            {latestMap && (
+              <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                <h2 className="font-display text-xl font-semibold mb-4">{t("dashboard.yourNumbers")}</h2>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {[
+                    { label: t("dashboard.destiny"), value: latestMap.life_path },
+                    { label: t("dashboard.self"), value: latestMap.destiny_expression },
+                    { label: t("dashboard.soul"), value: latestMap.soul },
+                    { label: t("dashboard.personality"), value: latestMap.personality },
+                    { label: t("dashboard.quintessence"), value: (() => { const s = latestMap.destiny_expression + latestMap.life_path; let r = s; while (r > 9 && r !== 11 && r !== 22) { r = r.toString().split('').reduce((a, d) => a + parseInt(d), 0); } return r; })() },
+                  ].map((item) => (
+                    <div key={item.label} className="glass-cosmic rounded-xl p-4 text-center">
+                      <div className="number-circle mx-auto mb-2 w-12 h-12 text-xl">{item.value}</div>
+                      <p className="text-sm text-muted-foreground">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
