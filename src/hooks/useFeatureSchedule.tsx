@@ -39,21 +39,27 @@ export function FeatureScheduleProvider({ children }: { children: ReactNode }) {
   const [userCreatedAt, setUserCreatedAt] = useState<string | null>(null);
   const [bypassSchedule, setBypassSchedule] = useState(false);
 
-  const BYPASS_EMAILS = ["regnew01@gmail.com", "maria732008@live.it", "realerenato@gmail.com"];
-
   const loadSchedule = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setLoading(false); return; }
 
-      if (BYPASS_EMAILS.includes(session.user.email || "")) {
-        setBypassSchedule(true);
-      }
-
       const [scheduleResult, profileResult] = await Promise.all([
         supabase.from("feature_schedule" as any).select("feature_key, feature_label, unlock_after_days, enabled"),
         supabase.from("profiles").select("created_at").eq("user_id", session.user.id).maybeSingle(),
       ]);
+
+      // Check if user has "subscription" override (bypass schedule)
+      const { data: overridesData } = await supabase
+        .from("user_service_overrides")
+        .select("service_key")
+        .eq("user_id", session.user.id);
+      
+      if (overridesData && overridesData.some(o => o.service_key === "subscription")) {
+        setBypassSchedule(true);
+      } else {
+        setBypassSchedule(false);
+      }
 
       if (scheduleResult.data) {
         setSchedule(scheduleResult.data as any[]);

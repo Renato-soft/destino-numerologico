@@ -10,9 +10,6 @@ const corsHeaders = {
 
 const SUBSCRIPTION_PRODUCT_ID = "prod_UC8lYk5YrO4Yqs";
 
-// Manual overrides: emails that get full access without payment
-const OVERRIDES: string[] = ["regnew01@gmail.com", "maria732008@live.it", "realerenato@gmail.com"];
-
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
@@ -48,9 +45,14 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
 
-    // Manual overrides — check BEFORE Stripe key validation
-    if (OVERRIDES.includes(user.email.toLowerCase())) {
-      logStep("Manual override found – full access");
+    // Check DB-based service overrides for "subscription" key (grants full_access)
+    const { data: overrides } = await supabaseClient
+      .from("user_service_overrides")
+      .select("service_key")
+      .eq("user_id", user.id);
+    
+    if (overrides && overrides.some((o: any) => o.service_key === "subscription")) {
+      logStep("DB override found – full access", { userId: user.id });
       return new Response(
         JSON.stringify({ subscribed: true, subscription_end: null, full_access: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
