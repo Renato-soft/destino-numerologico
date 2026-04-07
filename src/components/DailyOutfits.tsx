@@ -165,7 +165,19 @@ const DailyOutfits = () => {
         )}
       </div>
 
-      {!loading && photoCount < 5 && (
+      {!loading && photoCount === 0 && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-2xl glass-cosmic border border-primary/20 text-center">
+          <Camera className="w-12 h-12 text-primary mx-auto mb-4 opacity-60" />
+          <p className="text-foreground font-semibold mb-2">{t("outfits.noPhotosTitle")}</p>
+          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{t("outfits.noPhotosDesc")}</p>
+          <Button variant="cosmic" size="sm" onClick={() => navigate("/profile")}>
+            <Camera className="w-4 h-4 mr-2" />
+            {t("outfits.goUploadPhotos")}
+          </Button>
+        </motion.div>
+      )}
+
+      {!loading && photoCount > 0 && photoCount < 5 && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
@@ -181,7 +193,7 @@ const DailyOutfits = () => {
         </motion.div>
       )}
 
-      {loading ? (
+      {photoCount === 0 ? null : loading ? (
         <div className="glass-cosmic rounded-2xl p-12 flex flex-col items-center justify-center gap-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
           <div className="text-center">
