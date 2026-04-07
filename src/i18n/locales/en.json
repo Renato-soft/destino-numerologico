@@ -150,10 +150,11 @@
     "residenceStatePlaceholder": "E.g. London, New York, Milan...",
     "birthDatePlaceholder": "dd/mm/yyyy",
     "photosTitle": "Your photos",
-    "photosDesc": "The close-up photo is <1>required</1> to provide you with daily personalized outfit suggestions based on your physical appearance, complexion and build.",
-    "photosTip": "💡 <1>Tip:</1> also upload full-body photos to get even more precise outfit suggestions based on your real body type.",
+    "photosDesc": "Photos allow us to provide you with daily personalized outfit suggestions based on your physical appearance, complexion and build. <1>You can upload them later</1> from your profile.",
+    "photosTip": "💡 <1>Tip:</1> upload full-body photos and even swimwear shots to get more precise outfit suggestions based on your real body type.",
     "photosPrivacy": "Photos are private and visible only to you. They will be used exclusively to generate tailored outfit suggestions.",
-    "facePhoto": "Face (required)",
+    "photosOptionalNote": "⏭️ You can skip this step and upload photos later from your profile.",
+    "facePhoto": "Face (recommended)",
     "frontPhoto": "Full body front (recommended)",
     "sidePhoto": "Full body side (recommended)",
     "clickToUpload": "Click to upload",
@@ -350,7 +351,10 @@
     "boldTitle": "Empowerment",
     "boldSub": "Bold and fearless",
     "bonusLoading": "Bonus outfits are being generated in the background...",
-    "bonusNotReady": "Bonus outfits will be ready in a few minutes"
+    "bonusNotReady": "Bonus outfits will be ready in a few minutes",
+    "noPhotosTitle": "No photos uploaded",
+    "noPhotosDesc": "We need at least one photo of you to generate personalized outfits. Upload more personal photos, including swimwear shots, so the AI can analyze your body type and create outfits tailored to you.",
+    "goUploadPhotos": "Upload your photos"
   },
   "pillars": {
     "title": "The 7 Pillars of Destiny",

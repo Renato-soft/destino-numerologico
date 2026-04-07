@@ -150,10 +150,11 @@
     "residenceStatePlaceholder": "Es. Milano, Roma, Napoli...",
     "birthDatePlaceholder": "gg/mm/aaaa",
     "photosTitle": "Le tue foto",
-    "photosDesc": "La foto in primo piano è <1>obbligatoria</1> per fornirti ogni giorno consigli di abbigliamento personalizzati, basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura.",
-    "photosTip": "💡 <1>Consiglio:</1> carica anche le foto a figura intera per ottenere suggerimenti di outfit ancora più precisi, basati sulla tua corporatura reale.",
+    "photosDesc": "Le foto ci permettono di fornirti ogni giorno consigli di abbigliamento personalizzati, basati sul tuo aspetto fisico, il tuo colorito e la tua corporatura. <1>Puoi caricarle anche successivamente</1> dal tuo profilo.",
+    "photosTip": "💡 <1>Consiglio:</1> carica foto a figura intera e anche in costume da bagno per ottenere suggerimenti di outfit più precisi, basati sulla tua corporatura reale.",
     "photosPrivacy": "Le foto sono private e visibili solo a te. Verranno utilizzate esclusivamente per generare suggerimenti di outfit su misura.",
-    "facePhoto": "Viso (obbligatoria)",
+    "photosOptionalNote": "⏭️ Puoi saltare questo passaggio e caricare le foto in seguito dal tuo profilo.",
+    "facePhoto": "Viso (consigliata)",
     "frontPhoto": "Figura intera frontale (consigliata)",
     "sidePhoto": "Figura intera laterale (consigliata)",
     "clickToUpload": "Clicca per caricare",
@@ -350,7 +351,10 @@
     "boldTitle": "Empowerment",
     "boldSub": "Audace e fiera",
     "bonusLoading": "Gli outfit bonus vengono generati in background...",
-    "bonusNotReady": "Gli outfit bonus saranno pronti tra qualche minuto"
+    "bonusNotReady": "Gli outfit bonus saranno pronti tra qualche minuto",
+    "noPhotosTitle": "Nessuna foto caricata",
+    "noPhotosDesc": "Per generare outfit personalizzati abbiamo bisogno di almeno una tua foto. Carica più foto personali, anche in costume da bagno, per permettere all'AI di analizzare la tua corporatura e creare outfit su misura per te.",
+    "goUploadPhotos": "Carica le tue foto"
   },
   "pillars": {
     "title": "I 7 Pilastri del Destino",

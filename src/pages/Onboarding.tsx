@@ -110,10 +110,8 @@ const Onboarding = () => {
   };
 
   const validateStep2 = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.photos.face) newErrors.face = t("onboarding.faceRequired");
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // All photos are optional - can be uploaded later from profile
+    return true;
   };
 
   const handlePhotoChange = (type: keyof FormData["photos"]) => async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -437,13 +435,16 @@ const Onboarding = () => {
                 <p className="text-sm text-muted-foreground text-center mb-2">
                   {t("onboarding.photosTip").split("<1>")[0]}<span className="font-medium text-foreground">{t("onboarding.photosTip").split("<1>")[1]?.split("</1>")[0]}</span>{t("onboarding.photosTip").split("</1>")[1] || ""}
                 </p>
+                <p className="text-xs text-amber-500/80 text-center mb-2">
+                  {t("onboarding.photosOptionalNote")}
+                </p>
                 <p className="text-xs text-muted-foreground text-center mb-8 italic">
                   {t("onboarding.photosPrivacy")}
                 </p>
 
                 <div className="grid gap-4">
                   {[
-                    { key: "face" as const, label: t("onboarding.facePhoto"), required: true },
+                    { key: "face" as const, label: t("onboarding.facePhoto"), required: false },
                     { key: "fullFront" as const, label: t("onboarding.frontPhoto"), required: false },
                     { key: "fullSide" as const, label: t("onboarding.sidePhoto"), required: false },
                   ].map((photo) => (
