@@ -281,11 +281,13 @@ const Compatibility = () => {
                 </div>
 
                 {/* Sub-scores */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   {[
-                    { label: "Emotiva", value: result.emotional, icon: Heart, color: "from-rose-500 to-pink-500" },
-                    { label: "Comunicativa", value: result.communicative, icon: MessageCircle, color: "from-blue-500 to-cyan-500" },
-                    { label: "Professionale", value: result.professional, icon: Briefcase, color: "from-amber-500 to-orange-500" },
+                    { label: "Amore", value: result.emotional, icon: Heart, color: "from-rose-500 to-pink-500" },
+                    { label: "Comunicazione", value: result.communicative, icon: MessageCircle, color: "from-blue-500 to-cyan-500" },
+                    { label: "Lavoro", value: result.professional, icon: Briefcase, color: "from-amber-500 to-orange-500" },
+                    { label: "Sfide", value: result.challenges, icon: AlertTriangle, color: "from-purple-500 to-violet-500" },
+                    { label: "Crescita", value: result.growth, icon: Lightbulb, color: "from-emerald-500 to-teal-500" },
                   ].map(item => (
                     <div key={item.label} className="glass-cosmic rounded-xl p-6 text-center">
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-3`}>
