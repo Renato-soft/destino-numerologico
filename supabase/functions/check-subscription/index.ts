@@ -45,16 +45,17 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
     logStep("User authenticated", { email: user.email });
 
-    // Check DB-based service overrides for "subscription" key (grants full_access)
+    // DB-based subscription override: grants subscription access only,
+    // not full access to pay-per-use services.
     const { data: overrides } = await supabaseClient
       .from("user_service_overrides")
       .select("service_key")
       .eq("user_id", user.id);
     
     if (overrides && overrides.some((o: any) => o.service_key === "subscription")) {
-      logStep("DB override found – full access", { userId: user.id });
+      logStep("DB subscription override found", { userId: user.id });
       return new Response(
-        JSON.stringify({ subscribed: true, subscription_end: null, full_access: true }),
+        JSON.stringify({ subscribed: true, subscription_end: null, full_access: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
       );
     }
