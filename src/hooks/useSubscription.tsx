@@ -17,7 +17,7 @@ export const UNLOCK_ALL = {
   mode: "payment" as const,
 };
 
-// Pay-per-use features (€1.99 each)
+// Pay-per-use features (€1.99 each, 24h access)
 export const PAY_PER_USE = {
   brand: {
     product_id: "prod_UDOHQBseMWWyFG",
@@ -53,18 +53,16 @@ export const PAY_PER_USE = {
 
 export type PayPerUseFeature = keyof typeof PAY_PER_USE;
 
-// Trial PPU: services available once at €1.99 during 24h trial
 export const TRIAL_PPU = {} as const;
-
 export type TrialPPUFeature = keyof typeof TRIAL_PPU;
 
-// Routes FREE during 24h trial
-const TRIAL_FREE_ROUTES = ["/chat", "/dates"];
+// Routes FREE during 24h trial (removed /dates — always PPU now)
+const TRIAL_FREE_ROUTES = ["/chat"];
 
 // Routes included in subscription (post-trial)
 const SUBSCRIPTION_ROUTES = ["/map", "/personal-year", "/pillars", "/chat", "/community", "/profile"];
 
-// Routes always pay-per-use (post-trial)
+// Routes always pay-per-use with 24h expiry
 const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
   "/brand": "brand",
   "/house": "house",
@@ -73,17 +71,25 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
   "/map": "map",
 };
 
-// Routes that are PPU only during trial
+// 24h PPU routes (these expire 24h after purchase)
+const PPU_24H_ROUTES = ["/brand", "/house", "/compatibility", "/dates"];
+
 const TRIAL_PPU_ROUTES: Record<string, TrialPPUFeature> = {};
 
-const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
+const PPU_ACCESS_DURATION_MS = 24 * 60 * 60 * 1000; // 24h access window
+
+interface PurchaseRecord {
+  product_id: string;
+  created_at: string;
+}
 
 interface SubscriptionState {
   subscribed: boolean;
   fullAccess: boolean;
   subscriptionEnd: string | null;
   loading: boolean;
-  payPerUsePurchases: string[];
+  payPerUsePurchases: PurchaseRecord[];
   profileCreatedAt: string | null;
   hasUnlockAll: boolean;
 }
@@ -98,6 +104,7 @@ interface SubscriptionContextType extends SubscriptionState {
   getPayPerUseFeature: (route: string) => PayPerUseFeature | null;
   getTrialPPUFeature: (route: string) => TrialPPUFeature | null;
   hasPayPerUsePurchase: (feature: PayPerUseFeature | TrialPPUFeature) => boolean;
+  getActivePurchaseExpiry: (feature: PayPerUseFeature) => Date | null;
   refreshPayPerUsePurchases: () => Promise<void>;
 }
 
@@ -119,14 +126,14 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     if (!session) return;
     const { data } = await supabase
       .from("pay_per_use_purchases")
-      .select("product_id")
+      .select("product_id, created_at")
       .eq("user_id", session.user.id);
     if (data) {
-      const products = data.map(p => p.product_id);
+      const unlockAllProduct = UNLOCK_ALL.product_id;
       setState(prev => ({
         ...prev,
-        payPerUsePurchases: products,
-        hasUnlockAll: products.includes(UNLOCK_ALL.product_id),
+        payPerUsePurchases: data as PurchaseRecord[],
+        hasUnlockAll: data.some(p => p.product_id === unlockAllProduct),
       }));
     }
   }, []);
@@ -139,7 +146,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Load profile created_at for trial calculation
       const { data: profileData } = await supabase
         .from("profiles")
         .select("created_at")
@@ -149,13 +155,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
 
-      // Load PPU purchases
       const { data: ppuData } = await supabase
         .from("pay_per_use_purchases")
-        .select("product_id")
+        .select("product_id, created_at")
         .eq("user_id", session.user.id);
 
-      const products = ppuData?.map(p => p.product_id) || [];
+      const purchases = (ppuData || []) as PurchaseRecord[];
 
       setState(prev => ({
         ...prev,
@@ -164,8 +169,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         subscriptionEnd: data.subscription_end,
         loading: false,
         profileCreatedAt: profileData?.created_at || null,
-        payPerUsePurchases: products,
-        hasUnlockAll: products.includes(UNLOCK_ALL.product_id),
+        payPerUsePurchases: purchases,
+        hasUnlockAll: purchases.some(p => p.product_id === UNLOCK_ALL.product_id),
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
@@ -202,22 +207,65 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return Math.max(0, TRIAL_DURATION_MS - (Date.now() - created));
   }, [state.profileCreatedAt]);
 
+  // Get the expiry date of the most recent active purchase for a PPU feature
+  const getActivePurchaseExpiry = useCallback((feature: PayPerUseFeature): Date | null => {
+    const ppu = PAY_PER_USE[feature];
+    if (!ppu) return null;
+    
+    // Find the most recent purchase for this product
+    const purchases = state.payPerUsePurchases
+      .filter(p => p.product_id === ppu.product_id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    
+    if (purchases.length === 0) return null;
+    
+    const purchaseTime = new Date(purchases[0].created_at).getTime();
+    const expiryTime = purchaseTime + PPU_ACCESS_DURATION_MS;
+    
+    // Only return if still active
+    if (Date.now() < expiryTime) {
+      return new Date(expiryTime);
+    }
+    return null;
+  }, [state.payPerUsePurchases]);
+
+  const hasPayPerUsePurchase = useCallback((feature: PayPerUseFeature | TrialPPUFeature): boolean => {
+    if (state.hasUnlockAll && feature in PAY_PER_USE) return true;
+    
+    const ppu = (PAY_PER_USE as any)[feature];
+    if (!ppu) return false;
+    
+    const route = ppu.route;
+    
+    // For 24h routes, check expiry
+    if (PPU_24H_ROUTES.includes(route)) {
+      return getActivePurchaseExpiry(feature as PayPerUseFeature) !== null;
+    }
+    
+    // For non-24h routes (like map), just check if purchased
+    return state.payPerUsePurchases.some(p => p.product_id === ppu.product_id);
+  }, [state.payPerUsePurchases, state.hasUnlockAll, getActivePurchaseExpiry]);
+
   const canAccess = useCallback((route: string): boolean => {
     if (state.fullAccess) return true;
 
-    // Always-PPU routes: accessible if purchased or unlock-all
+    // 24h PPU routes: always require active (non-expired) purchase
+    if (PPU_24H_ROUTES.includes(route)) {
+      if (state.hasUnlockAll) return true;
+      const feature = PAY_PER_USE_ROUTES[route];
+      if (!feature) return false;
+      return getActivePurchaseExpiry(feature) !== null;
+    }
+
+    // Other PPU routes (map)
     if (route in PAY_PER_USE_ROUTES) {
       if (state.hasUnlockAll) return true;
-      // Map is included in subscription
       if (route === "/map" && state.subscribed) return true;
       const feature = PAY_PER_USE_ROUTES[route];
       const productId = PAY_PER_USE[feature].product_id;
-      if (state.payPerUsePurchases.includes(productId)) return true;
-      // During trial, dates and chat are free
-      if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;
+      if (state.payPerUsePurchases.some(p => p.product_id === productId)) return true;
       return false;
     }
-
 
     // During trial, free routes
     if (isInTrial() && TRIAL_FREE_ROUTES.includes(route)) return true;
@@ -227,9 +275,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       return state.subscribed;
     }
 
-    // Dashboard-only features (analisi giorno, outfit) - handled by trial or subscription
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, isInTrial]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
@@ -243,12 +290,6 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     return TRIAL_PPU_ROUTES[route] || null;
   }, []);
 
-  const hasPayPerUsePurchase = useCallback((feature: PayPerUseFeature | TrialPPUFeature): boolean => {
-    if (state.hasUnlockAll && feature in PAY_PER_USE) return true;
-    const ppu = (PAY_PER_USE as any)[feature] || (TRIAL_PPU as any)[feature];
-    return ppu ? state.payPerUsePurchases.includes(ppu.product_id) : false;
-  }, [state.payPerUsePurchases, state.hasUnlockAll]);
-
   return (
     <SubscriptionContext.Provider value={{
       ...state,
@@ -261,6 +302,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       getPayPerUseFeature,
       getTrialPPUFeature,
       hasPayPerUsePurchase,
+      getActivePurchaseExpiry,
       refreshPayPerUsePurchases,
     }}>
       {children}
@@ -285,6 +327,7 @@ const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
   getPayPerUseFeature: () => null,
   getTrialPPUFeature: () => null,
   hasPayPerUsePurchase: () => false,
+  getActivePurchaseExpiry: () => null,
   refreshPayPerUsePurchases: async () => {},
 };
 
