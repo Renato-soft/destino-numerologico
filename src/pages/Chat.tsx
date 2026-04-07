@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import DashboardLayout from "@/components/DashboardLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -415,7 +416,7 @@ const Chat = () => {
           )}
           <div ref={messagesEndRef} />
         </div>
-      </main>
+      </div>
 
       {/* Lightbox */}
       <AnimatePresence>
