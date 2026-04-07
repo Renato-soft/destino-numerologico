@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import DashboardLayout from "@/components/DashboardLayout";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -187,30 +188,8 @@ const FavorableDates = () => {
   const unfavorableDates = results.filter(r => !r.favorable).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Background */}
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/dashboard">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-display text-xl font-semibold">Date Favorevoli</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="relative z-10 container mx-auto px-4 py-8 max-w-2xl">
+    <DashboardLayout title="Date Favorevoli">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -350,8 +329,8 @@ const FavorableDates = () => {
             </>
           )}
         </motion.div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
