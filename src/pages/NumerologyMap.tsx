@@ -19,9 +19,9 @@ import {
 import NumerologyPyramid from "@/components/NumerologyPyramid";
 import NumberSection from "@/components/NumberSection";
 import PhotoPersonalitySection from "@/components/PhotoPersonalitySection";
+import DashboardLayout from "@/components/DashboardLayout";
 import {
   Sparkles,
-  ArrowLeft,
   RefreshCw,
   Loader2,
   Lock,
@@ -211,51 +211,30 @@ const NumerologyMap = () => {
     );
   }
 
+  const headerActions = numerologyData && profile && hasMapAccess ? (
+    <Button
+      variant="cosmic-outline"
+      size="sm"
+      onClick={generateMap}
+      disabled={generating}
+    >
+      {generating ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          {t("map.regenerating")}
+        </>
+      ) : (
+        <>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          {t("map.regenerate")}
+        </>
+      )}
+    </Button>
+  ) : undefined;
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-primary/5 pointer-events-none" />
-
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-display text-xl font-semibold">{t("map.headerTitle")}</span>
-            </div>
-          </div>
-
-          {numerologyData && profile && hasMapAccess && (
-            <Button
-              variant="cosmic-outline"
-              size="sm"
-              onClick={generateMap}
-              disabled={generating}
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t("map.regenerating")}
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  {t("map.regenerate")}
-                </>
-              )}
-            </Button>
-          )}
-        </div>
-      </header>
-
-      <main className="relative z-10 container mx-auto px-4 py-8 max-w-4xl">
+    <DashboardLayout title={t("map.headerTitle")} headerActions={headerActions}>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {!numerologyData ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -327,7 +306,7 @@ const NumerologyMap = () => {
               quintessenza={numerologyData.quintessenza}
             />
 
-            {/* Photo personality analysis - before numbers */}
+            {/* Photo personality analysis */}
             <PhotoPersonalitySection userName={profile?.nome || ""} />
 
             {/* Destino section - always visible */}
@@ -413,8 +392,8 @@ const NumerologyMap = () => {
             </div>
           </motion.div>
         )}
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
