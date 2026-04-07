@@ -212,6 +212,7 @@ export default function Pillars() {
 
   return (
     <DashboardLayout title="I 7 Pilastri del Destino">
+      <>
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         {/* Progress overview */}
         <motion.div
@@ -592,7 +593,7 @@ export default function Pillars() {
           </motion.div>
         )}
       </AnimatePresence>
-      </div>
+      </>
     </DashboardLayout>
   );
 }
