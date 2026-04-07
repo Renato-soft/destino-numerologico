@@ -401,7 +401,7 @@ const Dashboard = () => {
               </SidebarGroup>
             )}
 
-            <SidebarGroup defaultOpen>
+            <SidebarGroup>
               <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Servizi</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
