@@ -80,6 +80,11 @@ const DailyOutfits = () => {
         .eq("user_id", session.user.id);
       setPhotoCount(count || 0);
 
+      if ((count || 0) === 0) {
+        setLoading(false);
+        return;
+      }
+
       if (!force) {
         const cacheKey = getCacheKey();
         const cached = sessionStorage.getItem(cacheKey);
