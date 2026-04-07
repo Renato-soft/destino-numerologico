@@ -322,9 +322,11 @@ export default function HouseAnalyzer() {
                     <Link to="/map" className="text-primary underline">Mappa Numerologica</Link>{" "}
                     per scoprire la compatibilità con il tuo Destino.
                   </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </DashboardLayout>
   );
