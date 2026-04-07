@@ -74,7 +74,7 @@ const PAY_PER_USE_ROUTES: Record<string, PayPerUseFeature> = {
 };
 
 // Routes that are PPU only during trial
-const TRIAL_PPU_ROUTES: Record<string, TrialPPUFeature> = {
+const TRIAL_PPU_ROUTES: Record<string, TrialPPUFeature> = {};
 
 const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
