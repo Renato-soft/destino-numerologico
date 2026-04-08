@@ -446,9 +446,19 @@ const AdminDashboard = () => {
                 </div>
               ) : userDetail ? (
                 <div>
-                  <h2 className="font-display text-lg font-semibold mb-4">
-                    {selectedUserData?.nome} {selectedUserData?.cognome}
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-display text-lg font-semibold">
+                      {selectedUserData?.nome} {selectedUserData?.cognome}
+                    </h2>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setConfirmDeleteUser(selectedUser)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Elimina
+                    </Button>
+                  </div>
 
                   {/* Service overrides */}
                   <div className="mb-6 p-4 rounded-lg border border-border/30 bg-card/30">
