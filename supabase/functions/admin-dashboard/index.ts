@@ -28,8 +28,15 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user || !user.email || !ADMIN_EMAILS.includes(user.email)) {
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Token non valido" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const user = { id: claimsData.claims.sub as string, email: claimsData.claims.email as string };
+    if (!user.email || !ADMIN_EMAILS.includes(user.email)) {
       return new Response(JSON.stringify({ error: "Accesso negato" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

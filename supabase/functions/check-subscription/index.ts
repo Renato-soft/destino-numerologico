@@ -39,10 +39,12 @@ serve(async (req) => {
     if (!authHeader) throw new Error("No authorization header");
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) throw new Error("Authentication error: invalid token");
+    const userId = claimsData.claims.sub as string;
+    const userEmail = claimsData.claims.email as string;
+    if (!userEmail) throw new Error("User not authenticated");
+    const user = { id: userId, email: userEmail };
     logStep("User authenticated", { email: user.email });
 
     // DB-based subscription override: grants subscription access only,
