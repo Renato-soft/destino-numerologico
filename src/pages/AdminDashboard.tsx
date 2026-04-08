@@ -77,6 +77,7 @@ const AdminDashboard = () => {
   const [promoLoading, setPromoLoading] = useState(false);
   const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48, services: ["map", "chat", "daily_analysis", "outfits"] as string[] });
   const [showNewPromo, setShowNewPromo] = useState(false);
+  const [editingPromo, setEditingPromo] = useState<any | null>(null);
 
   useEffect(() => {
     fetchOverview();
