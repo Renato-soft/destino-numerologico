@@ -95,6 +95,13 @@ const Dashboard = () => {
 
       if (mapData) setLatestMap(mapData);
       setLoading(false);
+
+      // Auto-claim active promotion if not already claimed
+      if (activePromotion && !userPromotion) {
+        claimPromotion().then((claimed) => {
+          if (claimed) checkSubscription();
+        });
+      }
     };
 
     checkAuthAndLoadData();
