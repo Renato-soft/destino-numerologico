@@ -95,6 +95,21 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (action === "update-promotion") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { promotion_id, title, description, duration_hours, services } = body || {};
+      if (!promotion_id || !title) {
+        return new Response(JSON.stringify({ error: "promotion_id e titolo richiesti" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const updateData: any = { title, description: description || null };
+      if (duration_hours) updateData.duration_hours = duration_hours;
+      if (services && Array.isArray(services)) updateData.services = services;
+      await supabase.from("promotions").update(updateData).eq("id", promotion_id);
+      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     if (action === "delete-promotion") {
       if (userRole !== "superadmin") {
         return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
