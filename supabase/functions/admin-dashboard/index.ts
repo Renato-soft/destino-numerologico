@@ -51,6 +51,58 @@ Deno.serve(async (req) => {
       } catch { /* no body */ }
     }
 
+    // ===== PROMOTION MANAGEMENT =====
+    if (action === "list-promotions") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { data } = await supabase.from("promotions").select("*").order("created_at", { ascending: false });
+      return new Response(JSON.stringify({ promotions: data || [] }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "create-promotion") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { title, description, duration_hours } = body || {};
+      if (!title || !duration_hours) {
+        return new Response(JSON.stringify({ error: "Titolo e durata richiesti" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { data, error: insertErr } = await supabase.from("promotions").insert({ title, description: description || null, duration_hours }).select().single();
+      if (insertErr) throw insertErr;
+      return new Response(JSON.stringify({ promotion: data }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "toggle-promotion") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { promotion_id, is_active } = body || {};
+      if (!promotion_id) {
+        return new Response(JSON.stringify({ error: "promotion_id richiesto" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      // If activating, deactivate all others first
+      if (is_active) {
+        await supabase.from("promotions").update({ is_active: false }).neq("id", promotion_id);
+      }
+      const updateData: any = { is_active: !!is_active };
+      if (is_active) updateData.activated_at = new Date().toISOString();
+      await supabase.from("promotions").update(updateData).eq("id", promotion_id);
+      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "delete-promotion") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { promotion_id } = body || {};
+      if (!promotion_id) {
+        return new Response(JSON.stringify({ error: "promotion_id richiesto" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      await supabase.from("promotions").delete().eq("id", promotion_id);
+      return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // ===== UPDATE SCHEDULE =====
     if (action === "update-schedule") {
       if (userRole !== "superadmin") {
