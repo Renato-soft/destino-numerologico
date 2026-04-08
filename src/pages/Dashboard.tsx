@@ -14,6 +14,7 @@ import { calculateLifePath, calculatePersonalYear } from "@/lib/numerology";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
+import { usePromotion } from "@/hooks/usePromotion";
 import DashboardLayout from "@/components/DashboardLayout";
 import { LogOut } from "lucide-react";
 
@@ -46,6 +47,7 @@ const Dashboard = () => {
     isInTrial, isTrialExpired, trialRemainingMs
   } = useSubscription();
   const { isFeatureUnlocked } = useFeatureSchedule();
+  const { activePromotion, userPromotion, claimPromotion } = usePromotion();
   const [searchParams, setSearchParams] = useSearchParams();
   const [todayPostCount, setTodayPostCount] = useState(0);
 
