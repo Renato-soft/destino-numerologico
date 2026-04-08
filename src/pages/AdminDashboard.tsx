@@ -75,7 +75,7 @@ const AdminDashboard = () => {
   // Promotions state
   const [promotions, setPromotions] = useState<any[]>([]);
   const [promoLoading, setPromoLoading] = useState(false);
-  const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48 });
+  const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48, services: ["map", "chat", "daily_analysis", "outfits"] as string[] });
   const [showNewPromo, setShowNewPromo] = useState(false);
 
   useEffect(() => {
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${session.access_token}` },
         body: { action: "create-promotion", ...newPromo },
       });
-      setNewPromo({ title: "", description: "", duration_hours: 48 });
+      setNewPromo({ title: "", description: "", duration_hours: 48, services: ["map", "chat", "daily_analysis", "outfits"] });
       setShowNewPromo(false);
       await fetchPromotions();
     } catch (e) { console.error(e); }
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Crea promozioni per offrire accesso gratuito a Mappa, Chat, Analisi del Giorno e Outfit per un periodo limitato.
+              Crea promozioni per offrire accesso gratuito ai servizi selezionati per un periodo limitato.
             </p>
 
             {showNewPromo && (
@@ -467,8 +467,32 @@ const AdminDashboard = () => {
                   />
                   <span className="text-sm text-muted-foreground">ore di accesso gratuito</span>
                 </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">Servizi inclusi:</p>
+                  {[
+                    { key: "map", label: "Mappa Numerologica" },
+                    { key: "chat", label: "Chat AI" },
+                    { key: "daily_analysis", label: "Analisi del Giorno" },
+                    { key: "outfits", label: "Outfit" },
+                  ].map(svc => (
+                    <label key={svc.key} className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={newPromo.services.includes(svc.key)}
+                        onCheckedChange={(checked) => {
+                          setNewPromo(p => ({
+                            ...p,
+                            services: checked
+                              ? [...p.services, svc.key]
+                              : p.services.filter(s => s !== svc.key),
+                          }));
+                        }}
+                      />
+                      <span className="text-sm text-foreground">{svc.label}</span>
+                    </label>
+                  ))}
+                </div>
                 <div className="flex gap-2">
-                  <Button variant="cosmic" size="sm" onClick={handleCreatePromo} disabled={!newPromo.title}>
+                  <Button variant="cosmic" size="sm" onClick={handleCreatePromo} disabled={!newPromo.title || newPromo.services.length === 0}>
                     Crea Promozione
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => setShowNewPromo(false)}>
@@ -497,6 +521,13 @@ const AdminDashboard = () => {
                         {promo.duration_hours}h • Creata il {new Date(promo.created_at).toLocaleDateString("it-IT")}
                         {promo.activated_at && ` • Attivata il ${new Date(promo.activated_at).toLocaleDateString("it-IT")}`}
                       </p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {(promo.services || ["map", "chat", "daily_analysis", "outfits"]).map((s: string) => (
+                          <span key={s} className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary">{
+                            { map: "Mappa", chat: "Chat", daily_analysis: "Analisi", outfits: "Outfit" }[s] || s
+                          }</span>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usePromotion, PROMO_SERVICES } from "@/hooks/usePromotion";
+import { usePromotion, getPromoServices } from "@/hooks/usePromotion";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,11 @@ export function DashboardPromotionBanner() {
               {activePromotion?.title || "Promozione attiva"} — Accesso gratuito!
             </p>
             <p className="text-xs text-muted-foreground">
-              Mappa, Chat, Analisi del Giorno e Outfit gratuiti per te.
+              {(() => {
+                const svc = getPromoServices(activePromotion);
+                const labels: Record<string, string> = { map: "Mappa", chat: "Chat", daily_analysis: "Analisi del Giorno", outfits: "Outfit" };
+                return svc.map(s => labels[s] || s).join(", ") + " gratuiti per te.";
+              })()}
             </p>
           </div>
         </div>

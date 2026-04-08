@@ -94,6 +94,7 @@ interface SubscriptionState {
   hasUnlockAll: boolean;
   serviceOverrides: string[];
   activePromotionExpiresAt: string | null;
+  activePromotionServices: string[];
 }
 
 interface SubscriptionContextType extends SubscriptionState {
@@ -123,6 +124,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     hasUnlockAll: false,
     serviceOverrides: [],
     activePromotionExpiresAt: null,
+    activePromotionServices: [],
   });
 
   const refreshPayPerUsePurchases = useCallback(async () => {
@@ -146,7 +148,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [], activePromotionExpiresAt: null }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [], activePromotionExpiresAt: null, activePromotionServices: [] }));
         return;
       }
 
@@ -155,14 +157,24 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         supabase.functions.invoke("check-subscription"),
         supabase.from("pay_per_use_purchases").select("product_id, created_at").eq("user_id", session.user.id),
         supabase.from("user_service_overrides").select("service_key").eq("user_id", session.user.id),
-        supabase.from("user_promotions" as any).select("expires_at").eq("user_id", session.user.id).order("expires_at", { ascending: false }).limit(1),
+        supabase.from("user_promotions" as any).select("expires_at, promotion_id").eq("user_id", session.user.id).order("expires_at", { ascending: false }).limit(1),
       ]);
 
       if (error) throw error;
 
       const purchases = (ppuData || []) as PurchaseRecord[];
       const overrides = ((overridesData || []) as any[]).map((o: any) => o.service_key as string);
-      const promoExpiry = promoData && (promoData as any[]).length > 0 ? (promoData as any[])[0].expires_at : null;
+      const promoRow = promoData && (promoData as any[]).length > 0 ? (promoData as any[])[0] : null;
+      const promoExpiry = promoRow ? promoRow.expires_at : null;
+
+      // Fetch promotion services if there's an active promo
+      let promoServices: string[] = [];
+      if (promoRow?.promotion_id) {
+        const { data: promoDetail } = await supabase.from("promotions" as any).select("services").eq("id", promoRow.promotion_id).limit(1);
+        if (promoDetail && (promoDetail as any[]).length > 0) {
+          promoServices = (promoDetail as any[])[0].services || ["map", "chat", "daily_analysis", "outfits"];
+        }
+      }
 
       setState(prev => ({
         ...prev,
@@ -175,6 +187,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         hasUnlockAll: purchases.some(p => p.product_id === UNLOCK_ALL.product_id),
         serviceOverrides: overrides,
         activePromotionExpiresAt: promoExpiry,
+        activePromotionServices: promoServices,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
@@ -268,11 +281,16 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const serviceKey = routeToServiceKey(route);
     if (serviceKey && state.serviceOverrides.includes(serviceKey)) return true;
 
-    // Check active promotion access (map, chat, daily_analysis, outfits)
-    // Promotion covers: /map, /chat, /dashboard (daily analysis + outfits)
-    const promoRoutes = ["/map", "/chat", "/dashboard"];
-    if (promoRoutes.includes(route) && state.activePromotionExpiresAt) {
-      if (new Date(state.activePromotionExpiresAt).getTime() > Date.now()) return true;
+    // Check active promotion access based on per-promotion services
+    if (state.activePromotionExpiresAt && new Date(state.activePromotionExpiresAt).getTime() > Date.now()) {
+      const svc = state.activePromotionServices;
+      const routeToPromoService: Record<string, string> = {
+        "/map": "map", "/chat": "chat", "/dashboard": "daily_analysis",
+      };
+      const promoSvc = routeToPromoService[route];
+      if (promoSvc && svc.includes(promoSvc)) return true;
+      // outfits is on /dashboard too
+      if (route === "/dashboard" && svc.includes("outfits")) return true;
     }
 
     // 24h PPU routes: always require active (non-expired) purchase
@@ -302,7 +320,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, isInTrial, getActivePurchaseExpiry]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, state.activePromotionServices, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
@@ -346,6 +364,7 @@ const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
   hasUnlockAll: false,
   serviceOverrides: [],
   activePromotionExpiresAt: null,
+  activePromotionServices: [],
   checkSubscription: async () => {},
   canAccess: () => false,
   isInTrial: () => false,
