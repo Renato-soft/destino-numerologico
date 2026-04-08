@@ -5,11 +5,12 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn, KeyRound, Trash2,
+  LogIn, KeyRound, Trash2, Gift, Plus, Power,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
@@ -71,9 +72,16 @@ const AdminDashboard = () => {
   const [deletingUser, setDeletingUser] = useState(false);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<string | null>(null);
 
+  // Promotions state
+  const [promotions, setPromotions] = useState<any[]>([]);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48 });
+  const [showNewPromo, setShowNewPromo] = useState(false);
+
   useEffect(() => {
     fetchOverview();
     fetchFeatureSchedule();
+    fetchPromotions();
   }, []);
 
   const fetchOverview = async () => {
