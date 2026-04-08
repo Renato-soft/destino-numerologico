@@ -172,6 +172,27 @@ const AdminDashboard = () => {
     } catch (e) { console.error(e); }
   };
 
+  const handleUpdatePromo = async () => {
+    if (!editingPromo) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: {
+          action: "update-promotion",
+          promotion_id: editingPromo.id,
+          title: editingPromo.title,
+          description: editingPromo.description,
+          duration_hours: editingPromo.duration_hours,
+          services: editingPromo.services,
+        },
+      });
+      setEditingPromo(null);
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
   const handleSaveSchedule = async () => {
     setSavingSchedule(true);
     try {
@@ -538,6 +559,10 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setEditingPromo({ ...promo, services: promo.services || ["map", "chat", "daily_analysis", "outfits"] })}>
+                        <Save className="w-3 h-3 mr-1" />
+                        Modifica
+                      </Button>
                       <Button
                         variant={promo.is_active ? "outline" : "cosmic"}
                         size="sm"
@@ -552,6 +577,73 @@ const AdminDashboard = () => {
                         </Button>
                       )}
                     </div>
+                  </div>
+                  {editingPromo?.id === promo.id && (
+                    <div className="p-4 rounded-lg border border-primary/20 bg-card/30 space-y-3 mt-2">
+                      <Input
+                        placeholder="Titolo"
+                        value={editingPromo.title}
+                        onChange={e => setEditingPromo((p: any) => ({ ...p, title: e.target.value }))}
+                      />
+                      <Textarea
+                        placeholder="Descrizione (opzionale)"
+                        value={editingPromo.description || ""}
+                        onChange={e => setEditingPromo((p: any) => ({ ...p, description: e.target.value }))}
+                        rows={2}
+                      />
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          max={168}
+                          className="w-24"
+                          value={editingPromo.duration_hours}
+                          onChange={e => setEditingPromo((p: any) => ({ ...p, duration_hours: parseInt(e.target.value) || 48 }))}
+                        />
+                        <span className="text-sm text-muted-foreground">ore</span>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-foreground">Servizi inclusi:</p>
+                        {[
+                          { key: "map", label: "Mappa Numerologica" },
+                          { key: "chat", label: "Chat AI" },
+                          { key: "daily_analysis", label: "Analisi del Giorno" },
+                          { key: "outfits", label: "Outfit" },
+                          { key: "personal-year", label: "Anno Personale" },
+                          { key: "pillars", label: "Pilastri" },
+                          { key: "community", label: "Community" },
+                          { key: "brand", label: "Brand Analyzer" },
+                          { key: "house", label: "House Analyzer" },
+                          { key: "compatibility", label: "Compatibilità" },
+                          { key: "dates", label: "Date Favorevoli" },
+                        ].map(svc => (
+                          <label key={svc.key} className="flex items-center gap-2 cursor-pointer">
+                            <Checkbox
+                              checked={editingPromo.services.includes(svc.key)}
+                              onCheckedChange={(checked) => {
+                                setEditingPromo((p: any) => ({
+                                  ...p,
+                                  services: checked
+                                    ? [...p.services, svc.key]
+                                    : p.services.filter((s: string) => s !== svc.key),
+                                }));
+                              }}
+                            />
+                            <span className="text-sm text-foreground">{svc.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="cosmic" size="sm" onClick={handleUpdatePromo} disabled={!editingPromo.title || editingPromo.services.length === 0}>
+                          <Save className="w-3 h-3 mr-1" />
+                          Salva
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => setEditingPromo(null)}>
+                          Annulla
+                        </Button>
+                      </div>
+                    </div>
+                  )
                   </div>
                 ))}
               </div>
