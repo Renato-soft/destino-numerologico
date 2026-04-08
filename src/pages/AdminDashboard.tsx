@@ -68,11 +68,8 @@ const AdminDashboard = () => {
   const [userOverrides, setUserOverrides] = useState<string[]>([]);
   const [overridesLoading, setOverridesLoading] = useState(false);
   const [savingOverrides, setSavingOverrides] = useState(false);
-
-  // Delete user state
   const [deletingUser, setDeletingUser] = useState(false);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<string | null>(null);
-  const [savingOverrides, setSavingOverrides] = useState(false);
 
   useEffect(() => {
     fetchOverview();
