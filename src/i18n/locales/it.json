@@ -251,7 +251,7 @@
     "memberSince": "Iscritto dal {{date}}",
     "photos": "Le tue foto",
     "photosDesc": "Aggiorna le tue foto per consigli di abbigliamento più precisi",
-    "extraPhotosDesc": "Carica foto in contesti diversi per outfit più precisi: scatti estivi e invernali, primi piani che mostrino il colore degli occhi, foto di profilo e intere, e anche in costume da bagno per evidenziare le forme del corpo. Più varietà carichi, più l'AI saprà consigliarti il look perfetto.",
+    "extraPhotosDesc": "Carica foto in contesti diversi per outfit più precisi: scatti estivi e invernali, primi piani che mostrino il colore degli occhi, foto di profilo e intere, e anche in costume da bagno per evidenziare le forme del corpo. Più varietà carichi, più l'AI saprà consigliarti il look perfetto.\nIMPORTANTE: nella foto ci devi essere solo tu, non devono essere visibili altri volti o corporature in primo piano.",
     "photosPrivacyNote": "🔒 Tutte le foto caricate e gli outfit generati sono privati e visibili solo a te. Non verranno mai resi pubblici. Puoi eliminarli in qualunque momento.",
     "face": "Viso",
     "frontFull": "Figura frontale",

@@ -251,7 +251,7 @@
     "memberSince": "Member since {{date}}",
     "photos": "Your photos",
     "photosDesc": "Update your photos for more precise outfit suggestions",
-    "extraPhotosDesc": "Upload photos in different contexts for more accurate outfits: summer and winter shots, close-ups showing your eye color, profile and full views, and even swimwear to highlight your body shape. The more variety you upload, the better the AI can suggest the perfect look for you.",
+    "extraPhotosDesc": "Upload photos in different contexts for more accurate outfits: summer and winter shots, close-ups showing your eye color, profile and full views, and even swimwear to highlight your body shape. The more variety you upload, the better the AI can suggest the perfect look for you.\nIMPORTANT: Only you should be in the photo; no other faces or bodies should be visible in the foreground.",
     "photosPrivacyNote": "🔒 All uploaded photos and generated outfits are private and visible only to you. They will never be made public. You can delete them at any time.",
     "face": "Face",
     "frontFull": "Front full body",
