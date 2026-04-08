@@ -186,6 +186,30 @@ const AdminDashboard = () => {
     setUserOverrides(checked ? ALL_SERVICES.map(s => s.key) : []);
   };
 
+  const handleDeleteUser = async () => {
+    if (!confirmDeleteUser) return;
+    setDeletingUser(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data, error } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "delete-user", user_id: confirmDeleteUser },
+      });
+      if (error || data?.error) {
+        alert(data?.error || "Errore durante l'eliminazione");
+      } else {
+        setSelectedUser(null);
+        setUserDetail(null);
+        setConfirmDeleteUser(null);
+        await fetchOverview();
+      }
+    } catch (err: any) {
+      alert("Errore: " + err.message);
+    }
+    setDeletingUser(false);
+  };
+
   const fetchUserDetail = async (userId: string) => {
     setSelectedUser(userId);
     setDetailLoading(true);
