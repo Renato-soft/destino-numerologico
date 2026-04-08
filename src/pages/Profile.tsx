@@ -334,7 +334,7 @@ const ProfilePage = () => {
               </div>
               <span className="text-xs text-muted-foreground">{photos.length}/{MAX_PHOTOS}</span>
             </div>
-            <p className="text-sm text-muted-foreground">{t('profile.extraPhotosDesc')}</p>
+            <p className="text-sm text-muted-foreground whitespace-pre-line">{t('profile.extraPhotosDesc')}</p>
             <p className="text-sm text-muted-foreground mt-2 italic">{t('profile.photosPrivacyNote')}</p>
 
             {extraPhotos.length > 0 && (
