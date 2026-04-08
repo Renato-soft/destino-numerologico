@@ -574,6 +574,74 @@ export type Database = {
         }
         Relationships: []
       }
+      promotions: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          description: string | null
+          duration_hours: number
+          id: string
+          is_active: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          id?: string
+          is_active?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          id?: string
+          is_active?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_promotions: {
+        Row: {
+          claimed_at: string
+          created_at: string
+          expires_at: string
+          id: string
+          promotion_id: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          promotion_id: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          promotion_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_promotions_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_service_overrides: {
         Row: {
           created_at: string
