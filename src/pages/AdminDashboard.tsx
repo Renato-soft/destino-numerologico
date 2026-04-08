@@ -538,112 +538,113 @@ const AdminDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {promotions.map((promo: any) => (
-                  <div key={promo.id} className={`flex items-center justify-between p-3 rounded-lg border ${promo.is_active ? 'border-primary/40 bg-primary/5' : 'border-border/30 bg-card/30'}`}>
-                    <div className="flex-1 min-w-0">
+                  <div key={promo.id} className="space-y-2">
+                    <div className={`flex items-center justify-between p-3 rounded-lg border ${promo.is_active ? 'border-primary/40 bg-primary/5' : 'border-border/30 bg-card/30'}`}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">{promo.title}</span>
+                          {promo.is_active && (
+                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary">ATTIVA</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {promo.duration_hours}h • Creata il {new Date(promo.created_at).toLocaleDateString("it-IT")}
+                          {promo.activated_at && ` • Attivata il ${new Date(promo.activated_at).toLocaleDateString("it-IT")}`}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {(promo.services || ["map", "chat", "daily_analysis", "outfits"]).map((s: string) => (
+                            <span key={s} className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary">{
+                              ({ map: "Mappa", chat: "Chat", daily_analysis: "Analisi", outfits: "Outfit", "personal-year": "Anno", pillars: "Pilastri", community: "Community", brand: "Brand", house: "House", compatibility: "Compat.", dates: "Date" } as Record<string, string>)[s] || s
+                            }</span>
+                          ))}
+                        </div>
+                      </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">{promo.title}</span>
-                        {promo.is_active && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary">ATTIVA</span>
+                        <Button variant="outline" size="sm" onClick={() => setEditingPromo({ ...promo, services: promo.services || ["map", "chat", "daily_analysis", "outfits"] })}>
+                          <Save className="w-3 h-3 mr-1" />
+                          Modifica
+                        </Button>
+                        <Button
+                          variant={promo.is_active ? "outline" : "cosmic"}
+                          size="sm"
+                          onClick={() => handleTogglePromo(promo.id, !promo.is_active)}
+                        >
+                          <Power className="w-3 h-3 mr-1" />
+                          {promo.is_active ? "Disattiva" : "Attiva"}
+                        </Button>
+                        {!promo.is_active && (
+                          <Button variant="destructive" size="sm" onClick={() => handleDeletePromo(promo.id)}>
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {promo.duration_hours}h • Creata il {new Date(promo.created_at).toLocaleDateString("it-IT")}
-                        {promo.activated_at && ` • Attivata il ${new Date(promo.activated_at).toLocaleDateString("it-IT")}`}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {(promo.services || ["map", "chat", "daily_analysis", "outfits"]).map((s: string) => (
-                          <span key={s} className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary">{
-                            { map: "Mappa", chat: "Chat", daily_analysis: "Analisi", outfits: "Outfit", "personal-year": "Anno", pillars: "Pilastri", community: "Community", brand: "Brand", house: "House", compatibility: "Compat.", dates: "Date" }[s] || s
-                          }</span>
-                        ))}
-                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setEditingPromo({ ...promo, services: promo.services || ["map", "chat", "daily_analysis", "outfits"] })}>
-                        <Save className="w-3 h-3 mr-1" />
-                        Modifica
-                      </Button>
-                      <Button
-                        variant={promo.is_active ? "outline" : "cosmic"}
-                        size="sm"
-                        onClick={() => handleTogglePromo(promo.id, !promo.is_active)}
-                      >
-                        <Power className="w-3 h-3 mr-1" />
-                        {promo.is_active ? "Disattiva" : "Attiva"}
-                      </Button>
-                      {!promo.is_active && (
-                        <Button variant="destructive" size="sm" onClick={() => handleDeletePromo(promo.id)}>
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  {editingPromo?.id === promo.id && (
-                    <div className="p-4 rounded-lg border border-primary/20 bg-card/30 space-y-3 mt-2">
-                      <Input
-                        placeholder="Titolo"
-                        value={editingPromo.title}
-                        onChange={e => setEditingPromo((p: any) => ({ ...p, title: e.target.value }))}
-                      />
-                      <Textarea
-                        placeholder="Descrizione (opzionale)"
-                        value={editingPromo.description || ""}
-                        onChange={e => setEditingPromo((p: any) => ({ ...p, description: e.target.value }))}
-                        rows={2}
-                      />
-                      <div className="flex items-center gap-2">
+                    {editingPromo?.id === promo.id && (
+                      <div className="p-4 rounded-lg border border-primary/20 bg-card/30 space-y-3">
                         <Input
-                          type="number"
-                          min={1}
-                          max={168}
-                          className="w-24"
-                          value={editingPromo.duration_hours}
-                          onChange={e => setEditingPromo((p: any) => ({ ...p, duration_hours: parseInt(e.target.value) || 48 }))}
+                          placeholder="Titolo"
+                          value={editingPromo.title}
+                          onChange={e => setEditingPromo((p: any) => ({ ...p, title: e.target.value }))}
                         />
-                        <span className="text-sm text-muted-foreground">ore</span>
+                        <Textarea
+                          placeholder="Descrizione (opzionale)"
+                          value={editingPromo.description || ""}
+                          onChange={e => setEditingPromo((p: any) => ({ ...p, description: e.target.value }))}
+                          rows={2}
+                        />
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            min={1}
+                            max={168}
+                            className="w-24"
+                            value={editingPromo.duration_hours}
+                            onChange={e => setEditingPromo((p: any) => ({ ...p, duration_hours: parseInt(e.target.value) || 48 }))}
+                          />
+                          <span className="text-sm text-muted-foreground">ore</span>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-foreground">Servizi inclusi:</p>
+                          {[
+                            { key: "map", label: "Mappa Numerologica" },
+                            { key: "chat", label: "Chat AI" },
+                            { key: "daily_analysis", label: "Analisi del Giorno" },
+                            { key: "outfits", label: "Outfit" },
+                            { key: "personal-year", label: "Anno Personale" },
+                            { key: "pillars", label: "Pilastri" },
+                            { key: "community", label: "Community" },
+                            { key: "brand", label: "Brand Analyzer" },
+                            { key: "house", label: "House Analyzer" },
+                            { key: "compatibility", label: "Compatibilità" },
+                            { key: "dates", label: "Date Favorevoli" },
+                          ].map(svc => (
+                            <label key={svc.key} className="flex items-center gap-2 cursor-pointer">
+                              <Checkbox
+                                checked={editingPromo.services.includes(svc.key)}
+                                onCheckedChange={(checked) => {
+                                  setEditingPromo((p: any) => ({
+                                    ...p,
+                                    services: checked
+                                      ? [...p.services, svc.key]
+                                      : p.services.filter((s: string) => s !== svc.key),
+                                  }));
+                                }}
+                              />
+                              <span className="text-sm text-foreground">{svc.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="cosmic" size="sm" onClick={handleUpdatePromo} disabled={!editingPromo.title || editingPromo.services.length === 0}>
+                            <Save className="w-3 h-3 mr-1" />
+                            Salva
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => setEditingPromo(null)}>
+                            Annulla
+                          </Button>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Servizi inclusi:</p>
-                        {[
-                          { key: "map", label: "Mappa Numerologica" },
-                          { key: "chat", label: "Chat AI" },
-                          { key: "daily_analysis", label: "Analisi del Giorno" },
-                          { key: "outfits", label: "Outfit" },
-                          { key: "personal-year", label: "Anno Personale" },
-                          { key: "pillars", label: "Pilastri" },
-                          { key: "community", label: "Community" },
-                          { key: "brand", label: "Brand Analyzer" },
-                          { key: "house", label: "House Analyzer" },
-                          { key: "compatibility", label: "Compatibilità" },
-                          { key: "dates", label: "Date Favorevoli" },
-                        ].map(svc => (
-                          <label key={svc.key} className="flex items-center gap-2 cursor-pointer">
-                            <Checkbox
-                              checked={editingPromo.services.includes(svc.key)}
-                              onCheckedChange={(checked) => {
-                                setEditingPromo((p: any) => ({
-                                  ...p,
-                                  services: checked
-                                    ? [...p.services, svc.key]
-                                    : p.services.filter((s: string) => s !== svc.key),
-                                }));
-                              }}
-                            />
-                            <span className="text-sm text-foreground">{svc.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="cosmic" size="sm" onClick={handleUpdatePromo} disabled={!editingPromo.title || editingPromo.services.length === 0}>
-                          <Save className="w-3 h-3 mr-1" />
-                          Salva
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => setEditingPromo(null)}>
-                          Annulla
-                        </Button>
-                      </div>
-                    </div>
-                  )
+                    )}
                   </div>
                 ))}
               </div>
