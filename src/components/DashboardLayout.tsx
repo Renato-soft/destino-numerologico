@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { DashboardPromotionBanner } from "@/components/PromotionBanner";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
@@ -170,6 +171,8 @@ export default function DashboardLayout({ children, title, headerActions }: Dash
               {headerActions && <div className="flex items-center gap-2">{headerActions}</div>}
             </div>
           </header>
+
+          <DashboardPromotionBanner />
 
           <main className="flex-1 overflow-auto">
             {children}

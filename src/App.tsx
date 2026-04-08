@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import { FeatureScheduleProvider } from "@/hooks/useFeatureSchedule";
+import { PromotionProvider } from "@/hooks/usePromotion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
@@ -40,6 +41,7 @@ const App = () => (
       <BrowserRouter>
         <SubscriptionProvider>
         <FeatureScheduleProvider>
+        <PromotionProvider>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
@@ -66,6 +68,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+        </PromotionProvider>
         </FeatureScheduleProvider>
         </SubscriptionProvider>
       </BrowserRouter>
