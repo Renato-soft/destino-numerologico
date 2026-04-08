@@ -474,6 +474,13 @@ const AdminDashboard = () => {
                     { key: "chat", label: "Chat AI" },
                     { key: "daily_analysis", label: "Analisi del Giorno" },
                     { key: "outfits", label: "Outfit" },
+                    { key: "personal-year", label: "Anno Personale" },
+                    { key: "pillars", label: "Pilastri" },
+                    { key: "community", label: "Community" },
+                    { key: "brand", label: "Brand Analyzer" },
+                    { key: "house", label: "House Analyzer" },
+                    { key: "compatibility", label: "Compatibilità" },
+                    { key: "dates", label: "Date Favorevoli" },
                   ].map(svc => (
                     <label key={svc.key} className="flex items-center gap-2 cursor-pointer">
                       <Checkbox
@@ -524,7 +531,7 @@ const AdminDashboard = () => {
                       <div className="flex flex-wrap gap-1 mt-1">
                         {(promo.services || ["map", "chat", "daily_analysis", "outfits"]).map((s: string) => (
                           <span key={s} className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary">{
-                            { map: "Mappa", chat: "Chat", daily_analysis: "Analisi", outfits: "Outfit" }[s] || s
+                            { map: "Mappa", chat: "Chat", daily_analysis: "Analisi", outfits: "Outfit", "personal-year": "Anno", pillars: "Pilastri", community: "Community", brand: "Brand", house: "House", compatibility: "Compat.", dates: "Date" }[s] || s
                           }</span>
                         ))}
                       </div>
