@@ -356,6 +356,73 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ===== DELETE USER =====
+    if (action === "delete-user") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const targetUserId = body?.user_id;
+      if (!targetUserId) {
+        return new Response(JSON.stringify({ error: "user_id richiesto" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Prevent deleting yourself
+      if (targetUserId === user.id) {
+        return new Response(JSON.stringify({ error: "Non puoi eliminare il tuo account" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Delete user data from public tables first
+      await supabase.from("chat_messages").delete().eq("user_id", targetUserId);
+      await supabase.from("chat_sessions").delete().eq("user_id", targetUserId);
+      await supabase.from("community_comments").delete().eq("user_id", targetUserId);
+      await supabase.from("community_reactions").delete().eq("user_id", targetUserId);
+      await supabase.from("community_notifications").delete().eq("user_id", targetUserId);
+      await supabase.from("community_posts").delete().eq("user_id", targetUserId);
+      await supabase.from("community_reports").delete().eq("reporter_id", targetUserId);
+      await supabase.from("photos").delete().eq("user_id", targetUserId);
+      await supabase.from("numerology_maps").delete().eq("user_id", targetUserId);
+      await supabase.from("daily_reports").delete().eq("user_id", targetUserId);
+      await supabase.from("advanced_reports").delete().eq("user_id", targetUserId);
+      await supabase.from("pillar_progress").delete().eq("user_id", targetUserId);
+      await supabase.from("pillar_badges").delete().eq("user_id", targetUserId);
+      await supabase.from("user_service_overrides").delete().eq("user_id", targetUserId);
+      await supabase.from("pay_per_use_purchases").delete().eq("user_id", targetUserId);
+      await supabase.from("profiles").delete().eq("user_id", targetUserId);
+
+      // Delete user storage files
+      try {
+        const { data: photoFiles } = await supabase.storage.from("user-photos").list(targetUserId);
+        if (photoFiles && photoFiles.length > 0) {
+          await supabase.storage.from("user-photos").remove(photoFiles.map(f => `${targetUserId}/${f.name}`));
+        }
+        // Also delete outfits subfolder
+        const { data: outfitFiles } = await supabase.storage.from("user-photos").list(`${targetUserId}/outfits`);
+        if (outfitFiles && outfitFiles.length > 0) {
+          await supabase.storage.from("user-photos").remove(outfitFiles.map(f => `${targetUserId}/outfits/${f.name}`));
+        }
+      } catch (e) {
+        console.error("Error cleaning storage:", e);
+      }
+
+      // Finally delete the auth user
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(targetUserId);
+      if (deleteError) throw deleteError;
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Azione non valida" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

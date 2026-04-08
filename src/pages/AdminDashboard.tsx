@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn, KeyRound,
+  LogIn, KeyRound, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +68,8 @@ const AdminDashboard = () => {
   const [userOverrides, setUserOverrides] = useState<string[]>([]);
   const [overridesLoading, setOverridesLoading] = useState(false);
   const [savingOverrides, setSavingOverrides] = useState(false);
+  const [deletingUser, setDeletingUser] = useState(false);
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOverview();
@@ -182,6 +184,30 @@ const AdminDashboard = () => {
 
   const toggleAllOverrides = (checked: boolean) => {
     setUserOverrides(checked ? ALL_SERVICES.map(s => s.key) : []);
+  };
+
+  const handleDeleteUser = async () => {
+    if (!confirmDeleteUser) return;
+    setDeletingUser(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data, error } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "delete-user", user_id: confirmDeleteUser },
+      });
+      if (error || data?.error) {
+        alert(data?.error || "Errore durante l'eliminazione");
+      } else {
+        setSelectedUser(null);
+        setUserDetail(null);
+        setConfirmDeleteUser(null);
+        await fetchOverview();
+      }
+    } catch (err: any) {
+      alert("Errore: " + err.message);
+    }
+    setDeletingUser(false);
   };
 
   const fetchUserDetail = async (userId: string) => {
@@ -420,9 +446,19 @@ const AdminDashboard = () => {
                 </div>
               ) : userDetail ? (
                 <div>
-                  <h2 className="font-display text-lg font-semibold mb-4">
-                    {selectedUserData?.nome} {selectedUserData?.cognome}
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-display text-lg font-semibold">
+                      {selectedUserData?.nome} {selectedUserData?.cognome}
+                    </h2>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setConfirmDeleteUser(selectedUser)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Elimina
+                    </Button>
+                  </div>
 
                   {/* Service overrides */}
                   <div className="mb-6 p-4 rounded-lg border border-border/30 bg-card/30">
@@ -523,6 +559,36 @@ const AdminDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Delete confirmation dialog */}
+      {confirmDeleteUser && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => !deletingUser && setConfirmDeleteUser(null)}>
+          <div className="bg-card rounded-xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-foreground mb-2">Conferma eliminazione</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              Stai per eliminare definitivamente l'utente:
+            </p>
+            <p className="text-sm font-semibold text-foreground mb-4">
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.nome}{" "}
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.cognome}
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.email &&
+                ` (${overview.users.find(u => u.user_id === confirmDeleteUser)?.email})`}
+            </p>
+            <p className="text-xs text-destructive mb-6">
+              Questa azione è irreversibile. Tutti i dati dell'utente verranno cancellati.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" size="sm" onClick={() => setConfirmDeleteUser(null)} disabled={deletingUser}>
+                Annulla
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDeleteUser} disabled={deletingUser}>
+                {deletingUser ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Trash2 className="w-4 h-4 mr-1" />}
+                Elimina definitivamente
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Lightbox */}
       {lightboxUrl && (
