@@ -118,6 +118,59 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchPromotions = async () => {
+    setPromoLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "list-promotions" },
+      });
+      if (data?.promotions) setPromotions(data.promotions);
+    } catch (e) { console.error(e); }
+    setPromoLoading(false);
+  };
+
+  const handleCreatePromo = async () => {
+    if (!newPromo.title) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "create-promotion", ...newPromo },
+      });
+      setNewPromo({ title: "", description: "", duration_hours: 48 });
+      setShowNewPromo(false);
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
+  const handleTogglePromo = async (promoId: string, activate: boolean) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "toggle-promotion", promotion_id: promoId, is_active: activate },
+      });
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
+  const handleDeletePromo = async (promoId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "delete-promotion", promotion_id: promoId },
+      });
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
   const handleSaveSchedule = async () => {
     setSavingSchedule(true);
     try {
