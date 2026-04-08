@@ -560,6 +560,36 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* Delete confirmation dialog */}
+      {confirmDeleteUser && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => !deletingUser && setConfirmDeleteUser(null)}>
+          <div className="bg-card rounded-xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-foreground mb-2">Conferma eliminazione</h3>
+            <p className="text-sm text-muted-foreground mb-1">
+              Stai per eliminare definitivamente l'utente:
+            </p>
+            <p className="text-sm font-semibold text-foreground mb-4">
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.nome}{" "}
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.cognome}
+              {overview?.users.find(u => u.user_id === confirmDeleteUser)?.email &&
+                ` (${overview.users.find(u => u.user_id === confirmDeleteUser)?.email})`}
+            </p>
+            <p className="text-xs text-destructive mb-6">
+              Questa azione è irreversibile. Tutti i dati dell'utente verranno cancellati.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" size="sm" onClick={() => setConfirmDeleteUser(null)} disabled={deletingUser}>
+                Annulla
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDeleteUser} disabled={deletingUser}>
+                {deletingUser ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Trash2 className="w-4 h-4 mr-1" />}
+                Elimina definitivamente
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Lightbox */}
       {lightboxUrl && (
         <div
