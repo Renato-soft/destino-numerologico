@@ -582,6 +582,7 @@ export type Database = {
           duration_hours: number
           id: string
           is_active: boolean
+          services: string[]
           title: string
           updated_at: string
         }
@@ -592,6 +593,7 @@ export type Database = {
           duration_hours?: number
           id?: string
           is_active?: boolean
+          services?: string[]
           title: string
           updated_at?: string
         }
@@ -602,6 +604,7 @@ export type Database = {
           duration_hours?: number
           id?: string
           is_active?: boolean
+          services?: string[]
           title?: string
           updated_at?: string
         }
