@@ -124,7 +124,7 @@ export function LandingPromotionBanner() {
   if (!promo) return null;
 
   return (
-    <div className="w-full bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground py-3 px-4 text-center relative z-30">
+    <div className="w-full bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground py-3 px-4 text-center fixed top-0 left-0 right-0 z-50">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 animate-pulse" />
