@@ -124,27 +124,31 @@ export function LandingPromotionBanner() {
   if (!promo) return null;
 
   return (
-    <div className="w-full bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground py-3 px-4 text-center fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 animate-pulse" />
-          <span className="font-semibold text-sm sm:text-base">
-            🎉 {promo.title || "Promozione speciale"} — {promo.duration_hours}h di accesso gratuito!
-          </span>
+    <>
+      <div className="w-full bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground py-3 px-4 text-center fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 animate-pulse" />
+            <span className="font-semibold text-sm sm:text-base">
+              🎉 {promo.title || "Promozione speciale"} — {promo.duration_hours}h di accesso gratuito!
+            </span>
+          </div>
+          <Button
+            asChild
+            size="sm"
+            className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg"
+          >
+            <Link to="/auth?mode=signup">
+              Registrati gratis ora
+            </Link>
+          </Button>
         </div>
-        <Button
-          asChild
-          size="sm"
-          className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg"
-        >
-          <Link to="/auth?mode=signup">
-            Registrati gratis ora
-          </Link>
-        </Button>
+        {promo.description && (
+          <p className="text-xs mt-1 opacity-90">{promo.description}</p>
+        )}
       </div>
-      {promo.description && (
-        <p className="text-xs mt-1 opacity-90">{promo.description}</p>
-      )}
-    </div>
+      {/* Spacer to prevent content from hiding behind the fixed banner */}
+      <div className="w-full py-6" />
+    </>
   );
 }
