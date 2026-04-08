@@ -5,11 +5,12 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn, KeyRound, Trash2,
+  LogIn, KeyRound, Trash2, Gift, Plus, Power,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
@@ -71,9 +72,16 @@ const AdminDashboard = () => {
   const [deletingUser, setDeletingUser] = useState(false);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<string | null>(null);
 
+  // Promotions state
+  const [promotions, setPromotions] = useState<any[]>([]);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48 });
+  const [showNewPromo, setShowNewPromo] = useState(false);
+
   useEffect(() => {
     fetchOverview();
     fetchFeatureSchedule();
+    fetchPromotions();
   }, []);
 
   const fetchOverview = async () => {
@@ -108,6 +116,59 @@ const AdminDashboard = () => {
       (data as any[]).forEach((f: any) => { edits[f.feature_key] = f.unlock_after_days; });
       setScheduleEdits(edits);
     }
+  };
+
+  const fetchPromotions = async () => {
+    setPromoLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "list-promotions" },
+      });
+      if (data?.promotions) setPromotions(data.promotions);
+    } catch (e) { console.error(e); }
+    setPromoLoading(false);
+  };
+
+  const handleCreatePromo = async () => {
+    if (!newPromo.title) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "create-promotion", ...newPromo },
+      });
+      setNewPromo({ title: "", description: "", duration_hours: 48 });
+      setShowNewPromo(false);
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
+  const handleTogglePromo = async (promoId: string, activate: boolean) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "toggle-promotion", promotion_id: promoId, is_active: activate },
+      });
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
+  };
+
+  const handleDeletePromo = async (promoId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "delete-promotion", promotion_id: promoId },
+      });
+      await fetchPromotions();
+    } catch (e) { console.error(e); }
   };
 
   const handleSaveSchedule = async () => {
@@ -358,6 +419,104 @@ const AdminDashboard = () => {
                 </div>
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {/* Promotion Management - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Gift className="w-5 h-5 text-primary" />
+                <h2 className="font-display text-lg font-semibold">Gestione Promozioni</h2>
+              </div>
+              <Button variant="cosmic" size="sm" onClick={() => setShowNewPromo(!showNewPromo)}>
+                <Plus className="w-4 h-4 mr-1" />
+                Nuova
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Crea promozioni per offrire accesso gratuito a Mappa, Chat, Analisi del Giorno e Outfit per un periodo limitato.
+            </p>
+
+            {showNewPromo && (
+              <div className="mb-4 p-4 rounded-lg border border-primary/20 bg-card/30 space-y-3">
+                <Input
+                  placeholder="Titolo promozione (es: Promo Lancio 48h)"
+                  value={newPromo.title}
+                  onChange={e => setNewPromo(p => ({ ...p, title: e.target.value }))}
+                />
+                <Textarea
+                  placeholder="Descrizione (opzionale)"
+                  value={newPromo.description}
+                  onChange={e => setNewPromo(p => ({ ...p, description: e.target.value }))}
+                  rows={2}
+                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={1}
+                    max={168}
+                    className="w-24"
+                    value={newPromo.duration_hours}
+                    onChange={e => setNewPromo(p => ({ ...p, duration_hours: parseInt(e.target.value) || 48 }))}
+                  />
+                  <span className="text-sm text-muted-foreground">ore di accesso gratuito</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="cosmic" size="sm" onClick={handleCreatePromo} disabled={!newPromo.title}>
+                    Crea Promozione
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setShowNewPromo(false)}>
+                    Annulla
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {promoLoading ? (
+              <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>
+            ) : promotions.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">Nessuna promozione creata</p>
+            ) : (
+              <div className="space-y-3">
+                {promotions.map((promo: any) => (
+                  <div key={promo.id} className={`flex items-center justify-between p-3 rounded-lg border ${promo.is_active ? 'border-primary/40 bg-primary/5' : 'border-border/30 bg-card/30'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{promo.title}</span>
+                        {promo.is_active && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary">ATTIVA</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {promo.duration_hours}h • Creata il {new Date(promo.created_at).toLocaleDateString("it-IT")}
+                        {promo.activated_at && ` • Attivata il ${new Date(promo.activated_at).toLocaleDateString("it-IT")}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant={promo.is_active ? "outline" : "cosmic"}
+                        size="sm"
+                        onClick={() => handleTogglePromo(promo.id, !promo.is_active)}
+                      >
+                        <Power className="w-3 h-3 mr-1" />
+                        {promo.is_active ? "Disattiva" : "Attiva"}
+                      </Button>
+                      {!promo.is_active && (
+                        <Button variant="destructive" size="sm" onClick={() => handleDeletePromo(promo.id)}>
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
 

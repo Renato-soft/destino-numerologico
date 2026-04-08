@@ -93,6 +93,7 @@ interface SubscriptionState {
   profileCreatedAt: string | null;
   hasUnlockAll: boolean;
   serviceOverrides: string[];
+  activePromotionExpiresAt: string | null;
 }
 
 interface SubscriptionContextType extends SubscriptionState {
@@ -121,6 +122,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     profileCreatedAt: null,
     hasUnlockAll: false,
     serviceOverrides: [],
+    activePromotionExpiresAt: null,
   });
 
   const refreshPayPerUsePurchases = useCallback(async () => {
@@ -144,21 +146,23 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [] }));
+        setState(prev => ({ ...prev, subscribed: false, fullAccess: false, loading: false, payPerUsePurchases: [], profileCreatedAt: null, hasUnlockAll: false, serviceOverrides: [], activePromotionExpiresAt: null }));
         return;
       }
 
-      const [{ data: profileData }, { data, error }, { data: ppuData }, { data: overridesData }] = await Promise.all([
+      const [{ data: profileData }, { data, error }, { data: ppuData }, { data: overridesData }, { data: promoData }] = await Promise.all([
         supabase.from("profiles").select("created_at").eq("user_id", session.user.id).maybeSingle(),
         supabase.functions.invoke("check-subscription"),
         supabase.from("pay_per_use_purchases").select("product_id, created_at").eq("user_id", session.user.id),
         supabase.from("user_service_overrides").select("service_key").eq("user_id", session.user.id),
+        supabase.from("user_promotions" as any).select("expires_at").eq("user_id", session.user.id).order("expires_at", { ascending: false }).limit(1),
       ]);
 
       if (error) throw error;
 
       const purchases = (ppuData || []) as PurchaseRecord[];
       const overrides = ((overridesData || []) as any[]).map((o: any) => o.service_key as string);
+      const promoExpiry = promoData && (promoData as any[]).length > 0 ? (promoData as any[])[0].expires_at : null;
 
       setState(prev => ({
         ...prev,
@@ -170,6 +174,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         payPerUsePurchases: purchases,
         hasUnlockAll: purchases.some(p => p.product_id === UNLOCK_ALL.product_id),
         serviceOverrides: overrides,
+        activePromotionExpiresAt: promoExpiry,
       }));
     } catch (err) {
       console.error("Error checking subscription:", err);
@@ -263,6 +268,13 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     const serviceKey = routeToServiceKey(route);
     if (serviceKey && state.serviceOverrides.includes(serviceKey)) return true;
 
+    // Check active promotion access (map, chat, daily_analysis, outfits)
+    // Promotion covers: /map, /chat, /dashboard (daily analysis + outfits)
+    const promoRoutes = ["/map", "/chat", "/dashboard"];
+    if (promoRoutes.includes(route) && state.activePromotionExpiresAt) {
+      if (new Date(state.activePromotionExpiresAt).getTime() > Date.now()) return true;
+    }
+
     // 24h PPU routes: always require active (non-expired) purchase
     if (PPU_24H_ROUTES.includes(route)) {
       if (state.hasUnlockAll) return true;
@@ -290,7 +302,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, isInTrial, getActivePurchaseExpiry]);
+  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
     return route in PAY_PER_USE_ROUTES;
@@ -333,6 +345,7 @@ const DEFAULT_SUBSCRIPTION: SubscriptionContextType = {
   profileCreatedAt: null,
   hasUnlockAll: false,
   serviceOverrides: [],
+  activePromotionExpiresAt: null,
   checkSubscription: async () => {},
   canAccess: () => false,
   isInTrial: () => false,
