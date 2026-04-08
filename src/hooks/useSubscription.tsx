@@ -286,10 +286,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       const svc = state.activePromotionServices;
       const routeToPromoService: Record<string, string> = {
         "/map": "map", "/chat": "chat", "/dashboard": "daily_analysis",
+        "/personal-year": "personal-year", "/pillars": "pillars",
+        "/community": "community", "/brand": "brand", "/house": "house",
+        "/compatibility": "compatibility", "/dates": "dates",
       };
       const promoSvc = routeToPromoService[route];
       if (promoSvc && svc.includes(promoSvc)) return true;
-      // outfits is on /dashboard too
       if (route === "/dashboard" && svc.includes("outfits")) return true;
     }
 
