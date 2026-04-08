@@ -64,11 +64,15 @@ Deno.serve(async (req) => {
       if (userRole !== "superadmin") {
         return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      const { title, description, duration_hours } = body || {};
+      const { title, description, duration_hours, services } = body || {};
       if (!title || !duration_hours) {
         return new Response(JSON.stringify({ error: "Titolo e durata richiesti" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      const { data, error: insertErr } = await supabase.from("promotions").insert({ title, description: description || null, duration_hours }).select().single();
+      const insertPayload: any = { title, description: description || null, duration_hours };
+      if (services && Array.isArray(services) && services.length > 0) {
+        insertPayload.services = services;
+      }
+      const { data, error: insertErr } = await supabase.from("promotions").insert(insertPayload).select().single();
       if (insertErr) throw insertErr;
       return new Response(JSON.stringify({ promotion: data }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

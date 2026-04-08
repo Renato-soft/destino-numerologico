@@ -9,6 +9,7 @@ interface Promotion {
   is_active: boolean;
   activated_at: string | null;
   created_at: string;
+  services: string[];
 }
 
 interface UserPromotion {
@@ -31,8 +32,14 @@ interface PromotionContextType {
 
 const PromotionContext = createContext<PromotionContextType | null>(null);
 
-// Promotion covers these services only
-export const PROMO_SERVICES = ["map", "chat", "daily_analysis", "outfits"];
+// Default services (used as fallback if promotion has no services array)
+export const PROMO_SERVICES_DEFAULT = ["map", "chat", "daily_analysis", "outfits"];
+
+// Get active promo services from the promotion object
+export function getPromoServices(promo: Promotion | null): string[] {
+  if (!promo) return [];
+  return promo.services && promo.services.length > 0 ? promo.services : PROMO_SERVICES_DEFAULT;
+}
 
 export function PromotionProvider({ children }: { children: ReactNode }) {
   const [activePromotion, setActivePromotion] = useState<Promotion | null>(null);
