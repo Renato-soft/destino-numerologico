@@ -280,7 +280,20 @@ Deno.serve(async (req) => {
           const contentParts: any[] = [
             {
               type: "text",
-              text: `I'm providing reference photos of this person. Analyze their skin tone, face shape, hair color/length/style, eye color, body build, bust/chest proportions, and height. Then generate a new full-body image of a person with THESE SAME physical characteristics wearing the described outfit. Match the person's appearance closely.
+              text: `I'm providing reference photos of this person. Study them carefully.
+
+=== IDENTITY LOCK (MANDATORY — DO NOT DEVIATE) ===
+You MUST preserve the EXACT identity of this person:
+- FACE: Reproduce the EXACT same facial features — eyes shape, nose, lips, jawline, cheekbones. The face must be immediately recognizable as the same person.
+- HAIR: Keep the EXACT same hair color, length, texture, and style. Do NOT change hair color or add highlights.
+- SKIN: Match the exact skin tone and complexion.
+- BODY: Maintain the SAME body proportions or make the person look SLIGHTLY slimmer/more toned. NEVER make the person look heavier, larger, or bigger than in the reference photos. The goal is to make the person feel confident and attractive.
+- HEIGHT & BUILD: Keep the same height and overall frame.
+- AGE: The person must look the same age as in the photos.
+
+This is about SELF-CONFIDENCE: the person must look at the generated image and immediately recognize themselves, feeling beautiful and empowered. If in doubt, err on the side of a slightly more flattering/slim version rather than adding any weight or changing features.
+=== END IDENTITY LOCK ===
+
 The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}. This is a ${genderLabel}. ${prompt}`,
             },
           ];
