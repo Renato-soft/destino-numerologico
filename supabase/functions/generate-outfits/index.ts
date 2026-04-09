@@ -161,16 +161,16 @@ Deno.serve(async (req) => {
       if (userError || !user) {
         return new Response(JSON.stringify({ error: "Utente non trovato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      userId = user.id;
+      userId = userId;
     }
 
     const today = new Date().toISOString().split("T")[0];
 
     // Fetch profile, map, photos in parallel
     const [profileResult, mapResult, photosResult] = await Promise.all([
-      supabase.from("profiles").select("birth_date, sesso, residence_state, language").eq("user_id", user.id).single(),
-      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", user.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
-      supabase.from("photos").select("type, storage_path").eq("user_id", user.id),
+      supabase.from("profiles").select("birth_date, sesso, residence_state, language").eq("user_id", userId).single(),
+      supabase.from("numerology_maps").select("life_path, destiny_expression, soul, personality, personal_year, personal_year_reference").eq("user_id", userId).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("photos").select("type, storage_path").eq("user_id", userId),
     ]);
 
     const profile = profileResult.data;
@@ -197,14 +197,14 @@ Deno.serve(async (req) => {
     // Check cache
     let cachedOutfits: (string | null)[] | null = null;
     if (!force) {
-      const { data: existingFiles } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
+      const { data: existingFiles } = await supabase.storage.from("user-photos").list(`${userId}/outfits`, { search: cachePrefix });
       if (existingFiles && existingFiles.length >= 1) {
         const slotLabels = ["day1", "day2", "eve1", "eve2"];
         const urls = await Promise.all(
           slotLabels.map(async (label) => {
             const file = existingFiles.find((f) => f.name.includes(`_${label}.png`));
             if (!file) return null;
-            const { data } = await supabase.storage.from("user-photos").createSignedUrl(`${user.id}/outfits/${file.name}`, 3600);
+            const { data } = await supabase.storage.from("user-photos").createSignedUrl(`${userId}/outfits/${file.name}`, 3600);
             return data?.signedUrl || null;
           }),
         );
@@ -340,7 +340,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
         // Upload to storage
         const base64 = imageData.replace(/^data:image\/\w+;base64,/, "");
         const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-        const filePath = `${user.id}/outfits/${cachePrefix}_${label}.png`;
+        const filePath = `${userId}/outfits/${cachePrefix}_${label}.png`;
         const { error: uploadError } = await supabase.storage.from("user-photos").upload(filePath, binaryData, { contentType: "image/png", upsert: true });
         if (uploadError) {
           console.error(`Upload error for ${label}:`, uploadError);
@@ -373,8 +373,8 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
     // Schedule bonus generation in background with shorter delay
     const bonusGenerationPromise = (async () => {
       await new Promise((r) => setTimeout(r, 30_000));
-      console.log(`Starting bonus outfit generation for user ${user.id}`);
-      const { data: existingBonus } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`, { search: cachePrefix });
+      console.log(`Starting bonus outfit generation for user ${userId}`);
+      const { data: existingBonus } = await supabase.storage.from("user-photos").list(`${userId}/outfits`, { search: cachePrefix });
       for (let i = 0; i < bonusPrompts.length; i++) {
         const bp = bonusPrompts[i];
         const exists = existingBonus?.some((f) => f.name.includes(`_${bp.label}.png`));
@@ -387,7 +387,7 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
           }
         }
       }
-      console.log(`All bonus outfits completed for user ${user.id}`);
+      console.log(`All bonus outfits completed for user ${userId}`);
     })();
 
     try {
@@ -398,14 +398,14 @@ The clothing style must be age-appropriate${userAge ? ` (age ~${userAge})` : ""}
 
     // Cleanup old files (>3 days)
     try {
-      const { data: allFiles } = await supabase.storage.from("user-photos").list(`${user.id}/outfits`);
+      const { data: allFiles } = await supabase.storage.from("user-photos").list(`${userId}/outfits`);
       if (allFiles && allFiles.length > 0) {
         const cutoff = new Date();
         cutoff.setDate(cutoff.getDate() - 3);
         const cutoffDate = cutoff.toISOString().split("T")[0];
         const oldFiles = allFiles.filter((f) => { const m = f.name.match(/^(\d{4}-\d{2}-\d{2})_/); return m && m[1] < cutoffDate; });
         if (oldFiles.length > 0) {
-          await supabase.storage.from("user-photos").remove(oldFiles.map((f) => `${user.id}/outfits/${f.name}`));
+          await supabase.storage.from("user-photos").remove(oldFiles.map((f) => `${userId}/outfits/${f.name}`));
         }
       }
     } catch { /* non-fatal */ }
