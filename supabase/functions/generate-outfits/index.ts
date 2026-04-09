@@ -161,7 +161,7 @@ Deno.serve(async (req) => {
       if (userError || !user) {
         return new Response(JSON.stringify({ error: "Utente non trovato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      userId = userId;
+      userId = user.id;
     }
 
     const today = new Date().toISOString().split("T")[0];
