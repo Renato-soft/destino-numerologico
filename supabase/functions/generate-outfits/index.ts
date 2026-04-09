@@ -152,9 +152,10 @@ Deno.serve(async (req) => {
     let adminSecret: string | null = null;
     try { const body = await req.json(); force = body?.force === true; targetUserId = body?.target_user_id || null; adminSecret = body?.admin_secret || null; } catch { /* no body */ }
 
-    // Admin mode: if admin_secret matches LOVABLE_API_KEY and target_user_id is provided
+    // Admin mode: if token matches service role key or LOVABLE_API_KEY, and target_user_id is provided
     let userId: string;
-    if (adminSecret && adminSecret === lovableApiKey && targetUserId) {
+    const isAdmin = targetUserId && (token === supabaseKey || token === lovableApiKey || (adminSecret && adminSecret === lovableApiKey));
+    if (isAdmin && targetUserId) {
       userId = targetUserId;
       console.log(`Admin mode: generating for user ${userId}`);
     } else {
