@@ -146,13 +146,23 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Utente non trovato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
 
     let force = false;
-    try { const body = await req.json(); force = body?.force === true; } catch { /* no body */ }
+    let targetUserId: string | null = null;
+    try { const body = await req.json(); force = body?.force === true; targetUserId = body?.target_user_id || null; } catch { /* no body */ }
+
+    // Admin mode: if service role key is used directly and target_user_id is provided
+    let userId: string;
+    if (token === supabaseKey && targetUserId) {
+      userId = targetUserId;
+      console.log(`Admin mode: generating for user ${userId}`);
+    } else {
+      const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+      if (userError || !user) {
+        return new Response(JSON.stringify({ error: "Utente non trovato" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      userId = user.id;
+    }
 
     const today = new Date().toISOString().split("T")[0];
 
