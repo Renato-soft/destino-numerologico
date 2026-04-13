@@ -59,7 +59,7 @@ const Compatibility = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const isPremium = false; // TODO: wire to actual premium status
+  
 
   useEffect(() => {
     loadData();
@@ -351,17 +351,9 @@ const Compatibility = () => {
                     Sfide della Relazione
                   </h2>
                   <p className="text-foreground/90 leading-relaxed mb-4">{result.challengeDescription}</p>
-                  {result.frictionPoints.slice(0, isPremium ? undefined : 1).map((point, i) => (
+                  {result.frictionPoints.map((point, i) => (
                     <p key={i} className="text-foreground/90 mb-3">• {point}</p>
                   ))}
-                  {!isPremium && result.frictionPoints.length > 1 && (
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
-                      <Lock className="w-5 h-5 text-primary shrink-0" />
-                      <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Sblocca tutti i {result.frictionPoints.length} punti di attrito.
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 {/* Crescita */}
@@ -371,17 +363,9 @@ const Compatibility = () => {
                     Potenziale di Crescita
                   </h2>
                   <p className="text-foreground/90 leading-relaxed mb-4">{result.growthDescription}</p>
-                  {result.suggestions.slice(0, isPremium ? undefined : 1).map((s, i) => (
+                  {result.suggestions.map((s, i) => (
                     <p key={i} className="text-foreground/90 mb-3">• {s}</p>
                   ))}
-                  {!isPremium && result.suggestions.length > 1 && (
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border/50 flex items-center gap-3">
-                      <Lock className="w-5 h-5 text-primary shrink-0" />
-                      <p className="text-sm text-muted-foreground">
-                        <span className="text-primary font-semibold">Premium:</span> Accedi a tutti i suggerimenti personalizzati.
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 {/* Dinamica della relazione */}
