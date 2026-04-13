@@ -18,7 +18,6 @@ import {
   Briefcase,
   AlertTriangle,
   Lightbulb,
-  Lock,
 } from "lucide-react";
 import {
   Radar,
