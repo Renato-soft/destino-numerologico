@@ -135,7 +135,7 @@ const SimplifiedMiniMap = ({ nome, cognome, birthDate }: SimplifiedMiniMapProps)
       </div>
 
       <p className="text-xs text-muted-foreground mt-4 text-center italic">
-        Questa è un'anteprima semplificata. Sblocca la Mappa Numerologica completa per un'analisi approfondita! ✨
+        Questa è un'anteprima semplificata. Genera , dal menu a sinistram la Mappa Numerologica completa per un'analisi approfondita! ✨
       </p>
     </motion.section>
   );
