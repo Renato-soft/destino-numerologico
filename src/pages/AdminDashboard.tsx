@@ -393,6 +393,50 @@ const AdminDashboard = () => {
             </motion.div>
           ))}
         </div>
+        {/* Payment Mode Toggle - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {isFreeMode ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-500" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-amber-500" />
+                )}
+                <div>
+                  <h2 className="font-display text-lg font-semibold">Modalità Pagamento</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {isFreeMode
+                      ? "GRATUITO — Tutti i nuovi iscritti hanno accesso completo senza limiti. I blocchi di abbonamento sono nascosti."
+                      : "ABBONAMENTO — I nuovi iscritti hanno un trial di 24h, poi devono pagare. Tutti i blocchi di pagamento sono visibili."}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant={isFreeMode ? "outline" : "cosmic"}
+                size="sm"
+                onClick={async () => {
+                  const newMode = isFreeMode ? "subscription" : "free";
+                  try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+                    await supabase.functions.invoke("admin-dashboard", {
+                      headers: { Authorization: `Bearer ${session.access_token}` },
+                      body: { action: "update-payment-mode", mode: newMode },
+                    });
+                    await refreshAppSettings();
+                  } catch (e) { console.error(e); }
+                }}
+              >
+                {isFreeMode ? "Attiva Abbonamento" : "Attiva Gratuito"}
+              </Button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Feature Schedule Management - superadmin only */}
         {isSuperadmin && (
