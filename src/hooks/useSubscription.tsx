@@ -215,10 +215,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [state.profileCreatedAt]);
 
   const isTrialExpired = useCallback((): boolean => {
+    if (isFreeMode) return false;
     if (!state.profileCreatedAt) return false;
     const created = new Date(state.profileCreatedAt).getTime();
     return Date.now() - created >= TRIAL_DURATION_MS;
-  }, [state.profileCreatedAt]);
+  }, [state.profileCreatedAt, isFreeMode]);
 
   const trialRemainingMs = useCallback((): number => {
     if (!state.profileCreatedAt) return 0;
