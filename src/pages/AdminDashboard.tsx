@@ -55,6 +55,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<OverviewData | null>(null);
+  const { isFreeMode, refresh: refreshAppSettings } = useAppSettings();
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
