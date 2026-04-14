@@ -15,6 +15,7 @@ const milestones = [
 ];
 
 const EvolutionPath = () => {
+  const { isFreeMode } = useAppSettings();
   return (
     <section className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" />
@@ -63,7 +64,8 @@ const EvolutionPath = () => {
             </div>
           </div>
 
-          {/* CTA sidebar */}
+          {/* CTA sidebar - hidden in free mode */}
+          {!isFreeMode && (
           <div className="lg:sticky lg:top-24">
             <div className="text-center rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 via-card to-card p-8 md:p-10 shadow-glow-gold">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 text-primary text-sm font-bold mb-6">
@@ -91,6 +93,7 @@ const EvolutionPath = () => {
               </Button>
             </div>
           </div>
+          )}
         </div>
       </div>
     </section>
