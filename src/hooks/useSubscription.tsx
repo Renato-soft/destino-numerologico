@@ -115,6 +115,7 @@ interface SubscriptionContextType extends SubscriptionState {
 const SubscriptionContext = createContext<SubscriptionContextType | null>(null);
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
+  const { isFreeMode } = useAppSettings();
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
     fullAccess: false,
@@ -276,6 +277,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   };
 
   const canAccess = useCallback((route: string): boolean => {
+    if (isFreeMode) return true;
     if (state.fullAccess) return true;
 
     // Check admin-granted overrides
@@ -323,9 +325,10 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, state.activePromotionServices, isInTrial, getActivePurchaseExpiry]);
+  }, [isFreeMode, state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, state.activePromotionServices, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
+    if (isFreeMode) return false;
     return route in PAY_PER_USE_ROUTES;
   }, []);
 
