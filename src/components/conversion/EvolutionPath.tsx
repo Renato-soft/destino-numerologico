@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, Unlock, Zap } from "lucide-react";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 const milestones = [
   { day: "Giorno 1", title: "Chi sei davvero", description: "Scopri il tuo numero del destino", unlocked: true },

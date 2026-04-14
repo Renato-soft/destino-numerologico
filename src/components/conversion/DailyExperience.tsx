@@ -36,6 +36,7 @@ const subscriptionFeatures = [
 const DailyExperience = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { isFreeMode } = useAppSettings();
 
   const handleSubscribe = async () => {
     setLoading(true);
