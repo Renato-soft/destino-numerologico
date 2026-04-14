@@ -501,6 +501,19 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ===== UPDATE PAYMENT MODE =====
+    if (action === "update-payment-mode") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const mode = body?.mode;
+      if (!mode || !["free", "subscription"].includes(mode)) {
+        return new Response(JSON.stringify({ error: "Modalità non valida" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      await supabase.from("app_settings").update({ setting_value: mode }).eq("setting_key", "payment_mode");
+      return new Response(JSON.stringify({ success: true, mode }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     return new Response(JSON.stringify({ error: "Azione non valida" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
