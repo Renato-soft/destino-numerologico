@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { usePromotion, getPromoServices } from "@/hooks/usePromotion";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Clock, Crown, Sparkles, X } from "lucide-react";
@@ -18,6 +19,7 @@ function formatTime(ms: number) {
 export function DashboardPromotionBanner() {
   const { userPromotion, isPromotionActive, promotionRemainingMs, isPromotionExpired, activePromotion } = usePromotion();
   const { subscribed, checkSubscription } = useSubscription();
+  const { isFreeMode } = useAppSettings();
   const [remaining, setRemaining] = useState(0);
   const [dismissed, setDismissed] = useState(false);
 
@@ -43,7 +45,7 @@ export function DashboardPromotionBanner() {
     }
   }, [isPromotionExpired, subscribed, checkSubscription]);
 
-  if (!userPromotion || dismissed || subscribed) return null;
+  if (!userPromotion || dismissed || subscribed || isFreeMode) return null;
 
   if (isPromotionExpired()) {
     return (
@@ -108,6 +110,7 @@ export function DashboardPromotionBanner() {
 /** Banner shown on the landing page when a promotion is active */
 export function LandingPromotionBanner() {
   const [promo, setPromo] = useState<any>(null);
+  const { isFreeMode } = useAppSettings();
 
   useEffect(() => {
     supabase
@@ -121,7 +124,7 @@ export function LandingPromotionBanner() {
       });
   }, []);
 
-  if (!promo) return null;
+  if (!promo || isFreeMode) return null;
 
   return (
     <>

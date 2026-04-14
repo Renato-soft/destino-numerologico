@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sun, Shirt, MessageCircle, TrendingUp, Download, Loader2, Star, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PLAN } from "@/hooks/useSubscription";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { toast } from "sonner";
 import outfit0 from "@/assets/outfits/outfit0.jpg";
 import outfit1 from "@/assets/outfits/outfit1.jpg";
@@ -35,6 +36,7 @@ const subscriptionFeatures = [
 const DailyExperience = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { isFreeMode } = useAppSettings();
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -131,7 +133,8 @@ const DailyExperience = () => {
           </div>
         </div>
 
-        {/* Subscription CTA box */}
+        {/* Subscription CTA box - hidden in free mode */}
+        {!isFreeMode && (
         <div className="max-w-6xl mx-auto rounded-2xl border border-primary/20 bg-card/30 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
           <div className="flex items-start gap-4 flex-1">
             <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-0.5">
@@ -167,6 +170,7 @@ const DailyExperience = () => {
             )}
           </Button>
         </div>
+        )}
       </div>
     </section>
   );
