@@ -40,6 +40,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AppSettingsProvider>
         <SubscriptionProvider>
         <FeatureScheduleProvider>
         <PromotionProvider>
@@ -72,6 +73,7 @@ const App = () => (
         </PromotionProvider>
         </FeatureScheduleProvider>
         </SubscriptionProvider>
+        </AppSettingsProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
