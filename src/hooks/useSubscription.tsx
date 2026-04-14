@@ -330,7 +330,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const isPayPerUse = useCallback((route: string): boolean => {
     if (isFreeMode) return false;
     return route in PAY_PER_USE_ROUTES;
-  }, []);
+  }, [isFreeMode]);
 
   const getPayPerUseFeature = useCallback((route: string): PayPerUseFeature | null => {
     return PAY_PER_USE_ROUTES[route] || null;
