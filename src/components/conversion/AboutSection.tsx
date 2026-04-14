@@ -20,7 +20,7 @@ const AboutSection = () => {
 
             <div className="space-y-6 rounded-2xl bg-card/80 backdrop-blur-sm border-2 border-primary/20 p-6 md:p-8 shadow-2xl shadow-primary/5" style={{ background: 'linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--primary) / 0.08) 50%, hsl(var(--card)) 100%)' }}>
               <p className="text-foreground leading-relaxed text-base">
-                Mi chiamo Luca R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
+                Mi chiamo Renato R. e da sempre studio i modelli nascosti che influenzano la realtà, con un forte interesse per numerologia, fisica quantistica e informatica. Il mio obiettivo è unire approcci antichi e logica moderna per creare strumenti realmente utili nella vita quotidiana.
               </p>
               <p className="text-foreground leading-relaxed text-base">
                 Negli anni ho sviluppato questo sistema per rendere la numerologia più chiara, accessibile e concreta: non teoria astratta, ma indicazioni pratiche che puoi usare ogni giorno.
