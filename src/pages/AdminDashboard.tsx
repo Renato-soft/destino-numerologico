@@ -5,12 +5,13 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn, KeyRound, Trash2, Gift, Plus, Power,
+  LogIn, KeyRound, Trash2, Gift, Plus, Power, ToggleLeft, ToggleRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
