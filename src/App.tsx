@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import { FeatureScheduleProvider } from "@/hooks/useFeatureSchedule";
 import { PromotionProvider } from "@/hooks/usePromotion";
+import { AppSettingsProvider } from "@/hooks/useAppSettings";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
@@ -39,6 +40,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AppSettingsProvider>
         <SubscriptionProvider>
         <FeatureScheduleProvider>
         <PromotionProvider>
@@ -71,6 +73,7 @@ const App = () => (
         </PromotionProvider>
         </FeatureScheduleProvider>
         </SubscriptionProvider>
+        </AppSettingsProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

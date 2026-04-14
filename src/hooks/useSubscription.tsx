@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 // Monthly subscription
 export const PLAN = {
@@ -114,6 +115,7 @@ interface SubscriptionContextType extends SubscriptionState {
 const SubscriptionContext = createContext<SubscriptionContextType | null>(null);
 
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
+  const { isFreeMode } = useAppSettings();
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
     fullAccess: false,
@@ -213,10 +215,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [state.profileCreatedAt]);
 
   const isTrialExpired = useCallback((): boolean => {
+    if (isFreeMode) return false;
     if (!state.profileCreatedAt) return false;
     const created = new Date(state.profileCreatedAt).getTime();
     return Date.now() - created >= TRIAL_DURATION_MS;
-  }, [state.profileCreatedAt]);
+  }, [state.profileCreatedAt, isFreeMode]);
 
   const trialRemainingMs = useCallback((): number => {
     if (!state.profileCreatedAt) return 0;
@@ -275,6 +278,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   };
 
   const canAccess = useCallback((route: string): boolean => {
+    if (isFreeMode) return true;
     if (state.fullAccess) return true;
 
     // Check admin-granted overrides
@@ -322,11 +326,12 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     }
 
     return true;
-  }, [state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, state.activePromotionServices, isInTrial, getActivePurchaseExpiry]);
+  }, [isFreeMode, state.subscribed, state.fullAccess, state.payPerUsePurchases, state.hasUnlockAll, state.serviceOverrides, state.activePromotionExpiresAt, state.activePromotionServices, isInTrial, getActivePurchaseExpiry]);
 
   const isPayPerUse = useCallback((route: string): boolean => {
+    if (isFreeMode) return false;
     return route in PAY_PER_USE_ROUTES;
-  }, []);
+  }, [isFreeMode]);
 
   const getPayPerUseFeature = useCallback((route: string): PayPerUseFeature | null => {
     return PAY_PER_USE_ROUTES[route] || null;

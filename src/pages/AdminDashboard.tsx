@@ -5,12 +5,13 @@ import { motion } from "framer-motion";
 import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
-  LogIn, KeyRound, Trash2, Gift, Plus, Power,
+  LogIn, KeyRound, Trash2, Gift, Plus, Power, ToggleLeft, ToggleRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 interface OverviewData {
   role: "superadmin" | "admin" | "viewer";
@@ -54,6 +55,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [overview, setOverview] = useState<OverviewData | null>(null);
+  const { isFreeMode, refresh: refreshAppSettings } = useAppSettings();
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
@@ -391,6 +393,50 @@ const AdminDashboard = () => {
             </motion.div>
           ))}
         </div>
+        {/* Payment Mode Toggle - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {isFreeMode ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-500" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-amber-500" />
+                )}
+                <div>
+                  <h2 className="font-display text-lg font-semibold">Modalità Pagamento</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {isFreeMode
+                      ? "GRATUITO — Tutti i nuovi iscritti hanno accesso completo senza limiti. I blocchi di abbonamento sono nascosti."
+                      : "ABBONAMENTO — I nuovi iscritti hanno un trial di 24h, poi devono pagare. Tutti i blocchi di pagamento sono visibili."}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant={isFreeMode ? "outline" : "cosmic"}
+                size="sm"
+                onClick={async () => {
+                  const newMode = isFreeMode ? "subscription" : "free";
+                  try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+                    await supabase.functions.invoke("admin-dashboard", {
+                      headers: { Authorization: `Bearer ${session.access_token}` },
+                      body: { action: "update-payment-mode", mode: newMode },
+                    });
+                    await refreshAppSettings();
+                  } catch (e) { console.error(e); }
+                }}
+              >
+                {isFreeMode ? "Attiva Abbonamento" : "Attiva Gratuito"}
+              </Button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Feature Schedule Management - superadmin only */}
         {isSuperadmin && (

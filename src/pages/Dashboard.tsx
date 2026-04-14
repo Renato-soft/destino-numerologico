@@ -14,6 +14,7 @@ import { calculateLifePath, calculatePersonalYear } from "@/lib/numerology";
 import { useTranslation } from "react-i18next";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureSchedule } from "@/hooks/useFeatureSchedule";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { usePromotion } from "@/hooks/usePromotion";
 import DashboardLayout from "@/components/DashboardLayout";
 import { LogOut } from "lucide-react";
@@ -48,6 +49,7 @@ const Dashboard = () => {
   } = useSubscription();
   const { isFeatureUnlocked } = useFeatureSchedule();
   const { activePromotion, userPromotion, claimPromotion } = usePromotion();
+  const { isFreeMode } = useAppSettings();
   const [searchParams, setSearchParams] = useSearchParams();
   const [todayPostCount, setTodayPostCount] = useState(0);
 
@@ -166,7 +168,7 @@ const Dashboard = () => {
     );
   }
 
-  if (isTrialExpired() && !subscribed) {
+  if (!isFreeMode && isTrialExpired() && !subscribed) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="fixed inset-0 numerology-pattern opacity-20 pointer-events-none" />
@@ -203,7 +205,7 @@ const Dashboard = () => {
 
   const dailyAnalysisUnlocked = isFeatureUnlocked("daily_analysis");
   const outfitsUnlocked = isFeatureUnlocked("outfits");
-  const showDailyContent = subscribed || trialActive;
+  const showDailyContent = isFreeMode || subscribed || trialActive;
 
   const headerTitle = (
     <>
@@ -225,8 +227,8 @@ const Dashboard = () => {
   return (
     <DashboardLayout title={headerTitle as any} headerActions={communityButton}>
       <div className="px-4 md:px-8 py-6 space-y-6">
-        {/* Trial banner */}
-        {trialActive && !subscribed && (
+        {/* Trial banner - hidden in free mode */}
+        {!isFreeMode && trialActive && !subscribed && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

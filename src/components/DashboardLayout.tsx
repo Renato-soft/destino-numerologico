@@ -2,6 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardPromotionBanner } from "@/components/PromotionBanner";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,6 +54,7 @@ function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { isFreeMode } = useAppSettings();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -110,14 +112,16 @@ function AppSidebar() {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <NavLink to="/pricing" className="flex items-center gap-2 hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
-                    <Crown className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span className="truncate text-sm">Piani e Prezzi</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {!isFreeMode && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/pricing" className="flex items-center gap-2 hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
+                      <Crown className="w-4 h-4 shrink-0" />
+                      {!collapsed && <span className="truncate text-sm">Piani e Prezzi</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <NavLink to="/profile" className="flex items-center gap-2 hover:bg-muted/50" activeClassName="bg-muted text-primary font-medium">
