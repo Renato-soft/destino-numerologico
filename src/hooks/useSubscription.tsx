@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 // Monthly subscription
 export const PLAN = {
