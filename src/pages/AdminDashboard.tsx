@@ -296,6 +296,8 @@ const AdminDashboard = () => {
     }
     setDownloadingZip(null);
   };
+
+  const handleSaveSchedule = async () => {
     setSavingSchedule(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
