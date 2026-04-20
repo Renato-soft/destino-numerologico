@@ -203,7 +203,99 @@ const AdminDashboard = () => {
     } catch (e) { console.error(e); }
   };
 
-  const handleSaveSchedule = async () => {
+  const fetchAllPhotos = async () => {
+    setPhotosLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "list-all-photos" },
+      });
+      if (data?.users) {
+        setAllUserPhotos(data.users);
+        setPhotosLoaded(true);
+      }
+    } catch (e) { console.error(e); }
+    setPhotosLoading(false);
+  };
+
+  const handleDownloadSingle = async (url: string, filename: string) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("Download error:", e);
+      alert("Errore download");
+    }
+  };
+
+  const handleDownloadUserZip = async (user: any) => {
+    setDownloadingZip(user.user_id);
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+      for (const photo of user.photos) {
+        const res = await fetch(photo.url);
+        const blob = await res.blob();
+        const ext = photo.storage_path.split(".").pop() || "jpg";
+        zip.file(`${photo.type}_${photo.id.slice(0, 8)}.${ext}`, blob);
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+      const blobUrl = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `foto_${user.nome}_${user.cognome}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("ZIP error:", e);
+      alert("Errore creazione ZIP");
+    }
+    setDownloadingZip(null);
+  };
+
+  const handleDownloadAllZip = async () => {
+    setDownloadingZip("ALL");
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+      for (const user of allUserPhotos) {
+        const folderName = `${user.nome}_${user.cognome}_${user.user_id.slice(0, 8)}`;
+        const folder = zip.folder(folderName);
+        if (!folder) continue;
+        for (const photo of user.photos) {
+          const res = await fetch(photo.url);
+          const blob = await res.blob();
+          const ext = photo.storage_path.split(".").pop() || "jpg";
+          folder.file(`${photo.type}_${photo.id.slice(0, 8)}.${ext}`, blob);
+        }
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+      const blobUrl = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `tutte_le_foto_${new Date().toISOString().split("T")[0]}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("ZIP all error:", e);
+      alert("Errore creazione ZIP");
+    }
+    setDownloadingZip(null);
+  };
     setSavingSchedule(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
