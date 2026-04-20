@@ -6,6 +6,7 @@ import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
   LogIn, KeyRound, Trash2, Gift, Plus, Power, ToggleLeft, ToggleRight,
+  ImageIcon, Download, Archive,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +81,13 @@ const AdminDashboard = () => {
   const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48, services: ["map", "chat", "daily_analysis", "outfits"] as string[] });
   const [showNewPromo, setShowNewPromo] = useState(false);
   const [editingPromo, setEditingPromo] = useState<any | null>(null);
+
+  // User photos state
+  const [allUserPhotos, setAllUserPhotos] = useState<any[]>([]);
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [photosLoaded, setPhotosLoaded] = useState(false);
+  const [downloadingZip, setDownloadingZip] = useState<string | null>(null);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   useEffect(() => {
     fetchOverview();
@@ -193,6 +201,100 @@ const AdminDashboard = () => {
       setEditingPromo(null);
       await fetchPromotions();
     } catch (e) { console.error(e); }
+  };
+
+  const fetchAllPhotos = async () => {
+    setPhotosLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data } = await supabase.functions.invoke("admin-dashboard", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { action: "list-all-photos" },
+      });
+      if (data?.users) {
+        setAllUserPhotos(data.users);
+        setPhotosLoaded(true);
+      }
+    } catch (e) { console.error(e); }
+    setPhotosLoading(false);
+  };
+
+  const handleDownloadSingle = async (url: string, filename: string) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("Download error:", e);
+      alert("Errore download");
+    }
+  };
+
+  const handleDownloadUserZip = async (user: any) => {
+    setDownloadingZip(user.user_id);
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+      for (const photo of user.photos) {
+        const res = await fetch(photo.url);
+        const blob = await res.blob();
+        const ext = photo.storage_path.split(".").pop() || "jpg";
+        zip.file(`${photo.type}_${photo.id.slice(0, 8)}.${ext}`, blob);
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+      const blobUrl = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `foto_${user.nome}_${user.cognome}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("ZIP error:", e);
+      alert("Errore creazione ZIP");
+    }
+    setDownloadingZip(null);
+  };
+
+  const handleDownloadAllZip = async () => {
+    setDownloadingZip("ALL");
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+      for (const user of allUserPhotos) {
+        const folderName = `${user.nome}_${user.cognome}_${user.user_id.slice(0, 8)}`;
+        const folder = zip.folder(folderName);
+        if (!folder) continue;
+        for (const photo of user.photos) {
+          const res = await fetch(photo.url);
+          const blob = await res.blob();
+          const ext = photo.storage_path.split(".").pop() || "jpg";
+          folder.file(`${photo.type}_${photo.id.slice(0, 8)}.${ext}`, blob);
+        }
+      }
+      const content = await zip.generateAsync({ type: "blob" });
+      const blobUrl = URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `tutte_le_foto_${new Date().toISOString().split("T")[0]}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error("ZIP all error:", e);
+      alert("Errore creazione ZIP");
+    }
+    setDownloadingZip(null);
   };
 
   const handleSaveSchedule = async () => {
@@ -694,6 +796,115 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* User Photos Management - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-primary" />
+                <h2 className="font-display text-lg font-semibold">Foto Utenti</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                {!photosLoaded ? (
+                  <Button variant="cosmic" size="sm" onClick={() => { setShowPhotos(true); fetchAllPhotos(); }} disabled={photosLoading}>
+                    {photosLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+                    Carica foto
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => setShowPhotos(s => !s)}>
+                      {showPhotos ? "Nascondi" : "Mostra"}
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={fetchAllPhotos} disabled={photosLoading}>
+                      {photosLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Aggiorna"}
+                    </Button>
+                    {allUserPhotos.length > 0 && (
+                      <Button
+                        variant="cosmic"
+                        size="sm"
+                        onClick={handleDownloadAllZip}
+                        disabled={downloadingZip !== null}
+                      >
+                        {downloadingZip === "ALL" ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                        ) : (
+                          <Archive className="w-4 h-4 mr-1" />
+                        )}
+                        Scarica tutto (ZIP)
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Visualizza e scarica le foto caricate dagli utenti. Gli URL sono temporanei (validi 1 ora).
+            </p>
+
+            {showPhotos && photosLoaded && (
+              allUserPhotos.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-6">Nessuna foto caricata dagli utenti</p>
+              ) : (
+                <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                  {allUserPhotos.map((u: any) => (
+                    <div key={u.user_id} className="p-4 rounded-lg border border-border/30 bg-card/30">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{u.nome} {u.cognome}</p>
+                          <p className="text-xs text-muted-foreground">{u.photos.length} foto</p>
+                        </div>
+                        <Button
+                          variant="cosmic-outline"
+                          size="sm"
+                          onClick={() => handleDownloadUserZip(u)}
+                          disabled={downloadingZip !== null}
+                        >
+                          {downloadingZip === u.user_id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                          ) : (
+                            <Archive className="w-4 h-4 mr-1" />
+                          )}
+                          ZIP utente
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                        {u.photos.map((photo: any) => (
+                          <div key={photo.id} className="relative group">
+                            <img
+                              src={photo.url}
+                              alt={photo.type}
+                              loading="lazy"
+                              onClick={() => setLightboxUrl(photo.url)}
+                              className="w-full aspect-square object-cover rounded-md cursor-pointer border border-border/30"
+                            />
+                            <button
+                              onClick={() => {
+                                const ext = photo.storage_path.split(".").pop() || "jpg";
+                                handleDownloadSingle(photo.url, `${u.nome}_${photo.type}_${photo.id.slice(0, 8)}.${ext}`);
+                              }}
+                              className="absolute bottom-1 right-1 p-1 rounded-md bg-background/80 backdrop-blur opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                              title="Scarica"
+                            >
+                              <Download className="w-3 h-3 text-foreground" />
+                            </button>
+                            <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] bg-background/80 backdrop-blur text-foreground">
+                              {photo.type}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </motion.div>
         )}

@@ -501,6 +501,52 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ===== LIST ALL USER PHOTOS =====
+    if (action === "list-all-photos") {
+      if (userRole !== "superadmin") {
+        return new Response(JSON.stringify({ error: "Accesso negato" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      // Get all photos with owner profile info
+      const { data: photos } = await supabase
+        .from("photos")
+        .select("id, user_id, type, storage_path, created_at")
+        .order("created_at", { ascending: false });
+
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, nome, cognome");
+
+      const profileMap = new Map<string, { nome: string; cognome: string }>();
+      (profiles || []).forEach((p: any) => profileMap.set(p.user_id, { nome: p.nome, cognome: p.cognome }));
+
+      // Build user -> photos map with signed URLs
+      const grouped: Record<string, { user_id: string; nome: string; cognome: string; photos: { id: string; type: string; storage_path: string; url: string; created_at: string }[] }> = {};
+
+      for (const photo of photos || []) {
+        const { data: signed } = await supabase.storage
+          .from("user-photos")
+          .createSignedUrl(photo.storage_path, 3600);
+        if (!signed?.signedUrl) continue;
+
+        const profile = profileMap.get(photo.user_id) || { nome: "Utente", cognome: "Sconosciuto" };
+        if (!grouped[photo.user_id]) {
+          grouped[photo.user_id] = { user_id: photo.user_id, nome: profile.nome, cognome: profile.cognome, photos: [] };
+        }
+        grouped[photo.user_id].photos.push({
+          id: photo.id,
+          type: photo.type,
+          storage_path: photo.storage_path,
+          url: signed.signedUrl,
+          created_at: photo.created_at,
+        });
+      }
+
+      return new Response(JSON.stringify({ users: Object.values(grouped) }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // ===== UPDATE PAYMENT MODE =====
     if (action === "update-payment-mode") {
       if (userRole !== "superadmin") {
