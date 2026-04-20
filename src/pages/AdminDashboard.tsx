@@ -800,6 +800,115 @@ const AdminDashboard = () => {
           </motion.div>
         )}
 
+        {/* User Photos Management - superadmin only */}
+        {isSuperadmin && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-cosmic rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-primary" />
+                <h2 className="font-display text-lg font-semibold">Foto Utenti</h2>
+              </div>
+              <div className="flex items-center gap-2">
+                {!photosLoaded ? (
+                  <Button variant="cosmic" size="sm" onClick={() => { setShowPhotos(true); fetchAllPhotos(); }} disabled={photosLoading}>
+                    {photosLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+                    Carica foto
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => setShowPhotos(s => !s)}>
+                      {showPhotos ? "Nascondi" : "Mostra"}
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={fetchAllPhotos} disabled={photosLoading}>
+                      {photosLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Aggiorna"}
+                    </Button>
+                    {allUserPhotos.length > 0 && (
+                      <Button
+                        variant="cosmic"
+                        size="sm"
+                        onClick={handleDownloadAllZip}
+                        disabled={downloadingZip !== null}
+                      >
+                        {downloadingZip === "ALL" ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                        ) : (
+                          <Archive className="w-4 h-4 mr-1" />
+                        )}
+                        Scarica tutto (ZIP)
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Visualizza e scarica le foto caricate dagli utenti. Gli URL sono temporanei (validi 1 ora).
+            </p>
+
+            {showPhotos && photosLoaded && (
+              allUserPhotos.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-6">Nessuna foto caricata dagli utenti</p>
+              ) : (
+                <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                  {allUserPhotos.map((u: any) => (
+                    <div key={u.user_id} className="p-4 rounded-lg border border-border/30 bg-card/30">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{u.nome} {u.cognome}</p>
+                          <p className="text-xs text-muted-foreground">{u.photos.length} foto</p>
+                        </div>
+                        <Button
+                          variant="cosmic-outline"
+                          size="sm"
+                          onClick={() => handleDownloadUserZip(u)}
+                          disabled={downloadingZip !== null}
+                        >
+                          {downloadingZip === u.user_id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                          ) : (
+                            <Archive className="w-4 h-4 mr-1" />
+                          )}
+                          ZIP utente
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                        {u.photos.map((photo: any) => (
+                          <div key={photo.id} className="relative group">
+                            <img
+                              src={photo.url}
+                              alt={photo.type}
+                              loading="lazy"
+                              onClick={() => setLightboxUrl(photo.url)}
+                              className="w-full aspect-square object-cover rounded-md cursor-pointer border border-border/30"
+                            />
+                            <button
+                              onClick={() => {
+                                const ext = photo.storage_path.split(".").pop() || "jpg";
+                                handleDownloadSingle(photo.url, `${u.nome}_${photo.type}_${photo.id.slice(0, 8)}.${ext}`);
+                              }}
+                              className="absolute bottom-1 right-1 p-1 rounded-md bg-background/80 backdrop-blur opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                              title="Scarica"
+                            >
+                              <Download className="w-3 h-3 text-foreground" />
+                            </button>
+                            <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] bg-background/80 backdrop-blur text-foreground">
+                              {photo.type}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </motion.div>
+        )}
+
         {/* Revenue by product */}
         {Object.keys(overview.stripe.revenueByProduct).length > 0 && (
           <div className="glass-cosmic rounded-xl p-6 mb-8">
