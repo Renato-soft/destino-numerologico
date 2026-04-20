@@ -6,6 +6,7 @@ import {
   Users, UserPlus, TrendingUp, CreditCard, ArrowLeft,
   Eye, Loader2, UserX, ShoppingBag, X, CalendarClock, Save,
   LogIn, KeyRound, Trash2, Gift, Plus, Power, ToggleLeft, ToggleRight,
+  ImageIcon, Download, Archive,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +81,13 @@ const AdminDashboard = () => {
   const [newPromo, setNewPromo] = useState({ title: "", description: "", duration_hours: 48, services: ["map", "chat", "daily_analysis", "outfits"] as string[] });
   const [showNewPromo, setShowNewPromo] = useState(false);
   const [editingPromo, setEditingPromo] = useState<any | null>(null);
+
+  // User photos state
+  const [allUserPhotos, setAllUserPhotos] = useState<any[]>([]);
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [photosLoaded, setPhotosLoaded] = useState(false);
+  const [downloadingZip, setDownloadingZip] = useState<string | null>(null);
+  const [showPhotos, setShowPhotos] = useState(false);
 
   useEffect(() => {
     fetchOverview();
