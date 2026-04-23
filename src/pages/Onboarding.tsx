@@ -195,7 +195,7 @@ const Onboarding = () => {
         user_id: userId,
         nome: formData.nome,
         cognome: formData.cognome,
-        birth_date: birthDate.toISOString().split("T")[0],
+        birth_date: `${birthDate.getFullYear()}-${String(birthDate.getMonth() + 1).padStart(2, "0")}-${String(birthDate.getDate()).padStart(2, "0")}`,
         sesso: formData.sesso,
         residence_state: formData.residenceState.trim(),
         onboarding_completed: true,
