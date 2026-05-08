@@ -24,7 +24,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const ADMIN_EMAILS = ["regnew01@gmail.com", "maria732008@live.it", "realerenato@gmail.com"];
+const ADMIN_EMAILS = ["regnew01@gmail.com", "marahoney1973@gmail.com", "realerenato@gmail.com"];
 
 const menuItems = [
   { title: "Dashboard", icon: Home, href: "/dashboard" },
