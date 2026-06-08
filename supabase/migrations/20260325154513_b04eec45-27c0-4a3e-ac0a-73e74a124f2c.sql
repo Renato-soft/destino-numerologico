@@ -1,3 +1,0 @@
-ALTER TABLE community_posts DROP CONSTRAINT community_posts_user_id_fkey;
-ALTER TABLE community_comments DROP CONSTRAINT community_comments_user_id_fkey;
-ALTER TABLE community_reactions DROP CONSTRAINT community_reactions_user_id_fkey;

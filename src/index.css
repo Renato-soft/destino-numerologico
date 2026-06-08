@@ -1,102 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design System: Destino Numerologico
-   Tema cosmico mistico con palette notturna e accenti dorati
-*/
-
 @layer base {
   :root {
-    /* Colori cosmici */
-    --background: 232 47% 8%;
-    --foreground: 45 100% 96%;
+    --font-heading: 'DM Serif Display', serif;
+    --font-body: 'Fira Sans', sans-serif;
 
-    --card: 232 40% 12%;
-    --card-foreground: 45 100% 96%;
+    --background: 230 40% 6%;
+    --foreground: 220 20% 92%;
 
-    --popover: 232 40% 10%;
-    --popover-foreground: 45 100% 96%;
+    --card: 230 35% 10%;
+    --card-foreground: 220 20% 92%;
 
-    /* Oro mistico - colore primario */
-    --primary: 43 89% 58%;
-    --primary-foreground: 232 47% 8%;
+    --popover: 230 35% 10%;
+    --popover-foreground: 220 20% 92%;
 
-    /* Viola cosmico - colore secondario */
-    --secondary: 262 65% 40%;
-    --secondary-foreground: 45 100% 96%;
+    --primary: 42 70% 55%;
+    --primary-foreground: 230 40% 6%;
 
-    /* Blu notte - sfondo muted */
-    --muted: 232 35% 18%;
-    --muted-foreground: 220 20% 65%;
+    --secondary: 255 40% 50%;
+    --secondary-foreground: 220 20% 95%;
 
-    /* Ambra per accenti */
-    --accent: 38 92% 50%;
-    --accent-foreground: 232 47% 8%;
+    --muted: 230 30% 14%;
+    --muted-foreground: 220 15% 55%;
 
-    /* Rosso cosmico per distruttivi */
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 45 100% 96%;
+    --accent: 255 60% 65%;
+    --accent-foreground: 220 20% 95%;
 
-    --border: 232 30% 25%;
-    --input: 232 30% 20%;
-    --ring: 43 89% 58%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 220 20% 95%;
+
+    --border: 230 25% 18%;
+    --input: 230 25% 18%;
+    --ring: 42 70% 55%;
 
     --radius: 0.75rem;
 
-    /* Gradienti mistici */
-    --gradient-cosmic: linear-gradient(135deg, hsl(232 47% 8%) 0%, hsl(262 50% 15%) 50%, hsl(232 47% 8%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43 89% 58%) 0%, hsl(38 92% 50%) 50%, hsl(43 89% 68%) 100%);
-    --gradient-glow: linear-gradient(180deg, hsl(43 89% 58% / 0.15) 0%, transparent 100%);
-    --gradient-card: linear-gradient(180deg, hsl(232 40% 14%) 0%, hsl(232 40% 10%) 100%);
-    
-    /* Ombre mistiche */
-    --shadow-glow: 0 0 30px hsl(43 89% 58% / 0.2);
-    --shadow-cosmic: 0 20px 40px -10px hsl(262 65% 20% / 0.4);
-    --shadow-card: 0 10px 30px -5px hsl(232 47% 5% / 0.8);
+    --glow-primary: 0 0 60px hsl(42 70% 55% / 0.15);
+    --glow-accent: 0 0 80px hsl(255 60% 65% / 0.1);
+    --gradient-hero: linear-gradient(135deg, hsl(230 40% 6%) 0%, hsl(255 30% 12%) 50%, hsl(230 40% 8%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(42 70% 55%), hsl(35 80% 65%));
+    --gradient-card: linear-gradient(180deg, hsl(230 35% 12%) 0%, hsl(230 35% 8%) 100%);
 
-    /* Sidebar */
-    --sidebar-background: 232 40% 10%;
-    --sidebar-foreground: 45 100% 96%;
-    --sidebar-primary: 43 89% 58%;
-    --sidebar-primary-foreground: 232 47% 8%;
-    --sidebar-accent: 232 35% 18%;
-    --sidebar-accent-foreground: 45 100% 96%;
-    --sidebar-border: 232 30% 25%;
-    --sidebar-ring: 43 89% 58%;
-  }
-
-  /* Variante chiara (manteniamo il tema scuro come default) */
-  .light {
-    --background: 45 40% 97%;
-    --foreground: 232 47% 12%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 232 47% 12%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 232 47% 12%;
-
-    --primary: 43 89% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 262 50% 55%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 45 20% 92%;
-    --muted-foreground: 232 30% 40%;
-
-    --accent: 38 92% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 45 20% 85%;
-    --input: 45 20% 90%;
-    --ring: 43 89% 45%;
+    --sidebar-background: 230 35% 10%;
+    --sidebar-foreground: 220 20% 92%;
+    --sidebar-primary: 42 70% 55%;
+    --sidebar-primary-foreground: 230 40% 6%;
+    --sidebar-accent: 255 40% 50%;
+    --sidebar-accent-foreground: 220 20% 95%;
+    --sidebar-border: 230 25% 18%;
+    --sidebar-ring: 42 70% 55%;
   }
 }
 
@@ -104,204 +60,32 @@
   * {
     @apply border-border;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
   }
-
-  /* Typography con font serif per titoli */
-  h1, h2, h3, h4, h5, h6, .font-display {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-  }
-}
-
-@layer components {
-  /* Testo con gradiente oro */
-  .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(43 89% 58%) 0%, hsl(38 92% 50%) 50%, hsl(43 89% 68%) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Effetto glow per elementi importanti */
-  .glow-gold {
-    box-shadow: 0 0 20px hsl(43 89% 58% / 0.3), 0 0 40px hsl(43 89% 58% / 0.1);
-  }
-
-  .glow-gold-strong {
-    box-shadow: 0 0 30px hsl(43 89% 58% / 0.5), 0 0 60px hsl(43 89% 58% / 0.2);
-  }
-
-  /* Card con effetto vetro cosmico */
-  .glass-cosmic {
-    background: linear-gradient(180deg, hsl(232 40% 14% / 0.8) 0%, hsl(232 40% 10% / 0.9) 100%);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(232 30% 30% / 0.5);
-  }
-
-  /* Bordo con gradiente */
-  .border-gradient-gold {
-    position: relative;
-    border: 1px solid transparent;
-    background: linear-gradient(var(--background), var(--background)) padding-box,
-                linear-gradient(135deg, hsl(43 89% 58%) 0%, hsl(38 92% 50%) 100%) border-box;
-  }
-
-  /* Animazione stelle */
-  .stars-bg {
-    background-image: 
-      radial-gradient(2px 2px at 20px 30px, hsl(43 89% 58%), transparent),
-      radial-gradient(2px 2px at 40px 70px, hsl(43 89% 78%), transparent),
-      radial-gradient(1px 1px at 90px 40px, hsl(0 0% 100%), transparent),
-      radial-gradient(2px 2px at 130px 80px, hsl(43 89% 58%), transparent),
-      radial-gradient(1px 1px at 160px 30px, hsl(43 89% 78%), transparent);
-    background-size: 200px 100px;
-    animation: twinkle 4s ease-in-out infinite;
-  }
-
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  /* Animazione pulse per numeri */
-  .pulse-gold {
-    animation: pulseGold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  @keyframes pulseGold {
-    0%, 100% { 
-      box-shadow: 0 0 0 0 hsl(43 89% 58% / 0.4);
-    }
-    50% { 
-      box-shadow: 0 0 0 15px hsl(43 89% 58% / 0);
-    }
-  }
-
-  /* Numero circolare stilizzato */
-  .number-circle {
-    @apply inline-flex items-center justify-center;
-    @apply w-16 h-16 rounded-full;
-    @apply text-2xl font-bold;
-    background: linear-gradient(135deg, hsl(43 89% 58%) 0%, hsl(38 92% 50%) 100%);
-    color: hsl(232 47% 8%);
-    box-shadow: 0 0 30px hsl(43 89% 58% / 0.3);
-  }
-
-  .number-circle-lg {
-    @apply w-24 h-24 text-4xl;
-  }
-
-  /* Input stilizzato */
-  .input-cosmic {
-    @apply bg-muted/50 border-border/50 rounded-lg;
-    @apply focus:border-primary focus:ring-2 focus:ring-primary/20;
-    @apply transition-all duration-300;
-  }
-
-  .input-cosmic:focus {
-    box-shadow: 0 0 20px hsl(43 89% 58% / 0.15);
-  }
-
-  /* Bottone primario con gradiente */
-  .btn-cosmic {
-    @apply relative overflow-hidden;
-    @apply bg-gradient-to-r from-primary to-accent;
-    @apply text-primary-foreground font-semibold;
-    @apply rounded-lg px-6 py-3;
-    @apply transition-all duration-300;
-    @apply hover:shadow-lg hover:scale-[1.02];
-  }
-
-  .btn-cosmic::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.2), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .btn-cosmic:hover::before {
-    left: 100%;
-  }
-
-  /* Sfondo con pattern numeri */
-  .numerology-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='30' y='35' font-size='20' fill='%23d4af37' fill-opacity='0.03' text-anchor='middle' font-family='serif'%3E9%3C/text%3E%3C/svg%3E");
-    background-size: 60px 60px;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 }
 
 @layer utilities {
-  /* Animazione fade in up */
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
+  .text-gradient-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .bg-hero {
+    background: var(--gradient-hero);
   }
-
-  .animate-fadeIn {
-    animation: fadeIn 0.8s ease-out;
+  .bg-card-gradient {
+    background: var(--gradient-card);
   }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+  .glow-primary {
+    box-shadow: var(--glow-primary);
   }
-
-  /* Animazione float */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  /* Animazione rotate slow */
-  .animate-rotate-slow {
-    animation: rotateSlow 20s linear infinite;
-  }
-
-  @keyframes rotateSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* Scrollbar stilizzata */
-  .scrollbar-cosmic::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .scrollbar-cosmic::-webkit-scrollbar-track {
-    background: hsl(232 40% 10%);
-  }
-
-  .scrollbar-cosmic::-webkit-scrollbar-thumb {
-    background: hsl(43 89% 58% / 0.3);
-    border-radius: 4px;
-  }
-
-  .scrollbar-cosmic::-webkit-scrollbar-thumb:hover {
-    background: hsl(43 89% 58% / 0.5);
+  .glow-accent {
+    box-shadow: var(--glow-accent);
   }
 }

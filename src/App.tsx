@@ -1,81 +1,106 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SubscriptionProvider } from "@/hooks/useSubscription";
-import { FeatureScheduleProvider } from "@/hooks/useFeatureSchedule";
-import { PromotionProvider } from "@/hooks/usePromotion";
-import { AppSettingsProvider } from "@/hooks/useAppSettings";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import LandingPage from "./pages/LandingPage";
-import Auth from "./pages/Auth";
-import Onboarding from "./pages/Onboarding";
-import Dashboard from "./pages/Dashboard";
-import NumerologyMap from "./pages/NumerologyMap";
-import Chat from "./pages/Chat";
-import History from "./pages/History";
-import FavorableDates from "./pages/FavorableDates";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { LanguageProvider } from "@/i18n/LanguageContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthModalProvider } from "@/contexts/AuthModalContext";
+import AuthModal from "@/components/AuthModal";
 
-import ProfilePage from "./pages/Profile";
-import Compatibility from "./pages/Compatibility";
-import BrandAnalyzer from "./pages/BrandAnalyzer";
-import Pillars from "./pages/Pillars";
-
-import HouseAnalyzer from "./pages/HouseAnalyzer";
-import Community from "./pages/Community";
-import Pricing from "./pages/Pricing";
-import PersonalYear from "./pages/PersonalYear";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
+// Public pages
+import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import AdminDashboard from "./pages/AdminDashboard";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import EmailConfirmedPage from "./pages/EmailConfirmedPage";
 
+// Onboarding
+import OnboardingPage from "./pages/OnboardingPage";
+
+// App (protected)
+import AppLayout from "./pages/app/AppLayout";
+import DashboardPage from "./pages/app/DashboardPage";
+import SoulmatesPage from "./pages/app/SoulmatesPage";
+import ProfilePage from "./pages/app/ProfilePage";
 
 const queryClient = new QueryClient();
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, loading, user } = useAuth();
+  if (loading) return <div className="min-h-screen bg-hero flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (!user?.onboardingComplete) return <Navigate to="/onboarding" replace />;
+  return <>{children}</>;
+}
+
+function OnboardingRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, loading, user } = useAuth();
+  if (loading) return <div className="min-h-screen bg-hero flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (user?.onboardingComplete) return <Navigate to="/app/dashboard" replace />;
+  return <>{children}</>;
+}
+
+function AppRoutes() {
+  return (
+    <>
+      <AuthModal />
+      <Routes>
+        {/* Landing */}
+        <Route path="/" element={<Index />} />
+
+        {/* Auth (pagine standalone ancora disponibili) */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/auth/confirm" element={<EmailConfirmedPage />} />
+
+        {/* Onboarding */}
+        <Route
+          path="/onboarding"
+          element={
+            <OnboardingRoute>
+              <OnboardingPage />
+            </OnboardingRoute>
+          }
+        />
+
+        {/* App — protected */}
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="/app/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="soulmates" element={<SoulmatesPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppSettingsProvider>
-        <SubscriptionProvider>
-        <FeatureScheduleProvider>
-        <PromotionProvider>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/map" element={<ProtectedRoute route="/map"><NumerologyMap /></ProtectedRoute>} />
-            <Route path="/personal-year" element={<ProtectedRoute route="/personal-year"><PersonalYear /></ProtectedRoute>} />
-            <Route path="/chat" element={<ProtectedRoute route="/chat"><Chat /></ProtectedRoute>} />
-            <Route path="/history" element={<ProtectedRoute route="/history"><History /></ProtectedRoute>} />
-            <Route path="/dates" element={<ProtectedRoute route="/dates"><FavorableDates /></ProtectedRoute>} />
-            
-            <Route path="/compatibility" element={<ProtectedRoute route="/compatibility"><Compatibility /></ProtectedRoute>} />
-            <Route path="/brand" element={<ProtectedRoute route="/brand"><BrandAnalyzer /></ProtectedRoute>} />
-            <Route path="/pillars" element={<ProtectedRoute route="/pillars"><Pillars /></ProtectedRoute>} />
-            
-            <Route path="/house" element={<ProtectedRoute route="/house"><HouseAnalyzer /></ProtectedRoute>} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </PromotionProvider>
-        </FeatureScheduleProvider>
-        </SubscriptionProvider>
-        </AppSettingsProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <AuthModalProvider>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+        </LanguageProvider>
+      </AuthModalProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

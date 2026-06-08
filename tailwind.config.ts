@@ -12,11 +12,11 @@ export default {
         "2xl": "1400px",
       },
     },
-    extend: {
-      fontFamily: {
-        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+    fontFamily: {
+        heading: ['DM Serif Display', 'serif'],
+        body: ['Fira Sans', 'sans-serif'],
       },
+      extend: {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -61,15 +61,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom colors for numerology theme
-        cosmic: {
-          night: "hsl(232 47% 8%)",
-          deep: "hsl(232 40% 12%)",
-          purple: "hsl(262 65% 40%)",
-          gold: "hsl(43 89% 58%)",
-          amber: "hsl(38 92% 50%)",
-          cream: "hsl(45 100% 96%)",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -78,37 +69,25 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
-        glow: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        shimmer: "shimmer 2s linear infinite",
-        glow: "glow 2s ease-in-out infinite",
-      },
-      backgroundImage: {
-        "gradient-cosmic": "linear-gradient(135deg, hsl(232 47% 8%) 0%, hsl(262 50% 15%) 50%, hsl(232 47% 8%) 100%)",
-        "gradient-gold": "linear-gradient(135deg, hsl(43 89% 58%) 0%, hsl(38 92% 50%) 50%, hsl(43 89% 68%) 100%)",
-        "gradient-radial": "radial-gradient(ellipse at center, var(--tw-gradient-stops))",
-      },
-      boxShadow: {
-        "glow-gold": "0 0 30px hsl(43 89% 58% / 0.3), 0 0 60px hsl(43 89% 58% / 0.1)",
-        "glow-purple": "0 0 30px hsl(262 65% 40% / 0.3), 0 0 60px hsl(262 65% 40% / 0.1)",
-        cosmic: "0 20px 40px -10px hsl(262 65% 20% / 0.4)",
       },
     },
   },

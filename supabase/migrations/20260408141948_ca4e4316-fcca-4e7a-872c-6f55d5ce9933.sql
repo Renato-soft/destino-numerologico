@@ -1,1 +1,0 @@
-ALTER TABLE public.promotions ADD COLUMN services text[] NOT NULL DEFAULT ARRAY['map', 'chat', 'daily_analysis', 'outfits'];
