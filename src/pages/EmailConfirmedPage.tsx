@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Flame, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Flame, XCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/i18n/LanguageContext';
 
@@ -9,11 +9,11 @@ type Status = 'loading' | 'success' | 'error';
 
 export default function EmailConfirmedPage() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<Status>('loading');
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    // Check for error params in hash or query string
     const hash = window.location.hash.slice(1);
     const search = window.location.search.slice(1);
     const hashParams = new URLSearchParams(hash);
@@ -29,6 +29,11 @@ export default function EmailConfirmedPage() {
       return;
     }
 
+    const redirectToLogin = async () => {
+      await supabase.auth.signOut();
+      navigate('/login', { replace: true });
+    };
+
     // PKCE flow: exchange authorization code for session
     const code = queryParams.get('code');
     if (code) {
@@ -39,31 +44,23 @@ export default function EmailConfirmedPage() {
             setErrorMsg(error.message);
             setStatus('error');
           } else {
-            setStatus('success');
-            // Sign out so the user goes through the normal login flow
-            supabase.auth.signOut();
+            redirectToLogin();
           }
         });
       return;
     }
 
     // Hash-based flow: Supabase auto-processes the access_token in the hash.
-    // Listen for the resulting SIGNED_IN event.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          setStatus('success');
-          supabase.auth.signOut();
+          redirectToLogin();
         }
       }
     );
 
-    // Also handle the case where the hash was already consumed before we mounted
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setStatus('success');
-        supabase.auth.signOut();
-      }
+      if (session) redirectToLogin();
     });
 
     // Fallback timeout — if nothing fires the link is invalid
@@ -75,7 +72,7 @@ export default function EmailConfirmedPage() {
       subscription.unsubscribe();
       clearTimeout(timer);
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-hero flex items-center justify-center px-4">
@@ -92,20 +89,6 @@ export default function EmailConfirmedPage() {
         <div className="bg-card border border-border rounded-2xl p-8 shadow-xl text-center">
           {status === 'loading' && (
             <Loader2 className="w-12 h-12 text-primary mx-auto animate-spin" />
-          )}
-
-          {status === 'success' && (
-            <>
-              <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-5" />
-              <h1 className="font-heading text-3xl mb-2">{t.auth.confirmTitle}</h1>
-              <p className="text-muted-foreground mb-8">{t.auth.confirmSubtitle}</p>
-              <Link
-                to="/login"
-                className="inline-block w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-medium text-lg glow-primary hover:opacity-90 transition-all"
-              >
-                {t.auth.confirmCta}
-              </Link>
-            </>
           )}
 
           {status === 'error' && (

@@ -81,7 +81,13 @@ export async function fetchProfile(userId: string): Promise<UserProfile | null> 
 // ─── Register ─────────────────────────────────────────────────────────────────
 
 export async function register(email: string, password: string): Promise<UserProfile> {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${window.location.origin}/auth/confirm`,
+    },
+  });
   if (error) throw error;
   if (!data.user) throw new Error('No user returned from signUp');
 
